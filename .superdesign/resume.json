@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "projectId": "dadaedbf-da94-4619-9ab5-f76c58eed0b5",
+  "targets": {
+    "student-dashboard": {
+      "targetKind": "existing-ui",
+      "projectId": "dadaedbf-da94-4619-9ab5-f76c58eed0b5",
+      "activeDraftId": "b51a508f-5364-422c-a534-98c0053f5ae8",
+      "drafts": {
+        "b51a508f-5364-422c-a534-98c0053f5ae8": {
+          "title": "EduTrack AI - Student Dashboard",
+          "currentVersion": 1
+        }
+      }
+    },
+    "faculty-dashboard": {
+      "targetKind": "existing-ui",
+      "projectId": "dadaedbf-da94-4619-9ab5-f76c58eed0b5",
+      "activeDraftId": "73373ee5-4ca4-46ad-8189-0787591a8ae6",
+      "drafts": {
+        "73373ee5-4ca4-46ad-8189-0787591a8ae6": {
+          "title": "EduTrack AI - Faculty Dashboard",
+          "currentVersion": 1
+        }
+      }
+    },
+    "admin-dashboard": {
+      "targetKind": "existing-ui",
+      "projectId": "dadaedbf-da94-4619-9ab5-f76c58eed0b5",
+      "activeDraftId": "f229361f-241b-4bfb-8cdc-d598adaa0b62",
+      "drafts": {
+        "f229361f-241b-4bfb-8cdc-d598adaa0b62": {
+          "title": "EduTrack AI - Admin Dashboard",
+          "currentVersion": 1
+        }
+      }
+    },
+    "assignments": {
+      "targetKind": "existing-ui",
+      "projectId": "dadaedbf-da94-4619-9ab5-f76c58eed0b5",
+      "activeDraftId": "4155c4aa-0b40-4050-a4b1-579e1c9840ee",
+      "drafts": {
+        "4155c4aa-0b40-4050-a4b1-579e1c9840ee": {
+          "title": "EduTrack AI - Assignments",
+          "currentVersion": 1
+        }
+      }
+    },
+    "assistant": {
+      "targetKind": "existing-ui",
+      "projectId": "dadaedbf-da94-4619-9ab5-f76c58eed0b5",
+      "activeDraftId": "47a813d3-75d4-4f72-becd-73027fed4d14",
+      "drafts": {
+        "47a813d3-75d4-4f72-becd-73027fed4d14": {
+          "title": "EduTrack AI - Assistant",
+          "currentVersion": 1
+        }
+      }
+    },
+    "announcements": {
+      "targetKind": "existing-ui",
+      "projectId": "dadaedbf-da94-4619-9ab5-f76c58eed0b5",
+      "activeDraftId": "5c77ade7-494d-4efa-8b33-567d4fc459ca",
+      "drafts": {
+        "5c77ade7-494d-4efa-8b33-567d4fc459ca": {
+          "title": "EduTrack AI - Announcements",
+          "currentVersion": 1
+        }
+      }
+    },
+    "login": {
+      "targetKind": "existing-ui",
+      "projectId": "dadaedbf-da94-4619-9ab5-f76c58eed0b5",
+      "activeDraftId": "90fe00a6-3d73-4510-a7d5-699e3e6935bb",
+      "drafts": {
+        "90fe00a6-3d73-4510-a7d5-699e3e6935bb": {
+          "title": "EduTrack AI - Login",
+          "currentVersion": 1
+        }
+      }
+    }
+  }
+}

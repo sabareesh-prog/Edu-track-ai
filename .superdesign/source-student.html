@@ -1,0 +1,280 @@
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduTrack AI - Student Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&amp;display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #FFFFFF;
+            color: #4B4B4B;
+        }
+        
+        /* Duolingo-style 3D Button Effect */
+        .btn-3d {
+            position: relative;
+            transition: all 0.1s active;
+            border-bottom-width: 4px;
+        }
+        .btn-3d:active {
+            border-bottom-width: 0px;
+            transform: translateY(4px);
+        }
+
+        /* Card Styles */
+        .duo-card {
+            border: 2px solid #E5E5E5;
+            border-bottom-width: 4px;
+        }
+
+        /* Progress Ring Animation */
+        @keyframes progress {
+            0% { stroke-dasharray: 0 100; }
+        }
+        .progress-ring {
+            stroke-dasharray: 75 100;
+            animation: progress 1s ease-out forwards;
+        }
+
+        /* Mascot float animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .float-mascot {
+            animation: float 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="w-full h-screen flex flex-col bg-white" data-sd-id="1">
+        <!-- Header / Stats Bar -->
+        <header class="shrink-0 pt-14 px-6 pb-4 bg-white border-b-2 border-gray-100 flex items-center justify-between" data-sd-id="2">
+            <div class="flex items-center gap-3" data-sd-id="3">
+                <div class="w-10 h-10 rounded-xl bg-[#58CC02] flex items-center justify-center text-white shadow-sm" data-sd-id="4">
+                    <iconify-icon icon="lucide:user" class="text-2xl"></iconify-icon>
+                </div>
+                <div data-sd-id="5">
+                    <h1 class="text-xl font-extrabold tracking-tight leading-none" data-sd-id="6">Hi Priya!</h1>
+                    <p class="text-sm font-bold text-gray-400 uppercase tracking-wider" data-sd-id="7">Level 12</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-4" data-sd-id="8">
+                <div class="flex items-center gap-1" data-sd-id="9">
+                    <iconify-icon icon="lucide:flame" class="text-[#FF9600] text-2xl"></iconify-icon>
+                    <span class="font-black text-[#FF9600]" data-sd-id="10">7</span>
+                </div>
+                <div class="flex items-center gap-1" data-sd-id="11">
+                    <iconify-icon icon="lucide:zap" class="text-[#FFC800] text-2xl"></iconify-icon>
+                    <span class="font-black text-[#FFC800]" data-sd-id="12">1.2k</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Scroll Area -->
+        <main class="flex-1 overflow-y-auto px-6 py-6 space-y-8" data-sd-id="13">
+            
+            <!-- Daily Goal / Progress Ring -->
+            <section class="duo-card rounded-[20px] p-5 flex items-center gap-6 bg-white" data-sd-id="14">
+                <div class="relative w-24 h-24 flex items-center justify-center" data-sd-id="15">
+                    <svg viewBox="0 0 36 36" class="w-full h-full transform -rotate-90" data-sd-id="16">
+                        <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#E5E5E5" stroke-width="3"></path>
+                        <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#58CC02" stroke-width="3" stroke-linecap="round" class="progress-ring"></path>
+                    </svg>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center" data-sd-id="17">
+                        <span class="text-2xl font-black text-[#4B4B4B]" data-sd-id="18">3/4</span>
+                    </div>
+                </div>
+                <div class="flex-1" data-sd-id="19">
+                    <h2 class="text-lg font-black leading-tight" data-sd-id="20">Daily Goal</h2>
+                    <p class="text-[#777777] font-bold text-sm" data-sd-id="21">One more assignment to hit your streak!</p>
+                    <div class="mt-3 px-3 py-1 bg-[#58CC02] text-white text-[10px] font-black uppercase tracking-widest rounded-full inline-block" data-sd-id="22">
+                        75% COMPLETE
+                    </div>
+                </div>
+            </section>
+
+            <!-- AI Study Suggestion -->
+            <section class="relative bg-[#1CB0F6] rounded-[20px] p-6 text-white overflow-hidden shadow-lg shadow-blue-100" data-sd-id="23">
+                <div class="relative z-10 pr-20" data-sd-id="24">
+                    <h3 class="text-xl font-black mb-1" data-sd-id="25">Study Tip!</h3>
+                    <p class="font-bold opacity-90 leading-snug" data-sd-id="26">"You have 2 assignments due soon. Start with <span class="underline" data-sd-id="27">Data Structures</span> today!"</p>
+                    <button class="mt-4 bg-white text-[#1CB0F6] px-4 py-2 rounded-xl font-black text-sm btn-3d border-b-[#E5E5E5] active:border-b-0 uppercase tracking-wide" data-sd-id="28">
+                        Let's Go
+                    </button>
+                </div>
+                <!-- Mascot Owl/Robot (Absolute) -->
+                <div class="absolute -right-2 -bottom-2 w-32 h-32 float-mascot pointer-events-none opacity-90" data-sd-id="29">
+                   <!-- Simple SVG Mascot Shape -->
+                   <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" data-sd-id="30">
+                       <circle cx="50" cy="50" r="45" fill="#FFFFFF" fill-opacity="0.2"></circle>
+                       <path d="M50 20C30 20 20 35 20 55C20 75 35 85 50 85C65 85 80 75 80 55C80 35 70 20 50 20Z" fill="#58CC02" stroke="white" stroke-width="3"></path>
+                       <circle cx="35" cy="45" r="8" fill="white"></circle>
+                       <circle cx="35" cy="45" r="4" fill="black"></circle>
+                       <circle cx="65" cy="45" r="8" fill="white"></circle>
+                       <circle cx="65" cy="45" r="4" fill="black"></circle>
+                       <path d="M45 55L50 60L55 55" stroke="#FFC800" stroke-width="4" stroke-linecap="round"></path>
+                   </svg>
+                </div>
+            </section>
+
+            <!-- Quick Actions Grid -->
+            <div class="grid grid-cols-3 gap-4" data-sd-id="31">
+                <a href="#" id="action-add-btn" class="flex flex-col items-center justify-center p-4 rounded-[20px] duo-card bg-white active:bg-gray-50 transition-colors" data-sd-id="32">
+                    <div class="w-12 h-12 rounded-full bg-[#58CC02]/10 flex items-center justify-center mb-2" data-sd-id="33">
+                        <iconify-icon icon="lucide:plus" class="text-[#58CC02] text-2xl"></iconify-icon>
+                    </div>
+                    <span class="text-[12px] font-black text-gray-500 uppercase" data-sd-id="34">Add Task</span>
+                </a>
+                <a href="#" id="action-upload-btn" class="flex flex-col items-center justify-center p-4 rounded-[20px] duo-card bg-white active:bg-gray-50 transition-colors" data-sd-id="35">
+                    <div class="w-12 h-12 rounded-full bg-[#1CB0F6]/10 flex items-center justify-center mb-2" data-sd-id="36">
+                        <iconify-icon icon="lucide:file-up" class="text-[#1CB0F6] text-2xl"></iconify-icon>
+                    </div>
+                    <span class="text-[12px] font-black text-gray-500 uppercase" data-sd-id="37">Upload</span>
+                </a>
+                <a href="#" id="action-ai-btn" class="flex flex-col items-center justify-center p-4 rounded-[20px] duo-card bg-white active:bg-gray-50 transition-colors" data-sd-id="38">
+                    <div class="w-12 h-12 rounded-full bg-[#FFC800]/10 flex items-center justify-center mb-2" data-sd-id="39">
+                        <iconify-icon icon="lucide:brain" class="text-[#FFC800] text-2xl"></iconify-icon>
+                    </div>
+                    <span class="text-[12px] font-black text-gray-500 uppercase" data-sd-id="40">Ask AI</span>
+                </a>
+            </div>
+
+            <!-- Upcoming Deadlines -->
+            <section class="space-y-4" data-sd-id="41">
+                <div class="flex items-center justify-between" data-sd-id="42">
+                    <h3 class="text-xl font-black" data-sd-id="43">Upcoming</h3>
+                    <a href="#" id="view-all-deadlines" class="text-[#1CB0F6] font-black text-sm uppercase tracking-wider" data-sd-id="44">See All</a>
+                </div>
+                
+                <!-- Deadline Card: Critical -->
+                <div class="duo-card rounded-[20px] p-4 flex items-center gap-4 bg-white border-l-[8px] border-l-[#FF4B4B]" data-sd-id="45">
+                    <div class="w-14 h-14 bg-[#FF4B4B]/10 rounded-xl flex flex-col items-center justify-center text-[#FF4B4B]" data-sd-id="46">
+                        <span class="text-xs font-black leading-none uppercase" data-sd-id="47">Oct</span>
+                        <span class="text-xl font-black leading-none" data-sd-id="48">24</span>
+                    </div>
+                    <div class="flex-1" data-sd-id="49">
+                        <h4 class="font-black text-lg leading-tight" data-sd-id="50">Physics Lab Report</h4>
+                        <p class="text-sm font-bold text-[#FF4B4B] flex items-center gap-1" data-sd-id="51">
+                            <iconify-icon icon="lucide:clock"></iconify-icon>
+                            Due in 2 hours!
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Deadline Card: Soon -->
+                <div class="duo-card rounded-[20px] p-4 flex items-center gap-4 bg-white border-l-[8px] border-l-[#FF9600]" data-sd-id="52">
+                    <div class="w-14 h-14 bg-[#FF9600]/10 rounded-xl flex flex-col items-center justify-center text-[#FF9600]" data-sd-id="53">
+                        <span class="text-xs font-black leading-none uppercase" data-sd-id="54">Oct</span>
+                        <span class="text-xl font-black leading-none" data-sd-id="55">26</span>
+                    </div>
+                    <div class="flex-1" data-sd-id="56">
+                        <h4 class="font-black text-lg leading-tight" data-sd-id="57">Data Structures HW</h4>
+                        <p class="text-sm font-bold text-gray-400" data-sd-id="58">Computer Science</p>
+                    </div>
+                </div>
+
+                <!-- Deadline Card: Safe -->
+                <div class="duo-card rounded-[20px] p-4 flex items-center gap-4 bg-white border-l-[8px] border-l-[#58CC02]" data-sd-id="59">
+                    <div class="w-14 h-14 bg-[#58CC02]/10 rounded-xl flex flex-col items-center justify-center text-[#58CC02]" data-sd-id="60">
+                        <span class="text-xs font-black leading-none uppercase" data-sd-id="61">Oct</span>
+                        <span class="text-xl font-black leading-none" data-sd-id="62">29</span>
+                    </div>
+                    <div class="flex-1" data-sd-id="63">
+                        <h4 class="font-black text-lg leading-tight" data-sd-id="64">Math Integration Quiz</h4>
+                        <p class="text-sm font-bold text-gray-400" data-sd-id="65">Advanced Calculus</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Announcements Preview -->
+            <section class="space-y-4" data-sd-id="66">
+                <div class="flex items-center justify-between" data-sd-id="67">
+                    <h3 class="text-xl font-black" data-sd-id="68">Announcements</h3>
+                </div>
+                <div class="duo-card rounded-[20px] p-5 bg-[#F7F7F7] border-none" data-sd-id="69">
+                    <div class="flex items-center gap-3 mb-3" data-sd-id="70">
+                        <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center border-2 border-[#E5E5E5]" data-sd-id="71">
+                            <iconify-icon icon="lucide:megaphone" class="text-[#1CB0F6] text-xl"></iconify-icon>
+                        </div>
+                        <div data-sd-id="72">
+                            <p class="font-black text-sm" data-sd-id="73">Faculty Notice</p>
+                            <p class="text-xs font-bold text-gray-400" data-sd-id="74">Today, 10:30 AM</p>
+                        </div>
+                        <span class="ml-auto w-3 h-3 bg-[#1CB0F6] rounded-full" data-sd-id="75"></span>
+                    </div>
+                    <p class="font-bold text-sm leading-relaxed text-[#4B4B4B]" data-sd-id="76">
+                        The library hours have been extended until 10:00 PM for the upcoming midterms week. Happy studying!
+                    </p>
+                </div>
+            </section>
+
+            <!-- Spacer for Nav -->
+            <div class="h-10" data-sd-id="77"></div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <footer class="shrink-0 pb-[34px] bg-white border-t-2 border-[#E5E5E5] px-4 flex items-center justify-between h-[100px] z-50" data-sd-id="78">
+            <a href="#" id="nav-home" class="flex flex-col items-center gap-1 group py-2 flex-1" data-sd-id="79">
+                <div class="w-12 h-8 rounded-xl bg-[#58CC02]/10 flex items-center justify-center" data-sd-id="80">
+                    <iconify-icon icon="lucide:home" class="text-2xl text-[#58CC02]"></iconify-icon>
+                </div>
+                <span class="text-[10px] font-black text-[#58CC02] uppercase tracking-widest" data-sd-id="81">Home</span>
+            </a>
+            <a href="#" id="nav-assignments" class="flex flex-col items-center gap-1 group py-2 flex-1" data-sd-id="82">
+                <iconify-icon icon="lucide:book-open" class="text-2xl text-gray-300 group-hover:text-[#58CC02] transition-colors"></iconify-icon>
+                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest" data-sd-id="83">Tasks</span>
+            </a>
+            <a href="#" id="nav-ai" class="flex flex-col items-center gap-1 group py-2 flex-1 relative -top-2" data-sd-id="84">
+                <div class="w-14 h-14 rounded-2xl bg-[#1CB0F6] btn-3d border-b-[#1483B8] flex items-center justify-center text-white shadow-lg" data-sd-id="85">
+                    <iconify-icon icon="lucide:sparkles" class="text-3xl"></iconify-icon>
+                </div>
+            </a>
+            <a href="#" id="nav-announcements" class="flex flex-col items-center gap-1 group py-2 flex-1" data-sd-id="86">
+                <iconify-icon icon="lucide:bell" class="text-2xl text-gray-300 group-hover:text-[#58CC02] transition-colors"></iconify-icon>
+                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest" data-sd-id="87">Feed</span>
+            </a>
+            <a href="#" id="nav-profile" class="flex flex-col items-center gap-1 group py-2 flex-1" data-sd-id="88">
+                <iconify-icon icon="lucide:user-circle" class="text-2xl text-gray-300 group-hover:text-[#58CC02] transition-colors"></iconify-icon>
+                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest" data-sd-id="89">Profile</span>
+            </a>
+        </footer>
+    </div>
+
+    <!-- Achievement Toast (Hidden by default, used for gamification feel) -->
+    <div id="achievement-toast" class="fixed top-20 left-1/2 -translate-x-1/2 w-[85%] bg-[#FFC800] border-b-4 border-[#D9A000] p-4 rounded-2xl flex items-center gap-4 shadow-xl z-50 transform translate-y-[-200%] transition-transform duration-500 pointer-events-none" data-sd-id="90">
+        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center" data-sd-id="91">
+            <iconify-icon icon="lucide:trophy" class="text-[#FFC800] text-2xl"></iconify-icon>
+        </div>
+        <div data-sd-id="92">
+            <h5 class="font-black text-white text-sm uppercase leading-none mb-1" data-sd-id="93">New Badge!</h5>
+            <p class="font-black text-[#8C6D00] text-xs" data-sd-id="94">Early Bird: Completed before 9AM</p>
+        </div>
+    </div>
+
+    <script>
+        // Simple UI Interaction simulations
+        document.addEventListener('DOMContentLoaded', () => {
+            // Simulate a "Completed" state for a task (just for demo)
+            const cards = document.querySelectorAll('.duo-card');
+            cards.forEach(card => {
+                card.addEventListener('click', function() {
+                    this.classList.toggle('opacity-50');
+                });
+            });
+
+            // Randomly show achievement for visual flair
+            setTimeout(() => {
+                const toast = document.getElementById('achievement-toast');
+                toast.style.transform = 'translate(-50%, 0)';
+                setTimeout(() => {
+                    toast.style.transform = 'translate(-50%, -200%)';
+                }, 3000);
+            }, 1000);
+        });
+    </script>
+
+</body></html>
