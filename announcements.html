@@ -5,6 +5,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&amp;display=swap" rel="stylesheet">
+    <script src="supabaseConfig.js"></script>
+    <script src="supabaseClient.js"></script>
     <style>
         body {
             font-family: 'Nunito', sans-serif;
@@ -61,19 +63,19 @@
             
             <!-- Category Chips -->
             <div class="flex gap-3 overflow-x-auto pb-2 no-scrollbar" data-sd-id="8">
-                <button class="shrink-0 px-5 py-2 rounded-full bg-[#1CB0F6] text-white font-black text-sm uppercase tracking-wide btn-3d border-b-[#1483B8]" data-sd-id="9">
+                <button id="btn-cat-all" class="cat-filter-btn shrink-0 px-5 py-2 rounded-full bg-[#1CB0F6] text-white font-black text-sm uppercase tracking-wide btn-3d border-b-[#1483B8]">
                     All
                 </button>
-                <button class="shrink-0 px-5 py-2 rounded-full bg-white text-[#777777] font-black text-sm uppercase tracking-wide border-2 border-[#E5E5E5] border-b-4 active:border-b-2 active:translate-y-[2px]" data-sd-id="10">
+                <button id="btn-cat-academic" class="cat-filter-btn shrink-0 px-5 py-2 rounded-full bg-white text-[#777777] font-black text-sm uppercase tracking-wide border-2 border-[#E5E5E5] border-b-4 active:border-b-2 active:translate-y-[2px]">
                     Academic
                 </button>
-                <button class="shrink-0 px-5 py-2 rounded-full bg-white text-[#777777] font-black text-sm uppercase tracking-wide border-2 border-[#E5E5E5] border-b-4 active:border-b-2 active:translate-y-[2px]" data-sd-id="11">
+                <button id="btn-cat-campus" class="cat-filter-btn shrink-0 px-5 py-2 rounded-full bg-white text-[#777777] font-black text-sm uppercase tracking-wide border-2 border-[#E5E5E5] border-b-4 active:border-b-2 active:translate-y-[2px]">
                     Campus
                 </button>
             </div>
 
             <!-- Announcement Card: New -->
-            <div class="duo-card rounded-[20px] p-5 bg-white relative" data-sd-id="12">
+            <div class="duo-card rounded-[20px] p-5 bg-white relative cursor-pointer announcement-item" data-category="academic" data-sd-id="12">
                 <div class="flex items-start justify-between mb-3" data-sd-id="13">
                     <div class="flex items-center gap-3" data-sd-id="14">
                         <div class="w-12 h-12 rounded-2xl bg-[#1CB0F6]/10 flex items-center justify-center" data-sd-id="15">
@@ -84,7 +86,7 @@
                             <p class="text-xs font-bold text-gray-400 uppercase tracking-wider" data-sd-id="18">Prof. Arun • 10m ago</p>
                         </div>
                     </div>
-                    <span class="flex h-3 w-3 rounded-full bg-[#1CB0F6] ring-4 ring-[#1CB0F6]/10" data-sd-id="19"></span>
+                    <span class="unread-dot flex h-3 w-3 rounded-full bg-[#1CB0F6] ring-4 ring-[#1CB0F6]/10" data-sd-id="19"></span>
                 </div>
                 <p class="text-sm font-bold text-[#4B4B4B] leading-relaxed mb-4" data-sd-id="20">
                     The finalized midterm exam schedule for the Winter semester has been uploaded. Please check the department portal.
@@ -96,7 +98,7 @@
             </div>
 
             <!-- Announcement Card: Read -->
-            <div class="duo-card rounded-[20px] p-5 bg-white opacity-80" data-sd-id="24">
+            <div class="duo-card rounded-[20px] p-5 bg-white cursor-pointer announcement-item" data-category="campus" data-sd-id="24">
                 <div class="flex items-start justify-between mb-3" data-sd-id="25">
                     <div class="flex items-center gap-3" data-sd-id="26">
                         <div class="w-12 h-12 rounded-2xl bg-[#58CC02]/10 flex items-center justify-center" data-sd-id="27">
@@ -117,7 +119,7 @@
             </div>
 
             <!-- Announcement Card: New -->
-            <div class="duo-card rounded-[20px] p-5 bg-white relative" data-sd-id="34">
+            <div class="duo-card rounded-[20px] p-5 bg-white relative cursor-pointer announcement-item" data-category="academic" data-sd-id="34">
                 <div class="flex items-start justify-between mb-3" data-sd-id="35">
                     <div class="flex items-center gap-3" data-sd-id="36">
                         <div class="w-12 h-12 rounded-2xl bg-[#FF9600]/10 flex items-center justify-center" data-sd-id="37">
@@ -128,7 +130,7 @@
                             <p class="text-xs font-bold text-gray-400 uppercase tracking-wider" data-sd-id="40">AI Team • 5h ago</p>
                         </div>
                     </div>
-                    <span class="flex h-3 w-3 rounded-full bg-[#1CB0F6] ring-4 ring-[#1CB0F6]/10" data-sd-id="41"></span>
+                    <span class="unread-dot flex h-3 w-3 rounded-full bg-[#1CB0F6] ring-4 ring-[#1CB0F6]/10" data-sd-id="41"></span>
                 </div>
                 <p class="text-sm font-bold text-[#4B4B4B] leading-relaxed mb-4" data-sd-id="42">
                     Your Academic Assistant can now summarize PDFs directly! Just upload and ask "Summarize this".
@@ -140,7 +142,7 @@
             </div>
 
             <!-- Announcement Card: Old -->
-            <div class="duo-card rounded-[20px] p-5 bg-white opacity-80" data-sd-id="46">
+            <div class="duo-card rounded-[20px] p-5 bg-white cursor-pointer announcement-item" data-category="campus" data-sd-id="46">
                 <div class="flex items-start justify-between mb-3" data-sd-id="47">
                     <div class="flex items-center gap-3" data-sd-id="48">
                         <div class="w-12 h-12 rounded-2xl bg-gray-100 flex items-center justify-center" data-sd-id="49">
@@ -189,4 +191,85 @@
         </footer>
     </div>
 
+    <!-- Toast -->
+    <div id="toast" class="fixed top-20 left-1/2 -translate-x-1/2 w-[90%] max-w-sm bg-white border-2 border-[#E5E5E5] border-b-4 rounded-2xl p-4 flex items-center gap-4 shadow-2xl z-50 transform translate-y-[-200%] transition-transform duration-300 pointer-events-none">
+        <div id="toast-icon-bg" class="w-12 h-12 rounded-xl bg-[#1CB0F6]/15 text-[#1CB0F6] flex items-center justify-center shrink-0">
+            <iconify-icon id="toast-icon" icon="lucide:bell" class="text-2xl"></iconify-icon>
+        </div>
+        <div>
+            <h5 id="toast-title" class="font-black text-sm uppercase leading-none mb-1 text-[#4B4B4B]">Notification</h5>
+            <p id="toast-msg" class="font-bold text-xs text-gray-500">Notice details</p>
+        </div>
+    </div>
+
+    <script>
+        function showToast(title, msg, icon = 'lucide:bell', color = '#1CB0F6') {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-title').textContent = title;
+            document.getElementById('toast-msg').textContent = msg;
+            const iconBg = document.getElementById('toast-icon-bg');
+            const iconEl = document.getElementById('toast-icon');
+            iconBg.style.backgroundColor = color + '15';
+            iconBg.style.color = color;
+            iconEl.setAttribute('icon', icon);
+
+            toast.style.transform = 'translate(-50%, 0)';
+            setTimeout(() => {
+                toast.style.transform = 'translate(-50%, -200%)';
+            }, 3000);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const catBtns = {
+                'all': document.getElementById('btn-cat-all'),
+                'academic': document.getElementById('btn-cat-academic'),
+                'campus': document.getElementById('btn-cat-campus')
+            };
+            const cards = document.querySelectorAll('.announcement-item');
+
+            function filterAnnouncements(cat) {
+                Object.keys(catBtns).forEach(k => {
+                    const btn = catBtns[k];
+                    if (k === cat) {
+                        btn.className = 'cat-filter-btn shrink-0 px-5 py-2 rounded-full bg-[#1CB0F6] text-white font-black text-sm uppercase tracking-wide btn-3d border-b-[#1483B8]';
+                    } else {
+                        btn.className = 'cat-filter-btn shrink-0 px-5 py-2 rounded-full bg-white text-[#777777] font-black text-sm uppercase tracking-wide border-2 border-[#E5E5E5] border-b-4 active:border-b-2 active:translate-y-[2px]';
+                    }
+                });
+
+                cards.forEach(c => {
+                    const itemCat = c.getAttribute('data-category');
+                    if (cat === 'all' || itemCat === cat) {
+                        c.style.display = 'block';
+                    } else {
+                        c.style.display = 'none';
+                    }
+                });
+            }
+
+            catBtns.all.addEventListener('click', () => filterAnnouncements('all'));
+            catBtns.academic.addEventListener('click', () => filterAnnouncements('academic'));
+            catBtns.campus.addEventListener('click', () => filterAnnouncements('campus'));
+
+            // Click announcement to mark as read
+            cards.forEach(c => {
+                c.addEventListener('click', () => {
+                    const title = c.querySelector('h3') ? c.querySelector('h3').textContent : 'Notice';
+                    const dot = c.querySelector('.unread-dot');
+                    if (dot) dot.remove();
+                    c.classList.add('opacity-70');
+                    showToast('Marked as Read', `"${title}" has been acknowledged.`, 'lucide:check-circle', '#58CC02');
+                });
+            });
+
+            // Flame streak icon in header
+            const flame = document.querySelector('header .flex.items-center.gap-1');
+            if (flame) {
+                flame.style.cursor = 'pointer';
+                flame.addEventListener('click', () => {
+                    showToast('7 Day Streak! 🔥', 'Keep reading daily updates to extend your streak!', 'lucide:flame', '#FF9600');
+                });
+            }
+        });
+    </script>
 </body></html>

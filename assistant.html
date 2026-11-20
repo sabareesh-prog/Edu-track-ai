@@ -5,6 +5,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&amp;display=swap" rel="stylesheet">
+    <script src="supabaseConfig.js"></script>
+    <script src="supabaseClient.js"></script>
+    <script src="assistantService.js"></script>
     <style>
         body {
             font-family: 'Nunito', sans-serif;
@@ -66,16 +69,16 @@
                 </div>
                 <div data-sd-id="6">
                     <h1 class="text-xl font-black tracking-tight leading-none" data-sd-id="7">AI Assistant</h1>
-                    <p class="text-sm font-bold text-[#58CC02] tracking-wide" data-sd-id="8">Online &amp; Ready</p>
+                    <p id="ai-status-indicator" class="text-sm font-bold text-[#58CC02] tracking-wide flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#58CC02] animate-pulse"></span> Online &amp; Supabase Connected</p>
                 </div>
             </div>
-            <button id="header-settings-btn" class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center border-2 border-gray-100" data-sd-id="9">
-                <iconify-icon icon="lucide:more-vertical" class="text-xl text-gray-400"></iconify-icon>
+            <button id="header-settings-btn" onclick="if(window.renderKeyPromptModal) window.renderKeyPromptModal();" title="Supabase Settings" class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center border-2 border-gray-100 hover:bg-gray-100">
+                <iconify-icon icon="lucide:database" class="text-xl text-[#1CB0F6]"></iconify-icon>
             </button>
         </header>
 
         <!-- Chat Area -->
-        <main class="flex-1 overflow-y-auto px-6 py-6 space-y-6" data-sd-id="10">
+        <main id="chat-messages-container" class="flex-1 overflow-y-auto px-6 py-6 space-y-6" data-sd-id="10">
             
             <!-- Welcome Message -->
             <div class="flex flex-col gap-2 max-w-[85%] message-in" data-sd-id="11">
@@ -172,7 +175,7 @@
                     <iconify-icon icon="lucide:plus" class="text-2xl"></iconify-icon>
                 </button>
                 <div class="flex-1 relative" data-sd-id="55">
-                    <input type="text" placeholder="Type a message..." class="w-full h-12 pl-4 pr-12 rounded-2xl bg-[#F7F7F7] border-2 border-[#E5E5E5] font-bold text-sm focus:outline-none focus:border-[#1CB0F6] transition-colors" data-sd-id="56">
+                    <input type="text" id="chat-input" placeholder="Ask about assignments, deadlines, or study tips..." class="w-full h-12 pl-4 pr-12 rounded-2xl bg-[#F7F7F7] border-2 border-[#E5E5E5] font-bold text-sm focus:outline-none focus:border-[#1CB0F6] transition-colors" data-sd-id="56">
                     <button id="btn-send" class="absolute right-1 top-1 w-10 h-10 rounded-xl bg-[#1CB0F6] btn-3d border-b-[#1483B8] flex items-center justify-center text-white active:transform active:translate-y-1" data-sd-id="57">
                         <iconify-icon icon="lucide:arrow-up" class="text-xl"></iconify-icon>
                     </button>
@@ -214,26 +217,180 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
+        .typing-dots span {
+            animation: blink 1.4s infinite both;
+        }
+        .typing-dots span:nth-child(2) { animation-delay: .2s; }
+        .typing-dots span:nth-child(3) { animation-delay: .4s; }
+        @keyframes blink {
+            0% { opacity: .2; }
+            20% { opacity: 1; }
+            100% { opacity: .2; }
+        }
     </style>
 
     <script>
-        // Interactive Elements simulation
-        document.addEventListener('DOMContentLoaded', () => {
+        // Supabase-connected AI Assistant Chat Controller
+        document.addEventListener('DOMContentLoaded', async () => {
+            const chatContainer = document.getElementById('chat-messages-container');
+            const chatInput = document.getElementById('chat-input');
             const sendBtn = document.getElementById('btn-send');
-            const chips = document.querySelectorAll('button[id^="chip-"]');
-            
-            // Simple click feedback for chips
-            chips.forEach(chip => {
-                chip.addEventListener('click', () => {
-                    chip.classList.add('opacity-50');
-                    setTimeout(() => chip.classList.remove('opacity-50'), 200);
-                });
+            const uploadBtn = document.getElementById('btn-upload');
+
+            function scrollToBottom() {
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+
+            // Append User Message to UI
+            function appendUserMessage(text) {
+                const bubble = document.createElement('div');
+                bubble.className = 'flex justify-end message-in';
+                bubble.innerHTML = `
+                    <div class="bg-[#58CC02] border-b-4 border-[#46A302] rounded-2xl rounded-tr-none p-4 max-w-[85%] text-white">
+                        <p class="font-bold text-sm leading-relaxed">${escapeHtml(text)}</p>
+                    </div>
+                `;
+                chatContainer.appendChild(bubble);
+                scrollToBottom();
+            }
+
+            // Append Assistant Message to UI
+            function appendAssistantMessage(text) {
+                const bubble = document.createElement('div');
+                bubble.className = 'flex flex-col gap-2 max-w-[85%] message-in';
+                
+                // Convert Markdown-style formatting (*bold*, bullet points, linebreaks)
+                let formatted = text
+                    .replace(/\*\*(.*?)\*\*/g, '<strong class="font-black text-[#4B4B4B]">$1</strong>')
+                    .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
+                    .replace(/• (.*?)(\n|$)/g, '<div class="flex gap-2 items-start text-xs font-bold my-1"><span class="text-[#58CC02]">•</span><span>$1</span></div>')
+                    .replace(/\n\n/g, '<div class="h-2"></div>')
+                    .replace(/\n/g, '<br>');
+
+                bubble.innerHTML = `
+                    <div class="bg-[#F7F7F7] border-2 border-[#E5E5E5] border-b-4 rounded-2xl rounded-tl-none p-4 text-[#4B4B4B]">
+                        <div class="flex items-center gap-2 mb-2 text-[#1CB0F6]">
+                            <iconify-icon icon="lucide:sparkles" class="text-lg"></iconify-icon>
+                            <span class="text-[10px] font-black uppercase tracking-wider">EduTrack AI</span>
+                            <span class="text-[9px] font-extrabold text-[#58CC02] bg-[#58CC02]/10 px-2 py-0.5 rounded-full ml-auto">Supabase Grounded</span>
+                        </div>
+                        <div class="font-bold text-sm leading-relaxed">${formatted}</div>
+                    </div>
+                `;
+                chatContainer.appendChild(bubble);
+                scrollToBottom();
+            }
+
+            // Show Typing indicator
+            function showThinking() {
+                const typing = document.createElement('div');
+                typing.id = 'ai-thinking-indicator';
+                typing.className = 'flex items-center gap-3 p-4 bg-[#F7F7F7] border-2 border-[#E5E5E5] border-b-4 rounded-2xl rounded-tl-none w-max max-w-[85%] message-in';
+                typing.innerHTML = `
+                    <div class="w-7 h-7 rounded-full bg-[#1CB0F6]/10 flex items-center justify-center text-[#1CB0F6]">
+                        <iconify-icon icon="lucide:bot" class="text-lg"></iconify-icon>
+                    </div>
+                    <div class="text-xs font-black text-gray-500 flex items-center gap-1.5">
+                        <span>Querying Supabase...</span>
+                        <div class="typing-dots flex gap-0.5">
+                            <span>•</span><span>•</span><span>•</span>
+                        </div>
+                    </div>
+                `;
+                chatContainer.appendChild(typing);
+                scrollToBottom();
+                return typing;
+            }
+
+            function escapeHtml(string) {
+                return String(string).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            }
+
+            // Handle Send Action
+            async function handleSendMessage(customText) {
+                const text = customText || chatInput.value.trim();
+                if (!text) return;
+
+                if (!customText) chatInput.value = '';
+
+                appendUserMessage(text);
+                const thinkingIndicator = showThinking();
+
+                try {
+                    // Save user message to Supabase
+                    if (window.AssistantService) {
+                        await window.AssistantService.saveMessage('user', text);
+                    }
+
+                    // Process response through Supabase context
+                    const response = window.AssistantService 
+                        ? await window.AssistantService.processPrompt(text)
+                        : "I am ready to help! Please ensure your Supabase connection is active.";
+
+                    // Remove thinking
+                    if (thinkingIndicator) thinkingIndicator.remove();
+
+                    appendAssistantMessage(response);
+
+                    // Save assistant response to Supabase
+                    if (window.AssistantService) {
+                        await window.AssistantService.saveMessage('assistant', response);
+                    }
+                } catch (err) {
+                    if (thinkingIndicator) thinkingIndicator.remove();
+                    appendAssistantMessage("⚠️ Failed to process response. Please check your Supabase connection.");
+                    console.error('Chat error:', err);
+                }
+            }
+
+            // Event Listeners
+            sendBtn.addEventListener('click', () => handleSendMessage());
+            chatInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleSendMessage();
+                }
             });
 
-            // Prevent scroll overflow behavior
-            const main = document.querySelector('main');
-            main.scrollTop = main.scrollHeight;
+            // Action Chips
+            const chipMap = {
+                'chip-summarize': 'Can you summarize my study notes and lecture concepts?',
+                'chip-notes': 'What assignments, homework, or tasks are due soon in my Supabase database?',
+                'chip-study': 'What are the latest campus announcements and study suggestions for today?'
+            };
+
+            Object.keys(chipMap).forEach(id => {
+                const chip = document.getElementById(id);
+                if (chip) {
+                    chip.addEventListener('click', () => {
+                        handleSendMessage(chipMap[id]);
+                    });
+                }
+            });
+
+            // File Upload Simulation
+            if (uploadBtn) {
+                uploadBtn.addEventListener('click', () => {
+                    const input = document.createElement('input');
+                    input.type = 'file';
+                    input.accept = '.pdf,.txt,.docx';
+                    input.onchange = (e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                            appendUserMessage(`📎 Uploaded document: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`);
+                            const thinking = showThinking();
+                            setTimeout(() => {
+                                thinking.remove();
+                                appendAssistantMessage(`I've received **${file.name}**! I've indexed it against your course syllabus in Supabase. You can now ask me to summarize it, test your knowledge, or generate flashcards!`);
+                            }, 1200);
+                        }
+                    };
+                    input.click();
+                });
+            }
+
+            // Initial focus & scroll
+            scrollToBottom();
         });
     </script>
-
 </body></html>

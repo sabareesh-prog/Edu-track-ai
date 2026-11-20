@@ -1,0 +1,13 @@
+{
+  "name": "edutrack-ai",
+  "version": "1.0.0",
+  "description": "EduTrack AI - Multi-Role Student Education Management Platform",
+  "main": "index.html",
+  "scripts": {
+    "start": "node server.js",
+    "build": "echo 'Static assets ready for deployment'"
+  },
+  "keywords": ["education", "ai", "duolingo-ui", "supabase"],
+  "author": "EduTrack Team",
+  "license": "MIT"
+}

@@ -5,6 +5,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&amp;display=swap" rel="stylesheet">
+    <script src="supabaseConfig.js"></script>
+    <script src="supabaseClient.js"></script>
     <style>
         body {
             font-family: 'Nunito', sans-serif;
@@ -113,6 +115,9 @@
 
             <!-- Form -->
             <div class="w-full space-y-4 mb-8" data-sd-id="17">
+                <div id="signup-name-container" class="relative hidden">
+                    <input type="text" placeholder="Full Name" class="w-full h-14 px-5 rounded-2xl bg-[#F7F7F7] duo-input font-bold text-[#4B4B4B] placeholder:text-gray-400" id="login-name">
+                </div>
                 <div class="relative" data-sd-id="18">
                     <input type="email" placeholder="Email" class="w-full h-14 px-5 rounded-2xl bg-[#F7F7F7] duo-input font-bold text-[#4B4B4B] placeholder:text-gray-400" id="login-email" data-sd-id="19">
                 </div>
@@ -126,22 +131,49 @@
 
             <!-- Action Button -->
             <div class="w-full mt-auto" data-sd-id="24">
-                <a href="#" id="login-submit-btn" class="flex items-center justify-center w-full h-14 bg-[#58CC02] border-b-[#46A302] text-white font-black text-lg rounded-2xl btn-3d uppercase tracking-widest shadow-lg" data-sd-id="25">
+                <button type="button" id="login-submit-btn" class="flex items-center justify-center w-full h-14 bg-[#58CC02] border-b-[#46A302] text-white font-black text-lg rounded-2xl btn-3d uppercase tracking-widest shadow-lg cursor-pointer" data-sd-id="25">
                     Log In
-                </a>
+                </button>
                 <p class="mt-6 text-center text-[#777777] font-bold text-sm" data-sd-id="26">
-                    First time here? <a href="#" id="signup-link" class="text-[#1CB0F6]" data-sd-id="27">Sign Up</a>
+                    <span id="signup-prompt-text">First time here?</span> <a href="#" id="signup-link" class="text-[#1CB0F6] font-black hover:underline cursor-pointer" data-sd-id="27">Sign Up</a>
                 </p>
             </div>
         </main>
     </div>
 
+    <!-- Toast -->
+    <div id="toast" class="fixed top-20 left-1/2 -translate-x-1/2 w-[90%] max-w-sm bg-white border-2 border-[#E5E5E5] border-b-4 rounded-2xl p-4 flex items-center gap-4 shadow-2xl z-50 transform translate-y-[-200%] transition-transform duration-300 pointer-events-none">
+        <div id="toast-icon-bg" class="w-12 h-12 rounded-xl bg-[#58CC02]/15 text-[#58CC02] flex items-center justify-center shrink-0">
+            <iconify-icon id="toast-icon" icon="lucide:check-circle" class="text-2xl"></iconify-icon>
+        </div>
+        <div>
+            <h5 id="toast-title" class="font-black text-sm uppercase leading-none mb-1 text-[#4B4B4B]">Notification</h5>
+            <p id="toast-msg" class="font-bold text-xs text-gray-500">Notice details</p>
+        </div>
+    </div>
+
     <script>
         let currentRole = 'student';
+        let isSignUpMode = false;
+
+        function showToast(title, msg, icon = 'lucide:check-circle', color = '#58CC02') {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-title').textContent = title;
+            document.getElementById('toast-msg').textContent = msg;
+            const iconBg = document.getElementById('toast-icon-bg');
+            const iconEl = document.getElementById('toast-icon');
+            iconBg.style.backgroundColor = color + '15';
+            iconBg.style.color = color;
+            iconEl.setAttribute('icon', icon);
+
+            toast.style.transform = 'translate(-50%, 0)';
+            setTimeout(() => {
+                toast.style.transform = 'translate(-50%, -200%)';
+            }, 3500);
+        }
 
         function selectRole(role) {
             currentRole = role;
-            // Reset all buttons
             document.querySelectorAll('.role-btn').forEach(btn => {
                 btn.style.borderColor = '#E5E5E5';
                 btn.style.backgroundColor = '#FFFFFF';
@@ -152,7 +184,6 @@
             const activeBtn = document.getElementById('role-' + role);
             const loginBtn = document.getElementById('login-submit-btn');
             
-            // Set colors based on role
             let color = '#58CC02';
             let darkColor = '#46A302';
             
@@ -172,24 +203,74 @@
             activeBtn.style.borderBottomWidth = '2px';
             activeBtn.style.transform = 'translateY(2px)';
             
-            // Update main login button theme
             loginBtn.style.backgroundColor = color;
             loginBtn.style.borderBottomColor = darkColor;
         }
 
-        // Login action handler
-        document.getElementById('login-submit-btn').addEventListener('click', (e) => {
+        // Toggle between Log In and Sign Up
+        const signupLink = document.getElementById('signup-link');
+        const signupNameContainer = document.getElementById('signup-name-container');
+        const submitBtn = document.getElementById('login-submit-btn');
+        const promptText = document.getElementById('signup-prompt-text');
+
+        signupLink.addEventListener('click', (e) => {
             e.preventDefault();
-            if (currentRole === 'faculty') {
-                window.location.href = 'faculty.html';
-            } else if (currentRole === 'admin') {
-                window.location.href = 'admin.html';
+            isSignUpMode = !isSignUpMode;
+
+            if (isSignUpMode) {
+                signupNameContainer.classList.remove('hidden');
+                submitBtn.textContent = 'Create Account';
+                promptText.textContent = 'Already have an account?';
+                signupLink.textContent = 'Log In';
+                document.querySelector('h1').textContent = 'Join EduTrack';
             } else {
-                window.location.href = 'student.html';
+                signupNameContainer.classList.add('hidden');
+                submitBtn.textContent = 'Log In';
+                promptText.textContent = 'First time here?';
+                signupLink.textContent = 'Sign Up';
+                document.querySelector('h1').textContent = 'EduTrack AI';
             }
         });
 
-        // Default select student
+        // Forgot password
+        document.getElementById('forgot-password-link').addEventListener('click', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value.trim() || 'student@university.edu';
+            showToast('Reset Link Sent! ✉️', `Password reset instructions sent to ${email}`, 'lucide:mail', '#1CB0F6');
+        });
+
+        // Login / Sign Up action handler
+        submitBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value.trim();
+
+            if (isSignUpMode) {
+                const name = document.getElementById('login-name').value.trim() || 'New User';
+                // Sign up via Supabase if connected
+                if (window.eduSupabase && window.eduSupabase.isConnected() && email && password) {
+                    await window.eduSupabase.signUp(email, password, { full_name: name, role: currentRole });
+                }
+                showToast('Welcome Aboard! 🎉', `Account created as ${currentRole.toUpperCase()}`, 'lucide:user-check', '#58CC02');
+            } else {
+                // Log in via Supabase if connected
+                if (window.eduSupabase && window.eduSupabase.isConnected() && email && password) {
+                    await window.eduSupabase.signIn(email, password);
+                }
+                showToast('Logging In...', `Routing to ${currentRole.toUpperCase()} dashboard`, 'lucide:loader', '#58CC02');
+            }
+
+            setTimeout(() => {
+                if (currentRole === 'faculty') {
+                    window.location.href = 'faculty.html';
+                } else if (currentRole === 'admin') {
+                    window.location.href = 'admin.html';
+                } else {
+                    window.location.href = 'student.html';
+                }
+            }, 600);
+        });
+
         document.addEventListener('DOMContentLoaded', () => {
             selectRole('student');
         });

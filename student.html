@@ -5,6 +5,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&amp;display=swap" rel="stylesheet">
+    <script src="supabaseConfig.js"></script>
+    <script src="supabaseClient.js"></script>
     <style>
         body {
             font-family: 'Nunito', sans-serif;
@@ -102,12 +104,12 @@
                 <div class="relative z-10 pr-20" data-sd-id="24">
                     <h3 class="text-xl font-black mb-1" data-sd-id="25">Study Tip!</h3>
                     <p class="font-bold opacity-90 leading-snug" data-sd-id="26">"You have 2 assignments due soon. Start with <span class="underline" data-sd-id="27">Data Structures</span> today!"</p>
-                    <button class="mt-4 bg-white text-[#1CB0F6] px-4 py-2 rounded-xl font-black text-sm btn-3d border-b-[#E5E5E5] active:border-b-0 uppercase tracking-wide" data-sd-id="28">
-                        Let's Go
+                    <button onclick="window.location.href='assistant.html'" class="mt-4 bg-white text-[#1CB0F6] hover:bg-gray-50 px-4 py-2 rounded-xl font-black text-sm btn-3d border-b-[#E5E5E5] active:border-b-0 uppercase tracking-wide cursor-pointer" data-sd-id="28">
+                        Let's Go 🚀
                     </button>
                 </div>
                 <!-- Mascot Owl/Robot (Absolute) -->
-                <div class="absolute -right-2 -bottom-2 w-32 h-32 float-mascot pointer-events-none opacity-90" data-sd-id="29">
+                <div id="student-mascot" class="absolute -right-2 -bottom-2 w-32 h-32 float-mascot cursor-pointer opacity-90 hover:scale-105 transition-transform" data-sd-id="29">
                    <!-- Simple SVG Mascot Shape -->
                    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" data-sd-id="30">
                        <circle cx="50" cy="50" r="45" fill="#FFFFFF" fill-opacity="0.2"></circle>
@@ -256,24 +258,71 @@
     </div>
 
     <script>
-        // Simple UI Interaction simulations
+        function showAchievement(title, msg, icon = 'lucide:trophy') {
+            const toast = document.getElementById('achievement-toast');
+            toast.querySelector('h5').textContent = title;
+            toast.querySelector('p').textContent = msg;
+            toast.querySelector('iconify-icon').setAttribute('icon', icon);
+            toast.style.transform = 'translate(-50%, 0)';
+            setTimeout(() => {
+                toast.style.transform = 'translate(-50%, -200%)';
+            }, 3000);
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
-            // Simulate a "Completed" state for a task (just for demo)
-            const cards = document.querySelectorAll('.duo-card');
-            cards.forEach(card => {
-                card.addEventListener('click', function() {
-                    this.classList.toggle('opacity-50');
+            // Interactive Mascot
+            const mascot = document.getElementById('student-mascot');
+            if (mascot) {
+                const owlQuotes = [
+                    "Hoot! You're 75% done with your daily goal!",
+                    "Keep up the momentum! Study with AI today! 🦉",
+                    "7 days strong! Don't let your streak break!",
+                    "Data Structures is calling your name! 💻"
+                ];
+                mascot.addEventListener('click', () => {
+                    const quote = owlQuotes[Math.floor(Math.random() * owlQuotes.length)];
+                    showAchievement('Duo the Owl Says:', quote, 'lucide:sparkles');
+                });
+            }
+
+            // Streak & XP Click
+            const flame = document.querySelector('header .flex.items-center.gap-1:first-child');
+            if (flame) {
+                flame.style.cursor = 'pointer';
+                flame.addEventListener('click', () => {
+                    showAchievement('7 Day Streak! 🔥', 'You have studied every day this week! +50 XP bonus unlocked.', 'lucide:flame');
+                });
+            }
+
+            const zap = document.querySelector('header .flex.items-center.gap-1:last-child');
+            if (zap) {
+                zap.style.cursor = 'pointer';
+                zap.addEventListener('click', () => {
+                    showAchievement('1,240 Total XP ⚡', 'Level 12 Scholar. Only 160 XP to Level 13!', 'lucide:zap');
+                });
+            }
+
+            // Daily goal section click
+            const dailyGoal = document.querySelector('section[data-sd-id="14"]');
+            if (dailyGoal) {
+                dailyGoal.style.cursor = 'pointer';
+                dailyGoal.addEventListener('click', () => {
+                    showAchievement('Daily Goal: 3/4 Tasks! 🎯', 'Complete 1 more assignment today to hit your 100% streak target.', 'lucide:target');
+                });
+            }
+
+            // Make upcoming deadline cards clickable
+            document.querySelectorAll('section[data-sd-id="41"] .duo-card').forEach(card => {
+                card.style.cursor = 'pointer';
+                card.addEventListener('click', () => {
+                    window.location.href = 'assignments.html';
                 });
             });
 
-            // Randomly show achievement for visual flair
+            // Initial celebration
             setTimeout(() => {
-                const toast = document.getElementById('achievement-toast');
-                toast.style.transform = 'translate(-50%, 0)';
-                setTimeout(() => {
-                    toast.style.transform = 'translate(-50%, -200%)';
-                }, 3000);
-            }, 1000);
+                showAchievement('Welcome Back, Priya! 🎉', 'You have 2 assignments due soon. Let\'s make today count!', 'lucide:sparkles');
+            }, 800);
         });
     </script>
 

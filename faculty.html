@@ -5,6 +5,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&amp;display=swap" rel="stylesheet">
+    <script src="supabaseConfig.js"></script>
+    <script src="supabaseClient.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
         
@@ -105,29 +107,30 @@
                     <button id="tab-announcement" class="flex-1 py-3 px-2 rounded-xl bg-transparent text-sm font-black text-gray-400 uppercase tracking-wide" data-sd-id="26">Notice</button>
                 </div>
 
-                <!-- Publish Assignment Form -->
+                <!-- Form Container -->
                 <div id="form-assignment" class="duo-card rounded-[20px] p-5 bg-white space-y-4" data-sd-id="27">
                     <div class="space-y-1" data-sd-id="28">
                         <label class="text-[10px] font-black text-gray-400 uppercase ml-1" data-sd-id="29">Assignment Title</label>
-                        <input type="text" placeholder="e.g. Quantum Physics Quiz" class="w-full p-4 bg-gray-50 border-2 border-gray-200 rounded-xl font-bold duo-input" data-sd-id="30">
+                        <input type="text" id="faculty-task-title" placeholder="e.g. Quantum Physics Quiz" class="w-full p-4 bg-gray-50 border-2 border-gray-200 rounded-xl font-bold duo-input">
                     </div>
                     
                     <div class="grid grid-cols-2 gap-3" data-sd-id="31">
                         <div class="space-y-1" data-sd-id="32">
                             <label class="text-[10px] font-black text-gray-400 uppercase ml-1" data-sd-id="33">Subject</label>
-                            <select class="w-full p-4 bg-gray-50 border-2 border-gray-200 rounded-xl font-bold appearance-none duo-input" data-sd-id="34">
-                                <option data-sd-id="35">Physics</option>
-                                <option data-sd-id="36">Math</option>
-                                <option data-sd-id="37">CS</option>
+                            <select id="faculty-task-subject" class="w-full p-4 bg-gray-50 border-2 border-gray-200 rounded-xl font-bold appearance-none duo-input">
+                                <option value="Physics 101">Physics 101</option>
+                                <option value="Math 150">Math 150</option>
+                                <option value="CS 101">CS 101</option>
+                                <option value="AI Studies">AI Studies</option>
                             </select>
                         </div>
                         <div class="space-y-1" data-sd-id="38">
                             <label class="text-[10px] font-black text-gray-400 uppercase ml-1" data-sd-id="39">Deadline</label>
-                            <input type="date" class="w-full p-4 bg-gray-50 border-2 border-gray-200 rounded-xl font-bold duo-input text-sm" data-sd-id="40">
+                            <input type="date" id="faculty-task-date" class="w-full p-4 bg-gray-50 border-2 border-gray-200 rounded-xl font-bold duo-input text-sm">
                         </div>
                     </div>
 
-                    <button class="w-full py-4 bg-[#58CC02] text-white font-black rounded-2xl btn-3d border-b-[#46A302] active:border-b-0 uppercase tracking-widest text-sm mt-2" data-sd-id="41">
+                    <button id="btn-publish-assignment" class="w-full py-4 bg-[#58CC02] text-white font-black rounded-2xl btn-3d border-b-[#46A302] active:border-b-0 uppercase tracking-widest text-sm mt-2">
                         Publish to Class
                     </button>
                 </div>
@@ -137,37 +140,39 @@
             <section class="space-y-4" data-sd-id="42">
                 <div class="flex items-center justify-between" data-sd-id="43">
                     <h3 class="text-xl font-black" data-sd-id="44">Published Works</h3>
-                    <iconify-icon icon="lucide:filter" class="text-gray-400 text-xl"></iconify-icon>
+                    <iconify-icon icon="lucide:filter" class="text-gray-400 text-xl cursor-pointer hover:text-[#1CB0F6]" onclick="alert('Filtered by recent assignments');"></iconify-icon>
                 </div>
 
-                <!-- Item 1 -->
-                <div class="duo-card rounded-[20px] p-4 flex items-center justify-between bg-white border-l-[8px] border-l-[#1CB0F6]" data-sd-id="45">
-                    <div data-sd-id="46">
-                        <h4 class="font-black text-lg leading-tight" data-sd-id="47">Thermodynamics HW</h4>
-                        <div class="flex items-center gap-3 mt-1" data-sd-id="48">
-                            <span class="text-xs font-bold text-gray-400" data-sd-id="49">Physics 101</span>
-                            <span class="w-1 h-1 bg-gray-300 rounded-full" data-sd-id="50"></span>
-                            <span class="text-xs font-bold text-[#FF4B4B]" data-sd-id="51">Oct 28</span>
+                <div id="published-list-container" class="space-y-3">
+                    <!-- Item 1 -->
+                    <div class="duo-card rounded-[20px] p-4 flex items-center justify-between bg-white border-l-[8px] border-l-[#1CB0F6]" data-sd-id="45">
+                        <div data-sd-id="46">
+                            <h4 class="font-black text-lg leading-tight" data-sd-id="47">Thermodynamics HW</h4>
+                            <div class="flex items-center gap-3 mt-1" data-sd-id="48">
+                                <span class="text-xs font-bold text-gray-400" data-sd-id="49">Physics 101</span>
+                                <span class="w-1 h-1 bg-gray-300 rounded-full" data-sd-id="50"></span>
+                                <span class="text-xs font-bold text-[#FF4B4B]" data-sd-id="51">Due Tomorrow</span>
+                            </div>
                         </div>
+                        <button class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-[#1CB0F6] border-2 border-gray-100 hover:bg-gray-100" onclick="handleEditWork('Thermodynamics HW')">
+                            <iconify-icon icon="lucide:edit-3" class="text-xl"></iconify-icon>
+                        </button>
                     </div>
-                    <a href="#" id="edit-hw-1" class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-[#1CB0F6] border-2 border-gray-100" data-sd-id="52">
-                        <iconify-icon icon="lucide:edit-3" class="text-xl"></iconify-icon>
-                    </a>
-                </div>
 
-                <!-- Item 2 -->
-                <div class="duo-card rounded-[20px] p-4 flex items-center justify-between bg-white border-l-[8px] border-l-[#1CB0F6]" data-sd-id="53">
-                    <div data-sd-id="54">
-                        <h4 class="font-black text-lg leading-tight" data-sd-id="55">Lab Report: Optics</h4>
-                        <div class="flex items-center gap-3 mt-1" data-sd-id="56">
-                            <span class="text-xs font-bold text-gray-400" data-sd-id="57">Physics 101</span>
-                            <span class="w-1 h-1 bg-gray-300 rounded-full" data-sd-id="58"></span>
-                            <span class="text-xs font-bold text-gray-400" data-sd-id="59">Oct 31</span>
+                    <!-- Item 2 -->
+                    <div class="duo-card rounded-[20px] p-4 flex items-center justify-between bg-white border-l-[8px] border-l-[#1CB0F6]" data-sd-id="53">
+                        <div data-sd-id="54">
+                            <h4 class="font-black text-lg leading-tight" data-sd-id="55">Lab Report: Optics</h4>
+                            <div class="flex items-center gap-3 mt-1" data-sd-id="56">
+                                <span class="text-xs font-bold text-gray-400" data-sd-id="57">Physics 101</span>
+                                <span class="w-1 h-1 bg-gray-300 rounded-full" data-sd-id="58"></span>
+                                <span class="text-xs font-bold text-gray-400" data-sd-id="59">Oct 31</span>
+                            </div>
                         </div>
+                        <button class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-[#1CB0F6] border-2 border-gray-100 hover:bg-gray-100" onclick="handleEditWork('Lab Report: Optics')">
+                            <iconify-icon icon="lucide:edit-3" class="text-xl"></iconify-icon>
+                        </button>
                     </div>
-                    <a href="#" id="edit-hw-2" class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-[#1CB0F6] border-2 border-gray-100" data-sd-id="60">
-                        <iconify-icon icon="lucide:edit-3" class="text-xl"></iconify-icon>
-                    </a>
                 </div>
             </section>
 
@@ -202,38 +207,168 @@
         </footer>
     </div>
 
+    <!-- Toast -->
+    <div id="toast" class="fixed top-20 left-1/2 -translate-x-1/2 w-[90%] max-w-sm bg-white border-2 border-[#E5E5E5] border-b-4 rounded-2xl p-4 flex items-center gap-4 shadow-2xl z-50 transform translate-y-[-200%] transition-transform duration-300 pointer-events-none">
+        <div id="toast-icon-bg" class="w-12 h-12 rounded-xl bg-[#58CC02]/15 text-[#58CC02] flex items-center justify-center shrink-0">
+            <iconify-icon id="toast-icon" icon="lucide:check-circle" class="text-2xl"></iconify-icon>
+        </div>
+        <div>
+            <h5 id="toast-title" class="font-black text-sm uppercase leading-none mb-1 text-[#4B4B4B]">Notification</h5>
+            <p id="toast-msg" class="font-bold text-xs text-gray-500">Operation succeeded</p>
+        </div>
+    </div>
+
     <script>
-        // Tab switching logic simulation
+        function showToast(title, msg, icon = 'lucide:check-circle', color = '#58CC02') {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-title').textContent = title;
+            document.getElementById('toast-msg').textContent = msg;
+            const iconBg = document.getElementById('toast-icon-bg');
+            const iconEl = document.getElementById('toast-icon');
+            iconBg.style.backgroundColor = color + '15';
+            iconBg.style.color = color;
+            iconEl.setAttribute('icon', icon);
+
+            toast.style.transform = 'translate(-50%, 0)';
+            setTimeout(() => {
+                toast.style.transform = 'translate(-50%, -200%)';
+            }, 3000);
+        }
+
+        function handleEditWork(name) {
+            const newTitle = prompt(`Edit title for "${name}":`, name);
+            if (newTitle && newTitle.trim()) {
+                showToast('Updated!', `"${newTitle}" has been updated.`, 'lucide:edit', '#1CB0F6');
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const tabAssign = document.getElementById('tab-assign');
             const tabAnnounce = document.getElementById('tab-announcement');
             const formContainer = document.getElementById('form-assignment');
+            const publishedList = document.getElementById('published-list-container');
 
-            tabAnnounce.addEventListener('click', () => {
-                tabAnnounce.classList.add('bg-white', 'duo-card', 'text-[#1CB0F6]');
-                tabAnnounce.classList.remove('bg-transparent', 'text-gray-400');
-                tabAssign.classList.remove('bg-white', 'duo-card', 'text-[#1CB0F6]');
-                tabAssign.classList.add('bg-transparent', 'text-gray-400');
-                
-                // Simplified content swap for demo
+            function renderAssignForm() {
+                tabAssign.className = 'flex-1 py-3 bg-white rounded-xl text-xs font-black uppercase text-[#1CB0F6] duo-card transition-all';
+                tabAnnounce.className = 'flex-1 py-3 bg-transparent text-xs font-black uppercase text-gray-400 transition-all';
+
+                formContainer.innerHTML = `
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-black text-gray-400 uppercase ml-1">Assignment Title</label>
+                        <input type="text" id="faculty-task-title" placeholder="e.g. Quantum Physics Quiz" class="w-full p-4 bg-gray-50 border-2 border-gray-200 rounded-xl font-bold duo-input">
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-black text-gray-400 uppercase ml-1">Subject</label>
+                            <select id="faculty-task-subject" class="w-full p-4 bg-gray-50 border-2 border-gray-200 rounded-xl font-bold appearance-none duo-input">
+                                <option value="Physics 101">Physics 101</option>
+                                <option value="Math 150">Math 150</option>
+                                <option value="CS 101">CS 101</option>
+                                <option value="AI Studies">AI Studies</option>
+                            </select>
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-black text-gray-400 uppercase ml-1">Deadline</label>
+                            <input type="date" id="faculty-task-date" class="w-full p-4 bg-gray-50 border-2 border-gray-200 rounded-xl font-bold duo-input text-sm">
+                        </div>
+                    </div>
+
+                    <button id="btn-publish-assignment" class="w-full py-4 bg-[#58CC02] text-white font-black rounded-2xl btn-3d border-b-[#46A302] active:border-b-0 uppercase tracking-widest text-sm mt-2">
+                        Publish to Class
+                    </button>
+                `;
+
+                document.getElementById('btn-publish-assignment').addEventListener('click', async () => {
+                    const title = document.getElementById('faculty-task-title').value.trim();
+                    const subject = document.getElementById('faculty-task-subject').value;
+                    const date = document.getElementById('faculty-task-date').value || 'Next Week';
+
+                    if (!title) {
+                        alert('Please enter an assignment title');
+                        return;
+                    }
+
+                    const item = document.createElement('div');
+                    item.className = 'duo-card rounded-[20px] p-4 flex items-center justify-between bg-white border-l-[8px] border-l-[#58CC02]';
+                    item.innerHTML = `
+                        <div>
+                            <h4 class="font-black text-lg leading-tight">${title}</h4>
+                            <div class="flex items-center gap-3 mt-1">
+                                <span class="text-xs font-bold text-gray-400">${subject}</span>
+                                <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
+                                <span class="text-xs font-bold text-[#58CC02]">Due ${date}</span>
+                            </div>
+                        </div>
+                        <button class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-[#58CC02] border-2 border-gray-100" onclick="handleEditWork('${title}')">
+                            <iconify-icon icon="lucide:check" class="text-xl"></iconify-icon>
+                        </button>
+                    `;
+                    publishedList.prepend(item);
+
+                    // Save to Supabase
+                    if (window.eduSupabase && window.eduSupabase.isConnected()) {
+                        await window.eduSupabase.addAssignment({
+                            title,
+                            course: subject,
+                            status: 'pending',
+                            xp_reward: 120
+                        });
+                    }
+
+                    showToast('Assignment Published! 📚', `"${title}" is now visible to students.`, 'lucide:send', '#58CC02');
+                    document.getElementById('faculty-task-title').value = '';
+                });
+            }
+
+            function renderAnnounceForm() {
+                tabAnnounce.className = 'flex-1 py-3 bg-white rounded-xl text-xs font-black uppercase text-[#1CB0F6] duo-card transition-all';
+                tabAssign.className = 'flex-1 py-3 bg-transparent text-xs font-black uppercase text-gray-400 transition-all';
+
                 formContainer.innerHTML = `
                     <div class="space-y-1">
                         <label class="text-[10px] font-black text-gray-400 uppercase ml-1">Announcement Title</label>
-                        <input type="text" placeholder="e.g. Midterm Schedule Update" class="w-full p-4 bg-gray-50 border-2 border-gray-200 rounded-xl font-bold duo-input">
+                        <input type="text" id="faculty-ann-title" placeholder="e.g. Midterm Schedule Update" class="w-full p-4 bg-gray-50 border-2 border-gray-200 rounded-xl font-bold duo-input">
                     </div>
                     <div class="space-y-1">
                         <label class="text-[10px] font-black text-gray-400 uppercase ml-1">Message</label>
-                        <textarea rows="4" placeholder="Write your message here..." class="w-full p-4 bg-gray-50 border-2 border-gray-200 rounded-xl font-bold duo-input resize-none"></textarea>
+                        <textarea id="faculty-ann-msg" rows="3" placeholder="Write your announcement message..." class="w-full p-4 bg-gray-50 border-2 border-gray-200 rounded-xl font-bold duo-input resize-none"></textarea>
                     </div>
-                    <button class="w-full py-4 bg-[#FFC800] text-white font-black rounded-2xl btn-3d border-b-[#D9A000] active:border-b-0 uppercase tracking-widest text-sm mt-2">
-                        Blast Announcement
+                    <button id="btn-blast-announce" class="w-full py-4 bg-[#FFC800] text-white font-black rounded-2xl btn-3d border-b-[#D9A000] active:border-b-0 uppercase tracking-widest text-sm mt-2">
+                        Blast Announcement 📢
                     </button>
                 `;
-            });
 
-            tabAssign.addEventListener('click', () => {
-                location.reload(); // Quick reset for demo
-            });
+                document.getElementById('btn-blast-announce').addEventListener('click', async () => {
+                    const title = document.getElementById('faculty-ann-title').value.trim();
+                    const msg = document.getElementById('faculty-ann-msg').value.trim();
+
+                    if (!title || !msg) {
+                        alert('Please enter both title and message.');
+                        return;
+                    }
+
+                    // Save to Supabase
+                    if (window.eduSupabase && window.eduSupabase.isConnected()) {
+                        await window.eduSupabase.addAnnouncement({
+                            title,
+                            content: msg,
+                            author: 'Prof. Faculty',
+                            tag: 'Notice'
+                        });
+                    }
+
+                    showToast('Announcement Blasted! 📢', `Sent to all student feeds.`, 'lucide:megaphone', '#FFC800');
+                    document.getElementById('faculty-ann-title').value = '';
+                    document.getElementById('faculty-ann-msg').value = '';
+                });
+            }
+
+            tabAssign.addEventListener('click', renderAssignForm);
+            tabAnnounce.addEventListener('click', renderAnnounceForm);
+
+            // Initialize with Assign form
+            renderAssignForm();
         });
     </script>
 

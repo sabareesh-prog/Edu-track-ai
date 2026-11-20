@@ -5,6 +5,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&amp;display=swap" rel="stylesheet">
+    <script src="supabaseConfig.js"></script>
+    <script src="supabaseClient.js"></script>
     <style>
         body {
             font-family: 'Nunito', sans-serif;
@@ -222,40 +224,42 @@
                     </button>
                 </div>
 
-                <form class="space-y-6" data-sd-id="76">
+                <form id="new-task-form" class="space-y-6" data-sd-id="76">
                     <div class="space-y-2" data-sd-id="77">
                         <label class="text-sm font-black uppercase tracking-wider text-gray-400" data-sd-id="78">Assignment Title</label>
-                        <input type="text" placeholder="e.g. Physics Homework" class="w-full p-4 bg-[#F7F7F7] border-2 border-[#E5E5E5] rounded-2xl font-bold focus:outline-none focus:border-[#1CB0F6] transition-colors" data-sd-id="79">
+                        <input type="text" id="new-task-title" required placeholder="e.g. Physics Lab Report" class="w-full p-4 bg-[#F7F7F7] border-2 border-[#E5E5E5] rounded-2xl font-bold focus:outline-none focus:border-[#1CB0F6] transition-colors" data-sd-id="79">
                     </div>
 
                     <div class="grid grid-cols-2 gap-4" data-sd-id="80">
                         <div class="space-y-2" data-sd-id="81">
                             <label class="text-sm font-black uppercase tracking-wider text-gray-400" data-sd-id="82">Subject</label>
                             <div class="relative" data-sd-id="83">
-                                <select class="w-full p-4 bg-[#F7F7F7] border-2 border-[#E5E5E5] rounded-2xl font-bold focus:outline-none focus:border-[#1CB0F6] appearance-none" data-sd-id="84">
-                                    <option data-sd-id="85">Science</option>
-                                    <option data-sd-id="86">Math</option>
-                                    <option data-sd-id="87">History</option>
+                                <select id="new-task-subject" class="w-full p-4 bg-[#F7F7F7] border-2 border-[#E5E5E5] rounded-2xl font-bold focus:outline-none focus:border-[#1CB0F6] appearance-none" data-sd-id="84">
+                                    <option value="Computer Science">Computer Science</option>
+                                    <option value="Science">Science</option>
+                                    <option value="Math">Math</option>
+                                    <option value="History">History</option>
+                                    <option value="Literature">Literature</option>
                                 </select>
                                 <iconify-icon icon="lucide:chevron-down" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"></iconify-icon>
                             </div>
                         </div>
                         <div class="space-y-2" data-sd-id="88">
                             <label class="text-sm font-black uppercase tracking-wider text-gray-400" data-sd-id="89">Deadline</label>
-                            <input type="date" class="w-full p-4 bg-[#F7F7F7] border-2 border-[#E5E5E5] rounded-2xl font-bold focus:outline-none focus:border-[#1CB0F6]" data-sd-id="90">
+                            <input type="date" id="new-task-date" class="w-full p-4 bg-[#F7F7F7] border-2 border-[#E5E5E5] rounded-2xl font-bold focus:outline-none focus:border-[#1CB0F6]" data-sd-id="90">
                         </div>
                     </div>
 
                     <div class="space-y-2" data-sd-id="91">
                         <label class="text-sm font-black uppercase tracking-wider text-gray-400" data-sd-id="92">Status</label>
-                        <div class="grid grid-cols-3 gap-2" data-sd-id="93">
-                            <button type="button" class="py-3 bg-white border-2 border-[#E5E5E5] rounded-xl text-xs font-black uppercase" data-sd-id="94">Not Started</button>
-                            <button type="button" class="py-3 bg-[#1CB0F6]/10 border-2 border-[#1CB0F6] rounded-xl text-xs font-black uppercase text-[#1CB0F6]" data-sd-id="95">In Progress</button>
-                            <button type="button" class="py-3 bg-white border-2 border-[#E5E5E5] rounded-xl text-xs font-black uppercase" data-sd-id="96">Completed</button>
+                        <div class="grid grid-cols-3 gap-2" id="status-button-group">
+                            <button type="button" data-status="pending" class="status-choice-btn py-3 bg-[#1CB0F6]/10 border-2 border-[#1CB0F6] text-[#1CB0F6] rounded-xl text-xs font-black uppercase">Not Started</button>
+                            <button type="button" data-status="in-progress" class="status-choice-btn py-3 bg-white border-2 border-[#E5E5E5] text-gray-400 rounded-xl text-xs font-black uppercase">In Progress</button>
+                            <button type="button" data-status="completed" class="status-choice-btn py-3 bg-white border-2 border-[#E5E5E5] text-gray-400 rounded-xl text-xs font-black uppercase">Completed</button>
                         </div>
                     </div>
 
-                    <button type="submit" class="w-full py-4 bg-[#58CC02] border-b-4 border-[#46A302] rounded-2xl text-white font-black uppercase tracking-widest btn-3d active:translate-y-1 active:border-b-0 mt-4" data-sd-id="97">
+                    <button type="submit" id="btn-submit-task" class="w-full py-4 bg-[#58CC02] border-b-4 border-[#46A302] rounded-2xl text-white font-black uppercase tracking-widest btn-3d active:translate-y-1 active:border-b-0 mt-4" data-sd-id="97">
                         Add Assignment
                     </button>
                 </form>
@@ -263,49 +267,196 @@
         </div>
     </div>
 
+    <!-- Achievement Toast Notification -->
+    <div id="toast" class="fixed top-20 left-1/2 -translate-x-1/2 w-[90%] max-w-sm bg-white border-2 border-[#E5E5E5] border-b-4 rounded-2xl p-4 flex items-center gap-4 shadow-2xl z-50 transform translate-y-[-200%] transition-transform duration-300 pointer-events-none">
+        <div id="toast-icon-bg" class="w-12 h-12 rounded-xl bg-[#58CC02]/15 text-[#58CC02] flex items-center justify-center shrink-0">
+            <iconify-icon id="toast-icon" icon="lucide:check-circle" class="text-2xl"></iconify-icon>
+        </div>
+        <div>
+            <h5 id="toast-title" class="font-black text-sm uppercase leading-none mb-1 text-[#4B4B4B]">Notification</h5>
+            <p id="toast-msg" class="font-bold text-xs text-gray-500">Operation succeeded</p>
+        </div>
+    </div>
+
     <script>
+        function showToast(title, msg, icon = 'lucide:check-circle', color = '#58CC02') {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-title').textContent = title;
+            document.getElementById('toast-msg').textContent = msg;
+            const iconBg = document.getElementById('toast-icon-bg');
+            const iconEl = document.getElementById('toast-icon');
+            iconBg.style.backgroundColor = color + '15';
+            iconBg.style.color = color;
+            iconEl.setAttribute('icon', icon);
+
+            toast.style.transform = 'translate(-50%, 0)';
+            setTimeout(() => {
+                toast.style.transform = 'translate(-50%, -200%)';
+            }, 3000);
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const openBtn = document.getElementById('open-modal-btn');
             const closeBtn = document.getElementById('close-modal-btn');
             const modal = document.getElementById('add-modal');
             const overlay = modal.querySelector('.modal-overlay');
+            const taskForm = document.getElementById('new-task-form');
+            const mainContainer = document.querySelector('main');
 
+            // Modal Controls
             openBtn.addEventListener('click', () => {
                 modal.classList.remove('hidden');
+                document.getElementById('new-task-title').focus();
             });
 
-            const closeModal = () => {
-                modal.classList.add('hidden');
-            };
-
+            const closeModal = () => modal.classList.add('hidden');
             closeBtn.addEventListener('click', closeModal);
             overlay.addEventListener('click', closeModal);
 
-            // Tab toggling simulation
-            const tabs = [document.getElementById('tab-all'), document.getElementById('tab-pending'), document.getElementById('tab-completed')];
-            tabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    tabs.forEach(t => {
-                        t.classList.remove('tab-active');
-                        t.classList.add('text-gray-400');
+            // Status selection inside modal
+            let selectedStatus = 'pending';
+            const statusBtns = document.querySelectorAll('.status-choice-btn');
+            statusBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    statusBtns.forEach(b => {
+                        b.className = 'status-choice-btn py-3 bg-white border-2 border-[#E5E5E5] text-gray-400 rounded-xl text-xs font-black uppercase';
                     });
-                    tab.classList.add('tab-active');
-                    tab.classList.remove('text-gray-400');
+                    btn.className = 'status-choice-btn py-3 bg-[#1CB0F6]/10 border-2 border-[#1CB0F6] text-[#1CB0F6] rounded-xl text-xs font-black uppercase';
+                    selectedStatus = btn.getAttribute('data-status');
                 });
             });
 
-            // Checkbox simulation
-            const checkboxes = document.querySelectorAll('.checkbox-container input');
-            checkboxes.forEach(cb => {
-                cb.addEventListener('change', function() {
-                    const card = this.closest('.duo-card');
-                    if(this.checked) {
-                        card.classList.add('opacity-50');
+            // Tab filtering: All, Pending, Completed
+            let currentTab = 'all';
+            const tabs = {
+                'all': document.getElementById('tab-all'),
+                'pending': document.getElementById('tab-pending'),
+                'completed': document.getElementById('tab-completed')
+            };
+
+            function filterCards(filter) {
+                currentTab = filter;
+                Object.keys(tabs).forEach(k => {
+                    if (k === filter) {
+                        tabs[k].className = 'flex-1 py-3 text-sm font-black uppercase tracking-wider tab-active';
                     } else {
-                        card.classList.remove('opacity-50');
+                        tabs[k].className = 'flex-1 py-3 text-sm font-black uppercase tracking-wider text-gray-400';
                     }
                 });
+
+                const cards = document.querySelectorAll('.task-card, .duo-card[data-task-id]');
+                cards.forEach(card => {
+                    const cb = card.querySelector('input[type="checkbox"]');
+                    const isCompleted = cb && cb.checked;
+                    if (filter === 'all') {
+                        card.style.display = 'flex';
+                    } else if (filter === 'pending') {
+                        card.style.display = isCompleted ? 'none' : 'flex';
+                    } else if (filter === 'completed') {
+                        card.style.display = isCompleted ? 'flex' : 'none';
+                    }
+                });
+            }
+
+            tabs.all.addEventListener('click', () => filterCards('all'));
+            tabs.pending.addEventListener('click', () => filterCards('pending'));
+            tabs.completed.addEventListener('click', () => filterCards('completed'));
+
+            // Checkbox handler function
+            function bindCheckbox(cb) {
+                cb.addEventListener('change', async function() {
+                    const card = this.closest('.duo-card');
+                    const title = card.querySelector('h3') ? card.querySelector('h3').textContent : 'Assignment';
+                    const taskId = card.getAttribute('data-task-id');
+
+                    if (this.checked) {
+                        card.classList.add('opacity-50');
+                        showToast('Goal Accomplished! 🎉', `+150 XP for "${title}"`, 'lucide:award', '#58CC02');
+                    } else {
+                        card.classList.remove('opacity-50');
+                        showToast('Task Reopened', `"${title}" moved back to pending`, 'lucide:rotate-ccw', '#1CB0F6');
+                    }
+
+                    // Save to Supabase
+                    if (window.eduSupabase && window.eduSupabase.isConnected() && taskId) {
+                        await window.eduSupabase.toggleAssignment(taskId, this.checked);
+                    }
+
+                    // Refresh tab view if filtering
+                    if (currentTab !== 'all') {
+                        filterCards(currentTab);
+                    }
+                });
+            }
+
+            // Bind existing checkboxes
+            document.querySelectorAll('.checkbox-container input').forEach(bindCheckbox);
+
+            // Add Assignment Form Submit
+            taskForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const title = document.getElementById('new-task-title').value.trim();
+                const subject = document.getElementById('new-task-subject').value;
+                const deadline = document.getElementById('new-task-date').value || 'Tomorrow';
+                const isCompleted = selectedStatus === 'completed';
+
+                const newCard = document.createElement('div');
+                newCard.className = `duo-card rounded-[20px] p-4 bg-white flex items-center justify-between transition-all task-card ${isCompleted ? 'opacity-50' : ''}`;
+                newCard.setAttribute('data-task-id', 'task_' + Date.now());
+                newCard.innerHTML = `
+                    <div class="flex items-center gap-4">
+                        <label class="checkbox-container relative flex items-center cursor-pointer">
+                            <input type="checkbox" class="sr-only peer" ${isCompleted ? 'checked' : ''}>
+                            <div class="w-8 h-8 rounded-xl border-2 border-[#E5E5E5] bg-[#F7F7F7] flex items-center justify-center checkmark peer-checked:bg-[#58CC02] peer-checked:border-[#58CC02] peer-checked:text-white transition-all">
+                                <iconify-icon icon="lucide:check" class="text-xl"></iconify-icon>
+                            </div>
+                        </label>
+                        <div>
+                            <span class="text-[10px] font-black uppercase text-[#1CB0F6] tracking-wider">${escapeHtml(subject)}</span>
+                            <h3 class="font-black text-base text-[#4B4B4B]">${escapeHtml(title)}</h3>
+                            <div class="flex items-center gap-2 mt-1">
+                                <span class="text-xs font-bold text-gray-400 flex items-center gap-1">
+                                    <iconify-icon icon="lucide:clock" class="text-sm"></iconify-icon> Due ${escapeHtml(deadline)}
+                                </span>
+                                <span class="text-xs font-black text-[#58CC02]">+100 XP</span>
+                            </div>
+                        </div>
+                    </div>
+                    <span class="text-[11px] font-black uppercase ${isCompleted ? 'bg-[#58CC02]/10 text-[#58CC02]' : 'bg-gray-100 text-gray-400'} px-2 py-1 rounded-lg border border-[#E5E5E5]">
+                        ${isCompleted ? 'Done' : 'Pending'}
+                    </span>
+                `;
+
+                // Insert before spacer
+                const spacer = mainContainer.querySelector('.h-20');
+                if (spacer) {
+                    mainContainer.insertBefore(newCard, spacer);
+                } else {
+                    mainContainer.appendChild(newCard);
+                }
+
+                // Bind new checkbox
+                bindCheckbox(newCard.querySelector('input[type="checkbox"]'));
+
+                // Save to Supabase
+                if (window.eduSupabase && window.eduSupabase.isConnected()) {
+                    await window.eduSupabase.addAssignment({
+                        title,
+                        course: subject,
+                        due_date: new Date().toISOString(),
+                        status: isCompleted ? 'completed' : 'pending',
+                        xp_reward: 100
+                    });
+                }
+
+                closeModal();
+                taskForm.reset();
+                showToast('Assignment Added! 🚀', `"${title}" has been saved.`, 'lucide:plus-circle', '#58CC02');
             });
+
+            function escapeHtml(s) {
+                return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            }
         });
     </script>
 
