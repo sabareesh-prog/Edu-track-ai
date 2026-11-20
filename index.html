@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduTrack AI - Unified Interactive Web Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #F4F5F7;
+            color: #4B4B4B;
+        }
+
+        /* Duolingo 3D Tactile Buttons */
+        .btn-3d {
+            position: relative;
+            transition: all 0.1s ease;
+            border-bottom-width: 4px;
+        }
+        .btn-3d:active {
+            border-bottom-width: 0px;
+            transform: translateY(4px);
+        }
+
+        .duo-card {
+            border: 2px solid #E5E5E5;
+            border-bottom-width: 4px;
+            transition: all 0.15s ease;
+        }
+
+        /* Active Nav Tab */
+        .tab-btn.active {
+            background-color: #58CC02;
+            color: #FFFFFF;
+            border-bottom-color: #46A302;
+        }
+
+        .device-frame {
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.15), 0 0 0 12px #262626;
+        }
+
+        .device-mobile {
+            width: 420px;
+            height: 860px;
+            border-radius: 46px;
+        }
+
+        .device-tablet {
+            width: 768px;
+            height: 900px;
+            border-radius: 36px;
+        }
+
+        .device-full {
+            width: 100%;
+            height: calc(100vh - 84px);
+            border-radius: 0px;
+            box-shadow: none;
+            border: none;
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden">
+
+    <!-- Universal Top Navigation & Controller -->
+    <header class="h-[76px] bg-white border-b-2 border-[#E5E5E5] px-6 flex items-center justify-between shrink-0 z-50">
+        <!-- Brand -->
+        <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-2xl bg-[#58CC02] flex items-center justify-center text-white shadow-sm btn-3d border-b-[#46A302]">
+                <iconify-icon icon="lucide:graduation-cap" class="text-3xl"></iconify-icon>
+            </div>
+            <div>
+                <div class="flex items-center gap-2">
+                    <h1 class="text-xl font-black text-[#4B4B4B] leading-none">EduTrack AI</h1>
+                    <span class="px-2.5 py-0.5 bg-[#58CC02]/15 text-[#58CC02] text-[10px] font-black uppercase tracking-wider rounded-full">Duolingo UI</span>
+                </div>
+                <p class="text-xs font-bold text-gray-400 mt-1">Unified Multi-Role Education Management Platform</p>
+            </div>
+        </div>
+
+        <!-- Role & Screen Switcher -->
+        <div class="hidden lg:flex items-center gap-2 bg-[#F7F7F7] p-1.5 rounded-2xl border-2 border-[#E5E5E5]">
+            <button onclick="loadScreen('student.html', 'student')" id="btn-tab-student" class="tab-btn px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider text-[#4B4B4B] flex items-center gap-1.5 btn-3d border-b-transparent active">
+                <iconify-icon icon="lucide:user" class="text-base"></iconify-icon>
+                Student
+            </button>
+            <button onclick="loadScreen('faculty.html', 'faculty')" id="btn-tab-faculty" class="tab-btn px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider text-[#4B4B4B] flex items-center gap-1.5 btn-3d border-b-transparent">
+                <iconify-icon icon="lucide:briefcase" class="text-base"></iconify-icon>
+                Faculty
+            </button>
+            <button onclick="loadScreen('admin.html', 'admin')" id="btn-tab-admin" class="tab-btn px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider text-[#4B4B4B] flex items-center gap-1.5 btn-3d border-b-transparent">
+                <iconify-icon icon="lucide:shield-check" class="text-base"></iconify-icon>
+                Admin
+            </button>
+            <div class="w-[2px] h-6 bg-[#E5E5E5] mx-1"></div>
+            <button onclick="loadScreen('assignments.html', 'assignments')" id="btn-tab-assignments" class="tab-btn px-3 py-2 rounded-xl text-xs font-black uppercase tracking-wider text-[#4B4B4B] flex items-center gap-1.5 btn-3d border-b-transparent">
+                <iconify-icon icon="lucide:book-open" class="text-base"></iconify-icon>
+                Tasks
+            </button>
+            <button onclick="loadScreen('assistant.html', 'assistant')" id="btn-tab-assistant" class="tab-btn px-3 py-2 rounded-xl text-xs font-black uppercase tracking-wider text-[#4B4B4B] flex items-center gap-1.5 btn-3d border-b-transparent">
+                <iconify-icon icon="lucide:sparkles" class="text-base text-[#1CB0F6]"></iconify-icon>
+                AI Assistant
+            </button>
+            <button onclick="loadScreen('announcements.html', 'announcements')" id="btn-tab-announcements" class="tab-btn px-3 py-2 rounded-xl text-xs font-black uppercase tracking-wider text-[#4B4B4B] flex items-center gap-1.5 btn-3d border-b-transparent">
+                <iconify-icon icon="lucide:bell" class="text-base"></iconify-icon>
+                Feed
+            </button>
+            <button onclick="loadScreen('login.html', 'login')" id="btn-tab-login" class="tab-btn px-3 py-2 rounded-xl text-xs font-black uppercase tracking-wider text-[#4B4B4B] flex items-center gap-1.5 btn-3d border-b-transparent">
+                <iconify-icon icon="lucide:log-in" class="text-base"></iconify-icon>
+                Login
+            </button>
+        </div>
+
+        <!-- Controls: Viewport toggles & External Link -->
+        <div class="flex items-center gap-3">
+            <div class="flex items-center bg-[#F7F7F7] p-1 rounded-xl border border-[#E5E5E5]">
+                <button onclick="setViewport('mobile')" id="btn-vp-mobile" title="Mobile Frame" class="px-2.5 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider bg-white shadow-sm text-[#4B4B4B]">
+                    <iconify-icon icon="lucide:smartphone" class="text-base"></iconify-icon>
+                </button>
+                <button onclick="setViewport('tablet')" id="btn-vp-tablet" title="Tablet Frame" class="px-2.5 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider text-gray-400 hover:text-[#4B4B4B]">
+                    <iconify-icon icon="lucide:tablet" class="text-base"></iconify-icon>
+                </button>
+                <button onclick="setViewport('full')" id="btn-vp-full" title="Full Screen" class="px-2.5 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider text-gray-400 hover:text-[#4B4B4B]">
+                    <iconify-icon icon="lucide:maximize" class="text-base"></iconify-icon>
+                </button>
+            </div>
+
+            <!-- Open Direct Page in New Tab -->
+            <a id="btn-popout" href="student.html" target="_blank" title="Open screen in new tab" class="p-2.5 rounded-xl bg-white duo-card text-gray-500 hover:text-[#58CC02] flex items-center justify-center">
+                <iconify-icon icon="lucide:external-link" class="text-lg"></iconify-icon>
+            </a>
+
+            <!-- Superdesign Canvas -->
+            <a href="https://superdesign.dev/teams/2fafc277-a58f-441b-93e4-5863691f118a/projects/dadaedbf-da94-4619-9ab5-f76c58eed0b5" target="_blank" class="px-4 py-2 bg-[#1CB0F6] hover:bg-[#1899D6] text-white text-xs font-black uppercase tracking-wider rounded-xl btn-3d border-b-[#1483B8] flex items-center gap-1.5">
+                <iconify-icon icon="lucide:palette" class="text-base"></iconify-icon>
+                Canvas
+            </a>
+        </div>
+    </header>
+
+    <!-- Mobile Sub-Navigation Bar for Small Screens -->
+    <div class="lg:hidden bg-white border-b border-[#E5E5E5] px-4 py-2 flex items-center gap-2 overflow-x-auto no-scrollbar">
+        <button onclick="loadScreen('student.html', 'student')" class="px-3 py-1.5 bg-[#58CC02]/15 text-[#58CC02] text-xs font-black rounded-lg shrink-0">Student</button>
+        <button onclick="loadScreen('faculty.html', 'faculty')" class="px-3 py-1.5 bg-gray-100 text-gray-600 text-xs font-black rounded-lg shrink-0">Faculty</button>
+        <button onclick="loadScreen('admin.html', 'admin')" class="px-3 py-1.5 bg-gray-100 text-gray-600 text-xs font-black rounded-lg shrink-0">Admin</button>
+        <button onclick="loadScreen('assignments.html', 'assignments')" class="px-3 py-1.5 bg-gray-100 text-gray-600 text-xs font-black rounded-lg shrink-0">Tasks</button>
+        <button onclick="loadScreen('assistant.html', 'assistant')" class="px-3 py-1.5 bg-gray-100 text-gray-600 text-xs font-black rounded-lg shrink-0">AI Assistant</button>
+        <button onclick="loadScreen('announcements.html', 'announcements')" class="px-3 py-1.5 bg-gray-100 text-gray-600 text-xs font-black rounded-lg shrink-0">Feed</button>
+        <button onclick="loadScreen('login.html', 'login')" class="px-3 py-1.5 bg-gray-100 text-gray-600 text-xs font-black rounded-lg shrink-0">Login</button>
+    </div>
+
+    <!-- Main Workspace Frame Container -->
+    <main id="frame-container" class="flex-1 flex items-center justify-center p-4 overflow-hidden relative">
+        <!-- Interactive App IFrame inside Device Frame -->
+        <div id="device-wrapper" class="device-frame device-mobile bg-white relative overflow-hidden flex flex-col">
+            <!-- Mobile Dynamic Island / Notch -->
+            <div id="notch" class="absolute top-2 left-1/2 -translate-x-1/2 w-28 h-6 bg-black rounded-full z-50 pointer-events-none flex items-center justify-center">
+                <div class="w-2.5 h-2.5 rounded-full bg-neutral-900 border border-neutral-800 ml-auto mr-3"></div>
+            </div>
+
+            <!-- The Live Web App IFrame -->
+            <iframe id="app-frame" src="student.html" class="w-full h-full border-none bg-white"></iframe>
+        </div>
+    </main>
+
+    <script>
+        let currentScreen = 'student.html';
+        let currentKey = 'student';
+
+        const screenMap = {
+            'student': 'student.html',
+            'faculty': 'faculty.html',
+            'admin': 'admin.html',
+            'assignments': 'assignments.html',
+            'assistant': 'assistant.html',
+            'announcements': 'announcements.html',
+            'login': 'login.html'
+        };
+
+        function loadScreen(url, key) {
+            currentScreen = url;
+            currentKey = key;
+            const iframe = document.getElementById('app-frame');
+            iframe.src = url;
+            document.getElementById('btn-popout').href = url;
+
+            // Update top tabs active state
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            const activeBtn = document.getElementById('btn-tab-' + key);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+            }
+
+            // Sync URL hash
+            window.location.hash = key;
+        }
+
+        function setViewport(mode) {
+            const wrapper = document.getElementById('device-wrapper');
+            const notch = document.getElementById('notch');
+            const btnMobile = document.getElementById('btn-vp-mobile');
+            const btnTablet = document.getElementById('btn-vp-tablet');
+            const btnFull = document.getElementById('btn-vp-full');
+
+            [btnMobile, btnTablet, btnFull].forEach(b => {
+                b.classList.remove('bg-white', 'shadow-sm', 'text-[#4B4B4B]');
+                b.classList.add('text-gray-400');
+            });
+
+            wrapper.classList.remove('device-mobile', 'device-tablet', 'device-full');
+
+            if (mode === 'mobile') {
+                wrapper.classList.add('device-mobile');
+                notch.style.display = 'flex';
+                btnMobile.classList.add('bg-white', 'shadow-sm', 'text-[#4B4B4B]');
+                btnMobile.classList.remove('text-gray-400');
+            } else if (mode === 'tablet') {
+                wrapper.classList.add('device-tablet');
+                notch.style.display = 'none';
+                btnTablet.classList.add('bg-white', 'shadow-sm', 'text-[#4B4B4B]');
+                btnTablet.classList.remove('text-gray-400');
+            } else if (mode === 'full') {
+                wrapper.classList.add('device-full');
+                notch.style.display = 'none';
+                btnFull.classList.add('bg-white', 'shadow-sm', 'text-[#4B4B4B]');
+                btnFull.classList.remove('text-gray-400');
+            }
+        }
+
+        // Handle navigation inside iframe if possible
+        window.addEventListener('message', (e) => {
+            if (e.data && e.data.type === 'navigate') {
+                loadScreen(e.data.url, e.data.key);
+            }
+        });
+
+        // Initialize from hash or default to student
+        document.addEventListener('DOMContentLoaded', () => {
+            const hash = window.location.hash.replace('#', '');
+            if (hash && screenMap[hash]) {
+                loadScreen(screenMap[hash], hash);
+            } else {
+                loadScreen('student.html', 'student');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduTrack AI - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&amp;display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #FFFFFF;
+            color: #4B4B4B;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Duolingo-style 3D Button Effect */
+        .btn-3d {
+            position: relative;
+            transition: all 0.1s;
+            border-bottom-width: 4px;
+        }
+        .btn-3d:active {
+            border-bottom-width: 0px;
+            transform: translateY(4px);
+        }
+
+        /* Card Styles */
+        .duo-card {
+            border: 2px solid #E5E5E5;
+            border-bottom-width: 4px;
+            transition: all 0.2s;
+        }
+        
+        .duo-card.selected {
+            border-color: currentColor;
+            background-color: rgba(currentColor, 0.05);
+            transform: translateY(2px);
+            border-bottom-width: 2px;
+        }
+
+        /* Mascot float animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        .float-mascot {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        /* Input focus style */
+        .duo-input {
+            border: 2px solid #E5E5E5;
+            transition: border-color 0.2s;
+        }
+        .duo-input:focus {
+            outline: none;
+            border-color: #1CB0F6;
+            background-color: #F7F7F7;
+        }
+    </style>
+</head>
+<body>
+    <div class="w-full h-screen flex flex-col bg-white" data-sd-id="1">
+        <!-- Main Content Scroll Area -->
+        <main class="flex-1 overflow-y-auto pt-14 pb-[34px] px-8 flex flex-col items-center" data-sd-id="2">
+            
+            <!-- Mascot Section -->
+            <div class="w-32 h-32 float-mascot mb-6 flex items-center justify-center" data-sd-id="3">
+                <!-- Mascot Owl/Robot -->
+                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full drop-shadow-lg" data-sd-id="4">
+                    <circle cx="50" cy="50" r="45" fill="#58CC02"></circle>
+                    <path d="M50 20C30 20 20 35 20 55C20 75 35 85 50 85C65 85 80 75 80 55C80 35 70 20 50 20Z" fill="#58CC02" stroke="white" stroke-width="2"></path>
+                    <!-- Eyes -->
+                    <circle cx="35" cy="45" r="10" fill="white"></circle>
+                    <circle cx="35" cy="45" r="5" fill="#4B4B4B"></circle>
+                    <circle cx="65" cy="45" r="10" fill="white"></circle>
+                    <circle cx="65" cy="45" r="5" fill="#4B4B4B"></circle>
+                    <!-- Beak/Mouth -->
+                    <path d="M44 58L50 64L56 58" stroke="#FFC800" stroke-width="5" stroke-linecap="round"></path>
+                    <!-- Shine -->
+                    <circle cx="30" cy="30" r="4" fill="white" fill-opacity="0.3"></circle>
+                </svg>
+            </div>
+
+            <!-- Branding -->
+            <div class="text-center mb-10" data-sd-id="5">
+                <h1 class="text-3xl font-black tracking-tight text-[#4B4B4B] mb-2" data-sd-id="6">EduTrack AI</h1>
+                <p class="text-[#777777] font-bold text-lg leading-snug max-w-[240px] mx-auto" data-sd-id="7">Learn smarter. Never miss a deadline.</p>
+            </div>
+
+            <!-- Role Selector -->
+            <div class="w-full mb-8" data-sd-id="8">
+                <p class="text-[13px] font-black text-gray-400 uppercase tracking-widest mb-4 text-center" data-sd-id="9">Who are you?</p>
+                <div class="flex gap-3 justify-center" data-sd-id="10">
+                    <!-- Student -->
+                    <button id="role-student" onclick="selectRole('student')" class="role-btn flex-1 flex flex-col items-center p-3 rounded-2xl duo-card bg-white text-[#58CC02] border-[#E5E5E5] hover:bg-gray-50 transition-all" data-sd-id="11">
+                        <iconify-icon icon="lucide:graduation-cap" class="text-2xl mb-1"></iconify-icon>
+                        <span class="text-[11px] font-black uppercase" data-sd-id="12">Student</span>
+                    </button>
+                    <!-- Faculty -->
+                    <button id="role-faculty" onclick="selectRole('faculty')" class="role-btn flex-1 flex flex-col items-center p-3 rounded-2xl duo-card bg-white text-[#1CB0F6] border-[#E5E5E5] hover:bg-gray-50 transition-all" data-sd-id="13">
+                        <iconify-icon icon="lucide:book-user" class="text-2xl mb-1"></iconify-icon>
+                        <span class="text-[11px] font-black uppercase" data-sd-id="14">Faculty</span>
+                    </button>
+                    <!-- Admin -->
+                    <button id="role-admin" onclick="selectRole('admin')" class="role-btn flex-1 flex flex-col items-center p-3 rounded-2xl duo-card bg-white text-[#A855F7] border-[#E5E5E5] hover:bg-gray-50 transition-all" data-sd-id="15">
+                        <iconify-icon icon="lucide:shield-check" class="text-2xl mb-1"></iconify-icon>
+                        <span class="text-[11px] font-black uppercase" data-sd-id="16">Admin</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Form -->
+            <div class="w-full space-y-4 mb-8" data-sd-id="17">
+                <div class="relative" data-sd-id="18">
+                    <input type="email" placeholder="Email" class="w-full h-14 px-5 rounded-2xl bg-[#F7F7F7] duo-input font-bold text-[#4B4B4B] placeholder:text-gray-400" id="login-email" data-sd-id="19">
+                </div>
+                <div class="relative" data-sd-id="20">
+                    <input type="password" placeholder="Password" class="w-full h-14 px-5 rounded-2xl bg-[#F7F7F7] duo-input font-bold text-[#4B4B4B] placeholder:text-gray-400" id="login-password" data-sd-id="21">
+                </div>
+                <div class="text-right" data-sd-id="22">
+                    <a href="#" id="forgot-password-link" class="text-[#1CB0F6] font-black text-sm uppercase tracking-wider" data-sd-id="23">Forgot?</a>
+                </div>
+            </div>
+
+            <!-- Action Button -->
+            <div class="w-full mt-auto" data-sd-id="24">
+                <a href="#" id="login-submit-btn" class="flex items-center justify-center w-full h-14 bg-[#58CC02] border-b-[#46A302] text-white font-black text-lg rounded-2xl btn-3d uppercase tracking-widest shadow-lg" data-sd-id="25">
+                    Log In
+                </a>
+                <p class="mt-6 text-center text-[#777777] font-bold text-sm" data-sd-id="26">
+                    First time here? <a href="#" id="signup-link" class="text-[#1CB0F6]" data-sd-id="27">Sign Up</a>
+                </p>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let currentRole = 'student';
+
+        function selectRole(role) {
+            currentRole = role;
+            // Reset all buttons
+            document.querySelectorAll('.role-btn').forEach(btn => {
+                btn.style.borderColor = '#E5E5E5';
+                btn.style.backgroundColor = '#FFFFFF';
+                btn.style.borderBottomWidth = '4px';
+                btn.style.transform = 'translateY(0)';
+            });
+
+            const activeBtn = document.getElementById('role-' + role);
+            const loginBtn = document.getElementById('login-submit-btn');
+            
+            // Set colors based on role
+            let color = '#58CC02';
+            let darkColor = '#46A302';
+            
+            if (role === 'student') {
+                color = '#58CC02';
+                darkColor = '#46A302';
+            } else if (role === 'faculty') {
+                color = '#1CB0F6';
+                darkColor = '#1483B8';
+            } else if (role === 'admin') {
+                color = '#A855F7';
+                darkColor = '#7E22CE';
+            }
+
+            activeBtn.style.borderColor = color;
+            activeBtn.style.backgroundColor = color + '08';
+            activeBtn.style.borderBottomWidth = '2px';
+            activeBtn.style.transform = 'translateY(2px)';
+            
+            // Update main login button theme
+            loginBtn.style.backgroundColor = color;
+            loginBtn.style.borderBottomColor = darkColor;
+        }
+
+        // Login action handler
+        document.getElementById('login-submit-btn').addEventListener('click', (e) => {
+            e.preventDefault();
+            if (currentRole === 'faculty') {
+                window.location.href = 'faculty.html';
+            } else if (currentRole === 'admin') {
+                window.location.href = 'admin.html';
+            } else {
+                window.location.href = 'student.html';
+            }
+        });
+
+        // Default select student
+        document.addEventListener('DOMContentLoaded', () => {
+            selectRole('student');
+        });
+    </script>
+
+</body></html>

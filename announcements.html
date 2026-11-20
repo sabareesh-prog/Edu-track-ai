@@ -1,0 +1,192 @@
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduTrack AI - Announcements</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&amp;display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #FFFFFF;
+            color: #4B4B4B;
+        }
+
+        /* Duolingo-style 3D Button Effect */
+        .btn-3d {
+            position: relative;
+            transition: all 0.1s active;
+            border-bottom-width: 4px;
+        }
+        .btn-3d:active {
+            border-bottom-width: 0px;
+            transform: translateY(4px);
+        }
+
+        /* Card Styles */
+        .duo-card {
+            border: 2px solid #E5E5E5;
+            border-bottom-width: 4px;
+            transition: transform 0.1s ease;
+        }
+        .duo-card:active {
+            transform: scale(0.98);
+        }
+
+        /* Hide scrollbar for clean look */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="w-full h-screen flex flex-col bg-white" data-sd-id="1">
+        <!-- Header -->
+        <header class="shrink-0 pt-14 px-6 pb-4 bg-white border-b-2 border-gray-100 flex items-center justify-between" data-sd-id="2">
+            <h1 class="text-2xl font-black tracking-tight" data-sd-id="3">Announcements</h1>
+            <div class="flex items-center gap-2" data-sd-id="4">
+                <div class="flex items-center gap-1" data-sd-id="5">
+                    <iconify-icon icon="lucide:flame" class="text-[#FF9600] text-xl"></iconify-icon>
+                    <span class="font-black text-[#FF9600]" data-sd-id="6">7</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 overflow-y-auto px-6 py-6 space-y-4 no-scrollbar" data-sd-id="7">
+            
+            <!-- Category Chips -->
+            <div class="flex gap-3 overflow-x-auto pb-2 no-scrollbar" data-sd-id="8">
+                <button class="shrink-0 px-5 py-2 rounded-full bg-[#1CB0F6] text-white font-black text-sm uppercase tracking-wide btn-3d border-b-[#1483B8]" data-sd-id="9">
+                    All
+                </button>
+                <button class="shrink-0 px-5 py-2 rounded-full bg-white text-[#777777] font-black text-sm uppercase tracking-wide border-2 border-[#E5E5E5] border-b-4 active:border-b-2 active:translate-y-[2px]" data-sd-id="10">
+                    Academic
+                </button>
+                <button class="shrink-0 px-5 py-2 rounded-full bg-white text-[#777777] font-black text-sm uppercase tracking-wide border-2 border-[#E5E5E5] border-b-4 active:border-b-2 active:translate-y-[2px]" data-sd-id="11">
+                    Campus
+                </button>
+            </div>
+
+            <!-- Announcement Card: New -->
+            <div class="duo-card rounded-[20px] p-5 bg-white relative" data-sd-id="12">
+                <div class="flex items-start justify-between mb-3" data-sd-id="13">
+                    <div class="flex items-center gap-3" data-sd-id="14">
+                        <div class="w-12 h-12 rounded-2xl bg-[#1CB0F6]/10 flex items-center justify-center" data-sd-id="15">
+                            <iconify-icon icon="lucide:megaphone" class="text-[#1CB0F6] text-2xl"></iconify-icon>
+                        </div>
+                        <div data-sd-id="16">
+                            <h3 class="font-black text-base" data-sd-id="17">Midterm Schedule</h3>
+                            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider" data-sd-id="18">Prof. Arun • 10m ago</p>
+                        </div>
+                    </div>
+                    <span class="flex h-3 w-3 rounded-full bg-[#1CB0F6] ring-4 ring-[#1CB0F6]/10" data-sd-id="19"></span>
+                </div>
+                <p class="text-sm font-bold text-[#4B4B4B] leading-relaxed mb-4" data-sd-id="20">
+                    The finalized midterm exam schedule for the Winter semester has been uploaded. Please check the department portal.
+                </p>
+                <div class="flex items-center gap-2" data-sd-id="21">
+                    <span class="px-3 py-1 bg-[#1CB0F6] text-white text-[10px] font-black rounded-full uppercase" data-sd-id="22">New</span>
+                    <span class="px-3 py-1 bg-gray-100 text-gray-400 text-[10px] font-black rounded-full uppercase" data-sd-id="23">Urgent</span>
+                </div>
+            </div>
+
+            <!-- Announcement Card: Read -->
+            <div class="duo-card rounded-[20px] p-5 bg-white opacity-80" data-sd-id="24">
+                <div class="flex items-start justify-between mb-3" data-sd-id="25">
+                    <div class="flex items-center gap-3" data-sd-id="26">
+                        <div class="w-12 h-12 rounded-2xl bg-[#58CC02]/10 flex items-center justify-center" data-sd-id="27">
+                            <iconify-icon icon="lucide:library" class="text-[#58CC02] text-2xl"></iconify-icon>
+                        </div>
+                        <div data-sd-id="28">
+                            <h3 class="font-black text-base text-gray-600" data-sd-id="29">Library Hours Update</h3>
+                            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider" data-sd-id="30">Admin • 2h ago</p>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-sm font-bold text-gray-500 leading-relaxed mb-4" data-sd-id="31">
+                    Great news! The central library will remain open 24/7 starting next Monday to support your study marathons.
+                </p>
+                <div class="flex items-center gap-2" data-sd-id="32">
+                    <span class="px-3 py-1 bg-gray-100 text-gray-400 text-[10px] font-black rounded-full uppercase" data-sd-id="33">Facility</span>
+                </div>
+            </div>
+
+            <!-- Announcement Card: New -->
+            <div class="duo-card rounded-[20px] p-5 bg-white relative" data-sd-id="34">
+                <div class="flex items-start justify-between mb-3" data-sd-id="35">
+                    <div class="flex items-center gap-3" data-sd-id="36">
+                        <div class="w-12 h-12 rounded-2xl bg-[#FF9600]/10 flex items-center justify-center" data-sd-id="37">
+                            <iconify-icon icon="lucide:sparkles" class="text-[#FF9600] text-2xl"></iconify-icon>
+                        </div>
+                        <div data-sd-id="38">
+                            <h3 class="font-black text-base" data-sd-id="39">New AI Feature!</h3>
+                            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider" data-sd-id="40">AI Team • 5h ago</p>
+                        </div>
+                    </div>
+                    <span class="flex h-3 w-3 rounded-full bg-[#1CB0F6] ring-4 ring-[#1CB0F6]/10" data-sd-id="41"></span>
+                </div>
+                <p class="text-sm font-bold text-[#4B4B4B] leading-relaxed mb-4" data-sd-id="42">
+                    Your Academic Assistant can now summarize PDFs directly! Just upload and ask "Summarize this".
+                </p>
+                <div class="flex items-center gap-2" data-sd-id="43">
+                    <span class="px-3 py-1 bg-[#1CB0F6] text-white text-[10px] font-black rounded-full uppercase" data-sd-id="44">New</span>
+                    <span class="px-3 py-1 bg-[#FFC800] text-white text-[10px] font-black rounded-full uppercase" data-sd-id="45">Update</span>
+                </div>
+            </div>
+
+            <!-- Announcement Card: Old -->
+            <div class="duo-card rounded-[20px] p-5 bg-white opacity-80" data-sd-id="46">
+                <div class="flex items-start justify-between mb-3" data-sd-id="47">
+                    <div class="flex items-center gap-3" data-sd-id="48">
+                        <div class="w-12 h-12 rounded-2xl bg-gray-100 flex items-center justify-center" data-sd-id="49">
+                            <iconify-icon icon="lucide:calendar" class="text-gray-400 text-2xl"></iconify-icon>
+                        </div>
+                        <div data-sd-id="50">
+                            <h3 class="font-black text-base text-gray-600" data-sd-id="51">Guest Lecture Series</h3>
+                            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider" data-sd-id="52">Dr. Smith • Oct 22</p>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-sm font-bold text-gray-500 leading-relaxed" data-sd-id="53">
+                    Join us for an insightful talk on Quantum Computing. Refreshments will be provided.
+                </p>
+            </div>
+
+            <!-- Empty State Spacer -->
+            <div class="h-10" data-sd-id="54"></div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <footer class="shrink-0 pb-[34px] bg-white border-t-2 border-[#E5E5E5] px-4 flex items-center justify-between h-[100px] z-50" data-sd-id="55">
+            <a href="student.html" id="nav-home" class="flex flex-col items-center gap-1 group py-2 flex-1" data-sd-id="56">
+                <iconify-icon icon="lucide:home" class="text-2xl text-gray-300 group-hover:text-[#58CC02] transition-colors"></iconify-icon>
+                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest" data-sd-id="57">Home</span>
+            </a>
+            <a href="assignments.html" id="nav-assignments" class="flex flex-col items-center gap-1 group py-2 flex-1" data-sd-id="58">
+                <iconify-icon icon="lucide:book-open" class="text-2xl text-gray-300 group-hover:text-[#58CC02] transition-colors"></iconify-icon>
+                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest" data-sd-id="59">Tasks</span>
+            </a>
+            <a href="assistant.html" id="nav-ai" class="flex flex-col items-center gap-1 group py-2 flex-1 relative -top-2" data-sd-id="60">
+                <div class="w-14 h-14 rounded-2xl bg-[#1CB0F6] btn-3d border-b-[#1483B8] flex items-center justify-center text-white shadow-lg" data-sd-id="61">
+                    <iconify-icon icon="lucide:sparkles" class="text-3xl"></iconify-icon>
+                </div>
+            </a>
+            <a href="announcements.html" id="nav-announcements" class="flex flex-col items-center gap-1 group py-2 flex-1" data-sd-id="62">
+                <div class="w-12 h-8 rounded-xl bg-[#58CC02]/10 flex items-center justify-center" data-sd-id="63">
+                    <iconify-icon icon="lucide:bell" class="text-2xl text-[#58CC02]"></iconify-icon>
+                </div>
+                <span class="text-[10px] font-black text-[#58CC02] uppercase tracking-widest" data-sd-id="64">Feed</span>
+            </a>
+            <a href="login.html" id="nav-profile" class="flex flex-col items-center gap-1 group py-2 flex-1" data-sd-id="65">
+                <iconify-icon icon="lucide:user-circle" class="text-2xl text-gray-300 group-hover:text-[#58CC02] transition-colors"></iconify-icon>
+                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest" data-sd-id="66">Profile</span>
+            </a>
+        </footer>
+    </div>
+
+</body></html>
