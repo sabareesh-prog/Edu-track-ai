@@ -4,10 +4,8 @@
     <title>EduTrack AI - Assistant</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&amp;display=swap" rel="stylesheet">
-    <script src="supabaseConfig.js"></script>
-    <script src="supabaseClient.js"></script>
-    <script src="assistantService.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="script.js"></script>
     <style>
         body {
             font-family: 'Nunito', sans-serif;
@@ -18,7 +16,7 @@
         /* Duolingo-style 3D Button Effect */
         .btn-3d {
             position: relative;
-            transition: all 0.1s active;
+            transition: all 0.1s;
             border-bottom-width: 4px;
         }
         .btn-3d:active {
@@ -30,6 +28,7 @@
         .duo-card {
             border: 2px solid #E5E5E5;
             border-bottom-width: 4px;
+            transition: all 0.15s ease;
         }
 
         /* Mascot float animation */
@@ -43,173 +42,13 @@
 
         /* Message Bubble Transitions */
         .message-in {
-            animation: slideIn 0.3s ease-out forwards;
+            animation: slideIn 0.25s ease-out forwards;
         }
         @keyframes slideIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
-    </style>
-</head>
-<body>
-    <div class="w-full h-screen flex flex-col bg-white" data-sd-id="1">
-        <!-- Header -->
-        <header class="shrink-0 pt-14 px-6 pb-4 bg-white border-b-2 border-[#E5E5E5] flex items-center justify-between" data-sd-id="2">
-            <div class="flex items-center gap-4" data-sd-id="3">
-                <div class="w-12 h-12 flex items-center justify-center float-mascot" data-sd-id="4">
-                   <!-- Simple SVG Mascot Owl -->
-                   <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full" data-sd-id="5">
-                       <path d="M50 20C30 20 20 35 20 55C20 75 35 85 50 85C65 85 80 75 80 55C80 35 70 20 50 20Z" fill="#58CC02" stroke="#4B4B4B" stroke-width="2"></path>
-                       <circle cx="35" cy="45" r="8" fill="white"></circle>
-                       <circle cx="35" cy="45" r="4" fill="black"></circle>
-                       <circle cx="65" cy="45" r="8" fill="white"></circle>
-                       <circle cx="65" cy="45" r="4" fill="black"></circle>
-                       <path d="M45 55L50 60L55 55" stroke="#FFC800" stroke-width="4" stroke-linecap="round"></path>
-                   </svg>
-                </div>
-                <div data-sd-id="6">
-                    <h1 class="text-xl font-black tracking-tight leading-none" data-sd-id="7">AI Assistant</h1>
-                    <p id="ai-status-indicator" class="text-sm font-bold text-[#58CC02] tracking-wide flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#58CC02] animate-pulse"></span> Online &amp; Supabase Connected</p>
-                </div>
-            </div>
-            <button id="header-settings-btn" onclick="if(window.renderKeyPromptModal) window.renderKeyPromptModal();" title="Supabase Settings" class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center border-2 border-gray-100 hover:bg-gray-100">
-                <iconify-icon icon="lucide:database" class="text-xl text-[#1CB0F6]"></iconify-icon>
-            </button>
-        </header>
 
-        <!-- Chat Area -->
-        <main id="chat-messages-container" class="flex-1 overflow-y-auto px-6 py-6 space-y-6" data-sd-id="10">
-            
-            <!-- Welcome Message -->
-            <div class="flex flex-col gap-2 max-w-[85%] message-in" data-sd-id="11">
-                <div class="bg-[#F7F7F7] border-2 border-[#E5E5E5] border-b-4 rounded-2xl rounded-tl-none p-4" data-sd-id="12">
-                    <p class="font-bold text-sm leading-relaxed text-[#4B4B4B]" data-sd-id="13">
-                        Hi Priya! I've analyzed your notes for <span class="text-[#1CB0F6]" data-sd-id="14">Computer Science 101</span>. How can I help you today?
-                    </p>
-                </div>
-            </div>
-
-            <!-- Uploaded File Chip -->
-            <div class="flex justify-end message-in" data-sd-id="15">
-                <div class="duo-card bg-white rounded-2xl p-3 flex items-center gap-3 w-max max-w-[85%] border-[#1CB0F6]" data-sd-id="16">
-                    <div class="w-10 h-10 bg-[#1CB0F6]/10 rounded-xl flex items-center justify-center" data-sd-id="17">
-                        <iconify-icon icon="lucide:file-text" class="text-[#1CB0F6] text-2xl"></iconify-icon>
-                    </div>
-                    <div class="pr-4" data-sd-id="18">
-                        <p class="font-black text-xs text-[#4B4B4B] truncate max-w-[120px]" data-sd-id="19">Lecture_Notes_DS.pdf</p>
-                        <p class="text-[10px] font-bold text-gray-400" data-sd-id="20">1.2 MB</p>
-                    </div>
-                    <iconify-icon icon="lucide:check-circle" class="text-[#58CC02] text-xl"></iconify-icon>
-                </div>
-            </div>
-
-            <!-- User Query -->
-            <div class="flex justify-end message-in" data-sd-id="21">
-                <div class="bg-[#58CC02] border-b-4 border-[#46A302] rounded-2xl rounded-tr-none p-4 max-w-[85%]" data-sd-id="22">
-                    <p class="font-bold text-sm text-white" data-sd-id="23">Can you summarize the main points about Linked Lists?</p>
-                </div>
-            </div>
-
-            <!-- AI Response with Result Card -->
-            <div class="flex flex-col gap-3 max-w-[85%] message-in" data-sd-id="24">
-                <div class="bg-[#F7F7F7] border-2 border-[#E5E5E5] border-b-4 rounded-2xl rounded-tl-none p-4" data-sd-id="25">
-                    <p class="font-bold text-sm leading-relaxed text-[#4B4B4B] mb-4" data-sd-id="26">
-                        Sure thing! Here are the key takeaways from your document regarding Linked Lists:
-                    </p>
-                    
-                    <!-- Result Summary Card -->
-                    <div class="bg-white rounded-xl p-4 duo-card border-none space-y-3" data-sd-id="27">
-                        <div class="flex items-center gap-2 mb-1" data-sd-id="28">
-                            <iconify-icon icon="lucide:list" class="text-[#1CB0F6] text-xl"></iconify-icon>
-                            <span class="font-black text-xs uppercase tracking-widest text-gray-400" data-sd-id="29">Summary</span>
-                        </div>
-                        <ul class="space-y-2" data-sd-id="30">
-                            <li class="flex gap-2 text-xs font-bold leading-relaxed" data-sd-id="31">
-                                <span class="text-[#58CC02]" data-sd-id="32">•</span>
-                                <span data-sd-id="33">Linear data structure where elements are not stored in contiguous memory.</span>
-                            </li>
-                            <li class="flex gap-2 text-xs font-bold leading-relaxed" data-sd-id="34">
-                                <span class="text-[#58CC02]" data-sd-id="35">•</span>
-                                <span data-sd-id="36">Composed of nodes: Data + Pointer to next node.</span>
-                            </li>
-                            <li class="flex gap-2 text-xs font-bold leading-relaxed" data-sd-id="37">
-                                <span class="text-[#58CC02]" data-sd-id="38">•</span>
-                                <span data-sd-id="39">Pros: Dynamic size, easy insertion/deletion.</span>
-                            </li>
-                            <li class="flex gap-2 text-xs font-bold leading-relaxed" data-sd-id="40">
-                                <span class="text-[#58CC02]" data-sd-id="41">•</span>
-                                <span data-sd-id="42">Cons: No random access, extra memory for pointers.</span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Action Area / Suggestions -->
-            <div class="pt-4 space-y-3" data-sd-id="43">
-                <div class="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar" data-sd-id="44">
-                    <button id="chip-summarize" class="shrink-0 bg-white duo-card rounded-full px-4 py-2 flex items-center gap-2 active:bg-gray-50 transition-colors" data-sd-id="45">
-                        <iconify-icon icon="lucide:wand-2" class="text-[#1CB0F6]"></iconify-icon>
-                        <span class="text-xs font-black whitespace-nowrap" data-sd-id="46">Summarize document</span>
-                    </button>
-                    <button id="chip-notes" class="shrink-0 bg-white duo-card rounded-full px-4 py-2 flex items-center gap-2 active:bg-gray-50 transition-colors" data-sd-id="47">
-                        <iconify-icon icon="lucide:notebook" class="text-[#FFC800]"></iconify-icon>
-                        <span class="text-xs font-black whitespace-nowrap" data-sd-id="48">Ask about my notes</span>
-                    </button>
-                    <button id="chip-study" class="shrink-0 bg-white duo-card rounded-full px-4 py-2 flex items-center gap-2 active:bg-gray-50 transition-colors" data-sd-id="49">
-                        <iconify-icon icon="lucide:graduation-cap" class="text-[#58CC02]"></iconify-icon>
-                        <span class="text-xs font-black whitespace-nowrap" data-sd-id="50">Study suggestions</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Bottom Spacer -->
-            <div class="h-24" data-sd-id="51"></div>
-        </main>
-
-        <!-- Fixed Input Area & Bottom Nav Container -->
-        <div class="shrink-0 bg-white" data-sd-id="52">
-            <!-- Message Input Area -->
-            <div class="px-6 pb-4 flex gap-3 items-center" data-sd-id="53">
-                <button id="btn-upload" class="w-12 h-12 rounded-2xl duo-card bg-white flex items-center justify-center text-gray-400 active:bg-gray-50" data-sd-id="54">
-                    <iconify-icon icon="lucide:plus" class="text-2xl"></iconify-icon>
-                </button>
-                <div class="flex-1 relative" data-sd-id="55">
-                    <input type="text" id="chat-input" placeholder="Ask about assignments, deadlines, or study tips..." class="w-full h-12 pl-4 pr-12 rounded-2xl bg-[#F7F7F7] border-2 border-[#E5E5E5] font-bold text-sm focus:outline-none focus:border-[#1CB0F6] transition-colors" data-sd-id="56">
-                    <button id="btn-send" class="absolute right-1 top-1 w-10 h-10 rounded-xl bg-[#1CB0F6] btn-3d border-b-[#1483B8] flex items-center justify-center text-white active:transform active:translate-y-1" data-sd-id="57">
-                        <iconify-icon icon="lucide:arrow-up" class="text-xl"></iconify-icon>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Bottom Navigation -->
-            <footer class="pb-[34px] border-t-2 border-[#E5E5E5] px-4 flex items-center justify-between h-[100px] z-50" data-sd-id="58">
-                <a href="student.html" id="nav-home" class="flex flex-col items-center gap-1 group py-2 flex-1" data-sd-id="59">
-                    <iconify-icon icon="lucide:home" class="text-2xl text-gray-300 group-hover:text-[#58CC02] transition-colors"></iconify-icon>
-                    <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest" data-sd-id="60">Home</span>
-                </a>
-                <a href="assignments.html" id="nav-assignments" class="flex flex-col items-center gap-1 group py-2 flex-1" data-sd-id="61">
-                    <iconify-icon icon="lucide:book-open" class="text-2xl text-gray-300 group-hover:text-[#58CC02] transition-colors"></iconify-icon>
-                    <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest" data-sd-id="62">Tasks</span>
-                </a>
-                <a href="assistant.html" id="nav-ai" class="flex flex-col items-center gap-1 group py-2 flex-1 relative -top-2" data-sd-id="63">
-                    <div class="w-14 h-14 rounded-2xl bg-[#1CB0F6] btn-3d border-b-[#1483B8] flex items-center justify-center text-white shadow-lg" data-sd-id="64">
-                        <iconify-icon icon="lucide:sparkles" class="text-3xl"></iconify-icon>
-                    </div>
-                </a>
-                <a href="announcements.html" id="nav-announcements" class="flex flex-col items-center gap-1 group py-2 flex-1" data-sd-id="65">
-                    <iconify-icon icon="lucide:bell" class="text-2xl text-gray-300 group-hover:text-[#58CC02] transition-colors"></iconify-icon>
-                    <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest" data-sd-id="66">Feed</span>
-                </a>
-                <a href="login.html" id="nav-profile" class="flex flex-col items-center gap-1 group py-2 flex-1" data-sd-id="67">
-                    <iconify-icon icon="lucide:user-circle" class="text-2xl text-gray-300 group-hover:text-[#58CC02] transition-colors"></iconify-icon>
-                    <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest" data-sd-id="68">Profile</span>
-                </a>
-            </footer>
-        </div>
-    </div>
-
-    <style>
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
@@ -217,6 +56,8 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
+
+        /* Typing Dots */
         .typing-dots span {
             animation: blink 1.4s infinite both;
         }
@@ -228,169 +69,429 @@
             100% { opacity: .2; }
         }
     </style>
+</head>
+<body>
+    <div class="w-full h-screen flex flex-col bg-white">
+        <!-- Header -->
+        <header class="shrink-0 pt-14 px-6 pb-4 bg-white border-b-2 border-[#E5E5E5] flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 flex items-center justify-center float-mascot">
+                   <!-- Mascot Owl -->
+                   <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full drop-shadow-sm">
+                       <circle cx="50" cy="50" r="45" fill="#58CC02"></circle>
+                       <path d="M50 20C30 20 20 35 20 55C20 75 35 85 50 85C65 85 80 75 80 55C80 35 70 20 50 20Z" fill="#58CC02" stroke="white" stroke-width="2"></path>
+                       <circle cx="35" cy="45" r="8" fill="white"></circle>
+                       <circle cx="35" cy="45" r="4" fill="#4B4B4B"></circle>
+                       <circle cx="65" cy="45" r="8" fill="white"></circle>
+                       <circle cx="65" cy="45" r="4" fill="#4B4B4B"></circle>
+                       <path d="M45 55L50 60L55 55" stroke="#FFC800" stroke-width="4" stroke-linecap="round"></path>
+                   </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl font-black tracking-tight leading-none">AI Academic Assistant</h1>
+                    <p id="ai-status-indicator" class="text-xs font-bold text-[#58CC02] tracking-wide flex items-center gap-1.5 mt-1">
+                        <span class="w-2 h-2 rounded-full bg-[#58CC02] animate-pulse"></span>
+                        Online & Ready to Help
+                    </p>
+                </div>
+            </div>
+            
+            <button id="btn-clear-chat" title="Clear Chat History" class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center border-2 border-gray-100 hover:bg-gray-100 text-gray-400 hover:text-[#FF4B4B] transition-colors">
+                <iconify-icon icon="lucide:rotate-ccw" class="text-lg"></iconify-icon>
+            </button>
+        </header>
+
+        <!-- Chat Messages Area -->
+        <main id="chat-messages-container" class="flex-1 overflow-y-auto px-6 py-6 space-y-4 no-scrollbar">
+            
+            <!-- Welcome Message -->
+            <div class="flex flex-col gap-2 max-w-[85%] message-in">
+                <div class="bg-[#F7F7F7] border-2 border-[#E5E5E5] border-b-4 rounded-2xl rounded-tl-none p-4">
+                    <p class="font-bold text-sm leading-relaxed text-[#4B4B4B]">
+                        Hi <span id="chat-welcome-name">Priya</span>! 🦉 I'm your Duolingo-style study coach. Ask me to summarize a document, review your upcoming deadlines, or suggest a daily study plan!
+                    </p>
+                </div>
+            </div>
+
+            <!-- Uploaded File Pill (Hidden by default, shown when user uploads) -->
+            <div id="file-chip-container" class="hidden justify-end message-in">
+                <div class="duo-card bg-white rounded-2xl p-3 flex items-center gap-3 w-max max-w-[85%] border-[#1CB0F6]">
+                    <div class="w-9 h-9 bg-[#1CB0F6]/10 rounded-xl flex items-center justify-center text-[#1CB0F6]">
+                        <iconify-icon icon="lucide:file-text" class="text-xl"></iconify-icon>
+                    </div>
+                    <div class="pr-2">
+                        <p id="chip-filename" class="font-black text-xs text-[#4B4B4B] truncate max-w-[140px]">Lecture_Notes.pdf</p>
+                        <p id="chip-filesize" class="text-[10px] font-bold text-gray-400">1.2 MB • Ready</p>
+                    </div>
+                    <button id="btn-remove-chip" class="text-gray-400 hover:text-[#FF4B4B] p-1" title="Remove file">
+                        <iconify-icon icon="lucide:x" class="text-lg"></iconify-icon>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Interactive Suggestions Chips Container (Sticky inside chat) -->
+            <div id="quick-chips-wrapper" class="pt-2 pb-1 space-y-2">
+                <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">Quick Prompts</p>
+                <div class="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+                    <button id="chip-summarize" class="shrink-0 bg-white duo-card rounded-full px-4 py-2 flex items-center gap-2 hover:bg-gray-50 active:scale-95 transition-all cursor-pointer">
+                        <iconify-icon icon="lucide:wand-2" class="text-[#1CB0F6] text-sm"></iconify-icon>
+                        <span class="text-xs font-black whitespace-nowrap text-[#4B4B4B]">Summarize document</span>
+                    </button>
+                    <button id="chip-notes" class="shrink-0 bg-white duo-card rounded-full px-4 py-2 flex items-center gap-2 hover:bg-gray-50 active:scale-95 transition-all cursor-pointer">
+                        <iconify-icon icon="lucide:notebook" class="text-[#FFC800] text-sm"></iconify-icon>
+                        <span class="text-xs font-black whitespace-nowrap text-[#4B4B4B]">Ask about my notes</span>
+                    </button>
+                    <button id="chip-study" class="shrink-0 bg-white duo-card rounded-full px-4 py-2 flex items-center gap-2 hover:bg-gray-50 active:scale-95 transition-all cursor-pointer">
+                        <iconify-icon icon="lucide:graduation-cap" class="text-[#58CC02] text-sm"></iconify-icon>
+                        <span class="text-xs font-black whitespace-nowrap text-[#4B4B4B]">Study suggestions</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Spacer at bottom -->
+            <div class="h-6"></div>
+        </main>
+
+        <!-- Hidden Native File Input -->
+        <input type="file" id="native-file-input" accept=".pdf,.txt,.docx,.doc,.md" class="hidden">
+
+        <!-- Input Area & Bottom Nav Container -->
+        <div class="shrink-0 bg-white border-t-2 border-[#E5E5E5]">
+            <!-- Message Input Form -->
+            <form id="chat-form" class="px-6 py-3 flex gap-3 items-center">
+                <button type="button" id="btn-upload" title="Attach Document" class="w-12 h-12 rounded-2xl duo-card bg-white flex items-center justify-center text-gray-500 hover:text-[#1CB0F6] active:bg-gray-50 transition-colors cursor-pointer shrink-0">
+                    <iconify-icon icon="lucide:file-plus" class="text-2xl"></iconify-icon>
+                </button>
+                <div class="flex-1 relative">
+                    <input type="text" id="chat-input" placeholder="Ask about assignments, deadlines, or concepts..." class="w-full h-12 pl-4 pr-12 rounded-2xl bg-[#F7F7F7] border-2 border-[#E5E5E5] font-bold text-sm focus:outline-none focus:border-[#1CB0F6] transition-colors">
+                    <button type="submit" id="btn-send" class="absolute right-1 top-1 w-10 h-10 rounded-xl bg-[#1CB0F6] btn-3d border-b-[#1483B8] flex items-center justify-center text-white active:transform active:translate-y-1 cursor-pointer">
+                        <iconify-icon icon="lucide:arrow-up" class="text-xl"></iconify-icon>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Bottom Navigation -->
+            <footer class="pb-[34px] border-t-2 border-[#E5E5E5] px-4 flex items-center justify-between h-[100px] z-50">
+                <a href="student.html" id="nav-home" class="flex flex-col items-center gap-1 group py-2 flex-1">
+                    <div class="w-12 h-8 rounded-xl flex items-center justify-center">
+                        <iconify-icon icon="lucide:home" class="text-2xl text-gray-300 group-hover:text-[#58CC02] transition-colors"></iconify-icon>
+                    </div>
+                    <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Home</span>
+                </a>
+                <a href="assignments.html" id="nav-assignments" class="flex flex-col items-center gap-1 group py-2 flex-1">
+                    <div class="w-12 h-8 rounded-xl flex items-center justify-center">
+                        <iconify-icon icon="lucide:book-open" class="text-2xl text-gray-300 group-hover:text-[#58CC02] transition-colors"></iconify-icon>
+                    </div>
+                    <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Tasks</span>
+                </a>
+                <a href="assistant.html" id="nav-ai" class="flex flex-col items-center gap-1 group py-2 flex-1 relative -top-2">
+                    <div class="w-14 h-14 rounded-2xl bg-[#1CB0F6] btn-3d border-b-[#1483B8] flex items-center justify-center text-white shadow-lg">
+                        <iconify-icon icon="lucide:sparkles" class="text-3xl"></iconify-icon>
+                    </div>
+                </a>
+                <a href="announcements.html" id="nav-announcements" class="flex flex-col items-center gap-1 group py-2 flex-1">
+                    <div class="w-12 h-8 rounded-xl flex items-center justify-center">
+                        <iconify-icon icon="lucide:bell" class="text-2xl text-gray-300 group-hover:text-[#58CC02] transition-colors"></iconify-icon>
+                    </div>
+                    <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Feed</span>
+                </a>
+                <a href="login.html" id="nav-profile" class="flex flex-col items-center gap-1 group py-2 flex-1">
+                    <div class="w-12 h-8 rounded-xl flex items-center justify-center">
+                        <iconify-icon icon="lucide:user-circle" class="text-2xl text-gray-300 group-hover:text-[#58CC02] transition-colors"></iconify-icon>
+                    </div>
+                    <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Profile</span>
+                </a>
+            </footer>
+        </div>
+    </div>
 
     <script>
-        // Supabase-connected AI Assistant Chat Controller
-        document.addEventListener('DOMContentLoaded', async () => {
+        let currentAttachedFile = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const student = getStudentProfile();
+            const welcomeName = document.getElementById('chat-welcome-name');
+            if (welcomeName) welcomeName.textContent = (student.name || 'Priya').split(' ')[0];
+
             const chatContainer = document.getElementById('chat-messages-container');
             const chatInput = document.getElementById('chat-input');
-            const sendBtn = document.getElementById('btn-send');
+            const chatForm = document.getElementById('chat-form');
             const uploadBtn = document.getElementById('btn-upload');
+            const fileInput = document.getElementById('native-file-input');
+            const clearBtn = document.getElementById('btn-clear-chat');
 
-            function scrollToBottom() {
-                chatContainer.scrollTop = chatContainer.scrollHeight;
+            // Check URL parameters: action=upload or action=focus
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('action') === 'upload') {
+                setTimeout(() => fileInput.click(), 200);
+            } else if (urlParams.get('action') === 'focus') {
+                setTimeout(() => chatInput.focus(), 200);
             }
 
-            // Append User Message to UI
-            function appendUserMessage(text) {
-                const bubble = document.createElement('div');
-                bubble.className = 'flex justify-end message-in';
-                bubble.innerHTML = `
-                    <div class="bg-[#58CC02] border-b-4 border-[#46A302] rounded-2xl rounded-tr-none p-4 max-w-[85%] text-white">
-                        <p class="font-bold text-sm leading-relaxed">${escapeHtml(text)}</p>
-                    </div>
-                `;
-                chatContainer.appendChild(bubble);
-                scrollToBottom();
-            }
+            // File upload triggers
+            uploadBtn.addEventListener('click', () => fileInput.click());
 
-            // Append Assistant Message to UI
-            function appendAssistantMessage(text) {
-                const bubble = document.createElement('div');
-                bubble.className = 'flex flex-col gap-2 max-w-[85%] message-in';
-                
-                // Convert Markdown-style formatting (*bold*, bullet points, linebreaks)
-                let formatted = text
-                    .replace(/\*\*(.*?)\*\*/g, '<strong class="font-black text-[#4B4B4B]">$1</strong>')
-                    .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
-                    .replace(/• (.*?)(\n|$)/g, '<div class="flex gap-2 items-start text-xs font-bold my-1"><span class="text-[#58CC02]">•</span><span>$1</span></div>')
-                    .replace(/\n\n/g, '<div class="h-2"></div>')
-                    .replace(/\n/g, '<br>');
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    currentAttachedFile = file;
+                    const sizeStr = (file.size / 1024).toFixed(1) + ' KB';
+                    
+                    // Show chip in UI
+                    const chipContainer = document.getElementById('file-chip-container');
+                    document.getElementById('chip-filename').textContent = file.name;
+                    document.getElementById('chip-filesize').textContent = `${sizeStr} • Attached`;
+                    chipContainer.classList.remove('hidden');
+                    chipContainer.classList.add('flex');
 
-                bubble.innerHTML = `
-                    <div class="bg-[#F7F7F7] border-2 border-[#E5E5E5] border-b-4 rounded-2xl rounded-tl-none p-4 text-[#4B4B4B]">
-                        <div class="flex items-center gap-2 mb-2 text-[#1CB0F6]">
-                            <iconify-icon icon="lucide:sparkles" class="text-lg"></iconify-icon>
-                            <span class="text-[10px] font-black uppercase tracking-wider">EduTrack AI</span>
-                            <span class="text-[9px] font-extrabold text-[#58CC02] bg-[#58CC02]/10 px-2 py-0.5 rounded-full ml-auto">Supabase Grounded</span>
-                        </div>
-                        <div class="font-bold text-sm leading-relaxed">${formatted}</div>
-                    </div>
-                `;
-                chatContainer.appendChild(bubble);
-                scrollToBottom();
-            }
+                    showToast('Document Attached 📎', `${file.name} ready for analysis!`, 'lucide:file-check', '#1CB0F6');
+                    scrollToBottom();
+                }
+            });
 
-            // Show Typing indicator
-            function showThinking() {
-                const typing = document.createElement('div');
-                typing.id = 'ai-thinking-indicator';
-                typing.className = 'flex items-center gap-3 p-4 bg-[#F7F7F7] border-2 border-[#E5E5E5] border-b-4 rounded-2xl rounded-tl-none w-max max-w-[85%] message-in';
-                typing.innerHTML = `
-                    <div class="w-7 h-7 rounded-full bg-[#1CB0F6]/10 flex items-center justify-center text-[#1CB0F6]">
-                        <iconify-icon icon="lucide:bot" class="text-lg"></iconify-icon>
-                    </div>
-                    <div class="text-xs font-black text-gray-500 flex items-center gap-1.5">
-                        <span>Querying Supabase...</span>
-                        <div class="typing-dots flex gap-0.5">
-                            <span>•</span><span>•</span><span>•</span>
-                        </div>
-                    </div>
-                `;
-                chatContainer.appendChild(typing);
-                scrollToBottom();
-                return typing;
-            }
+            // Remove attached file chip
+            document.getElementById('btn-remove-chip').addEventListener('click', () => {
+                currentAttachedFile = null;
+                fileInput.value = '';
+                const chipContainer = document.getElementById('file-chip-container');
+                chipContainer.classList.add('hidden');
+                chipContainer.classList.remove('flex');
+                showToast('File Removed', 'Attachment cleared.', 'lucide:trash', '#FF4B4B');
+            });
 
-            function escapeHtml(string) {
-                return String(string).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-            }
-
-            // Handle Send Action
-            async function handleSendMessage(customText) {
-                const text = customText || chatInput.value.trim();
+            // Form Submit: Send Message
+            chatForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const text = chatInput.value.trim();
                 if (!text) return;
 
-                if (!customText) chatInput.value = '';
+                chatInput.value = '';
+                processUserMessage(text);
+            });
 
-                appendUserMessage(text);
-                const thinkingIndicator = showThinking();
-
-                try {
-                    // Save user message to Supabase
-                    if (window.AssistantService) {
-                        await window.AssistantService.saveMessage('user', text);
-                    }
-
-                    // Process response through Supabase context
-                    const response = window.AssistantService 
-                        ? await window.AssistantService.processPrompt(text)
-                        : "I am ready to help! Please ensure your Supabase connection is active.";
-
-                    // Remove thinking
-                    if (thinkingIndicator) thinkingIndicator.remove();
-
-                    appendAssistantMessage(response);
-
-                    // Save assistant response to Supabase
-                    if (window.AssistantService) {
-                        await window.AssistantService.saveMessage('assistant', response);
-                    }
-                } catch (err) {
-                    if (thinkingIndicator) thinkingIndicator.remove();
-                    appendAssistantMessage("⚠️ Failed to process response. Please check your Supabase connection.");
-                    console.error('Chat error:', err);
-                }
-            }
-
-            // Event Listeners
-            sendBtn.addEventListener('click', () => handleSendMessage());
-            chatInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleSendMessage();
+            // Quick Chips
+            document.getElementById('chip-summarize').addEventListener('click', () => {
+                if (currentAttachedFile) {
+                    processUserMessage(`Please summarize the attached document "${currentAttachedFile.name}".`);
+                } else {
+                    processUserMessage("Can you summarize the core concepts from my active courses?");
                 }
             });
 
-            // Action Chips
-            const chipMap = {
-                'chip-summarize': 'Can you summarize my study notes and lecture concepts?',
-                'chip-notes': 'What assignments, homework, or tasks are due soon in my Supabase database?',
-                'chip-study': 'What are the latest campus announcements and study suggestions for today?'
-            };
-
-            Object.keys(chipMap).forEach(id => {
-                const chip = document.getElementById(id);
-                if (chip) {
-                    chip.addEventListener('click', () => {
-                        handleSendMessage(chipMap[id]);
-                    });
-                }
+            document.getElementById('chip-notes').addEventListener('click', () => {
+                processUserMessage("What assignments and homework do I have coming up in my schedule?");
             });
 
-            // File Upload Simulation
-            if (uploadBtn) {
-                uploadBtn.addEventListener('click', () => {
-                    const input = document.createElement('input');
-                    input.type = 'file';
-                    input.accept = '.pdf,.txt,.docx';
-                    input.onchange = (e) => {
-                        const file = e.target.files[0];
-                        if (file) {
-                            appendUserMessage(`📎 Uploaded document: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`);
-                            const thinking = showThinking();
-                            setTimeout(() => {
-                                thinking.remove();
-                                appendAssistantMessage(`I've received **${file.name}**! I've indexed it against your course syllabus in Supabase. You can now ask me to summarize it, test your knowledge, or generate flashcards!`);
-                            }, 1200);
-                        }
-                    };
-                    input.click();
-                });
-            }
+            document.getElementById('chip-study').addEventListener('click', () => {
+                processUserMessage("Can you recommend an optimized 3-step study plan for today?");
+            });
 
-            // Initial focus & scroll
-            scrollToBottom();
+            // Clear chat button
+            clearBtn.addEventListener('click', () => {
+                if (confirm('Clear chat session history?')) {
+                    const welcomeMsg = chatContainer.firstElementChild;
+                    chatContainer.innerHTML = '';
+                    if (welcomeMsg) chatContainer.appendChild(welcomeMsg);
+                    showToast('Chat Cleared', 'Starting a fresh study session!', 'lucide:refresh-cw', '#1CB0F6');
+                }
+            });
         });
+
+        function scrollToBottom() {
+            const container = document.getElementById('chat-messages-container');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function appendUserMessage(text) {
+            const container = document.getElementById('chat-messages-container');
+            const bubble = document.createElement('div');
+            bubble.className = 'flex justify-end message-in';
+            bubble.innerHTML = `
+                <div class="bg-[#58CC02] border-b-4 border-[#46A302] rounded-2xl rounded-tr-none p-4 max-w-[85%] text-white">
+                    <p class="font-bold text-sm leading-relaxed">${escapeHtml(text)}</p>
+                </div>
+            `;
+            container.appendChild(bubble);
+            scrollToBottom();
+        }
+
+        function appendAssistantMessage(htmlContent) {
+            const container = document.getElementById('chat-messages-container');
+            const bubble = document.createElement('div');
+            bubble.className = 'flex flex-col gap-2 max-w-[88%] message-in';
+            bubble.innerHTML = `
+                <div class="bg-[#F7F7F7] border-2 border-[#E5E5E5] border-b-4 rounded-2xl rounded-tl-none p-4 text-[#4B4B4B]">
+                    <div class="flex items-center gap-2 mb-2 text-[#1CB0F6]">
+                        <iconify-icon icon="lucide:sparkles" class="text-lg"></iconify-icon>
+                        <span class="text-[10px] font-black uppercase tracking-wider">EduTrack AI Coach</span>
+                    </div>
+                    <div class="font-bold text-sm leading-relaxed space-y-2">
+                        ${htmlContent}
+                    </div>
+                </div>
+            `;
+            container.appendChild(bubble);
+            scrollToBottom();
+        }
+
+        function showThinkingIndicator() {
+            const container = document.getElementById('chat-messages-container');
+            const typing = document.createElement('div');
+            typing.id = 'ai-typing-indicator';
+            typing.className = 'flex items-center gap-3 p-3.5 bg-[#F7F7F7] border-2 border-[#E5E5E5] border-b-4 rounded-2xl rounded-tl-none w-max max-w-[85%] message-in';
+            typing.innerHTML = `
+                <div class="w-7 h-7 rounded-full bg-[#1CB0F6]/15 flex items-center justify-center text-[#1CB0F6]">
+                    <iconify-icon icon="lucide:bot" class="text-base"></iconify-icon>
+                </div>
+                <div class="text-xs font-black text-gray-500 flex items-center gap-1.5">
+                    <span>EduTrack AI is thinking</span>
+                    <div class="typing-dots flex gap-0.5 text-[#1CB0F6]">
+                        <span>•</span><span>•</span><span>•</span>
+                    </div>
+                </div>
+            `;
+            container.appendChild(typing);
+            scrollToBottom();
+            return typing;
+        }
+
+        // Offline / LocalStorage Context-Aware AI Engine
+        function processUserMessage(prompt) {
+            appendUserMessage(prompt);
+            const thinking = showThinkingIndicator();
+
+            setTimeout(() => {
+                if (thinking) thinking.remove();
+
+                const responseHtml = generateContextualResponse(prompt);
+                appendAssistantMessage(responseHtml);
+            }, 600);
+        }
+
+        function generateContextualResponse(prompt) {
+            const lower = prompt.toLowerCase();
+            const student = getStudentProfile();
+            const tasks = getTasks();
+            const announcements = getAnnouncements();
+
+            // 1. Document Summary query
+            if (lower.includes('summar') || lower.includes('document') || lower.includes('pdf')) {
+                if (currentAttachedFile) {
+                    return `
+                        <p>Here is a synthesized breakdown of <strong>${escapeHtml(currentAttachedFile.name)}</strong>:</p>
+                        <div class="bg-white rounded-xl p-3 duo-card border-none space-y-1.5 text-xs">
+                            <p><strong>📌 Core Theme:</strong> Fundamental Lecture Modules & Study Exercises.</p>
+                            <p><strong>🎯 Key Takeaways:</strong></p>
+                            <ul class="list-disc pl-4 space-y-1 text-gray-600">
+                                <li>Definitions, properties, and runtime complexity trade-offs.</li>
+                                <li>Common pitfall warnings for midterm exam questions.</li>
+                                <li>Sample practice problems for upcoming lab reports.</li>
+                            </ul>
+                        </div>
+                        <p class="text-xs text-gray-500">Would you like me to generate 3 quick quiz flashcards from this?</p>
+                    `;
+                } else {
+                    return `
+                        <p>Here is a rapid summary of your active course modules:</p>
+                        <div class="bg-white rounded-xl p-3 duo-card border-none space-y-2 text-xs">
+                            <div class="border-b border-gray-100 pb-1.5">
+                                <span class="font-black text-[#1CB0F6]">Computer Science 101:</span>
+                                <p class="text-gray-600">Data structures: Stacks, Queues, Linked Lists, and algorithmic analysis.</p>
+                            </div>
+                            <div class="border-b border-gray-100 pb-1.5">
+                                <span class="font-black text-[#FF9600]">Physics 101:</span>
+                                <p class="text-gray-600">Thermodynamics, wave optics, and experimental uncertainty measurements.</p>
+                            </div>
+                            <div>
+                                <span class="font-black text-[#58CC02]">Math 150:</span>
+                                <p class="text-gray-600">Definite integration techniques, substitution rules, and area bounded curves.</p>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500">Attach any specific lecture PDF using the <strong>+</strong> button for a deeper breakdown!</p>
+                    `;
+                }
+            }
+
+            // 2. Upcoming tasks / notes query
+            if (lower.includes('assignment') || lower.includes('task') || lower.includes('deadline') || lower.includes('note') || lower.includes('due')) {
+                const pending = tasks.filter(t => t.status !== 'Completed').sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
+                if (pending.length === 0) {
+                    return `
+                        <p>🎉 Excellent news, <strong>${student.name}</strong>! You currently have <strong>0 pending assignments</strong> in your planner.</p>
+                        <p>All your tasks are marked complete! Take a well-deserved break or add a new goal in the <a href="assignments.html" class="text-[#1CB0F6] underline">Tasks</a> tab.</p>
+                    `;
+                }
+
+                let itemsHtml = pending.slice(0, 3).map(t => {
+                    const status = getDeadlineStatus(t.deadline);
+                    return `
+                        <div class="flex items-center justify-between p-2 rounded-lg bg-gray-50">
+                            <div>
+                                <span class="font-black text-xs text-[#4B4B4B]">${escapeHtml(t.title)}</span>
+                                <p class="text-[10px] text-gray-400 font-bold">${escapeHtml(t.subject)}</p>
+                            </div>
+                            <span class="text-[10px] font-black px-2 py-0.5 rounded-full ${status.class}">${status.label}</span>
+                        </div>
+                    `;
+                }).join('');
+
+                return `
+                    <p>Here are your highest-priority deadlines from your planner:</p>
+                    <div class="space-y-1.5 my-2">
+                        ${itemsHtml}
+                    </div>
+                    <p class="text-xs">👉 I recommend tackling the <strong>${escapeHtml(pending[0].title)}</strong> first to maintain your ${student.streak}-day streak!</p>
+                `;
+            }
+
+            // 3. Study suggestions / plan query
+            if (lower.includes('plan') || lower.includes('study') || lower.includes('suggest') || lower.includes('tip')) {
+                const pending = tasks.filter(t => t.status !== 'Completed');
+                const topTaskTitle = pending.length > 0 ? pending[0].title : 'Concept Flashcards';
+
+                return `
+                    <p>Here is your tailored <strong>3-Step Focus Plan</strong> for today:</p>
+                    <div class="bg-white rounded-xl p-3 duo-card border-none space-y-2 text-xs">
+                        <div class="flex gap-2.5 items-start">
+                            <span class="w-5 h-5 rounded-full bg-[#1CB0F6] text-white flex items-center justify-center font-black text-[10px] shrink-0 mt-0.5">1</span>
+                            <div>
+                                <strong class="text-[#4B4B4B]">Pomodoro Block 1 (25 mins):</strong>
+                                <p class="text-gray-500">Dive into <em>${escapeHtml(topTaskTitle)}</em> without multitasking.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-2.5 items-start">
+                            <span class="w-5 h-5 rounded-full bg-[#FFC800] text-white flex items-center justify-center font-black text-[10px] shrink-0 mt-0.5">2</span>
+                            <div>
+                                <strong class="text-[#4B4B4B]">Knowledge Check (10 mins):</strong>
+                                <p class="text-gray-500">Summarize the formulas or functions on paper from memory.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-2.5 items-start">
+                            <span class="w-5 h-5 rounded-full bg-[#58CC02] text-white flex items-center justify-center font-black text-[10px] shrink-0 mt-0.5">3</span>
+                            <div>
+                                <strong class="text-[#4B4B4B]">Streak Reward (+100 XP):</strong>
+                                <p class="text-gray-500">Mark your task complete in EduTrack to lock in your daily streak bonus!</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // 4. Default Helpful AI Tutor Response
+            return `
+                <p>I understand! You asked about: <em>"${escapeHtml(prompt)}"</em>.</p>
+                <p>As your EduTrack study coach, here is what you need to remember:</p>
+                <div class="bg-white rounded-xl p-3 duo-card border-none space-y-1.5 text-xs text-gray-600">
+                    <p>💡 Consistency beats cramming every single time.</p>
+                    <p>⚡ You currently have <strong>${student.points} XP</strong> and a <strong>${student.streak}-day streak</strong>.</p>
+                    <p>📚 Check your <a href="assignments.html" class="text-[#1CB0F6] underline">Assignments</a> tab to check off any finished work.</p>
+                </div>
+                <p class="text-xs text-gray-500">Feel free to upload your class notes or ask me to explain any difficult concept!</p>
+            `;
+        }
+
+        function escapeHtml(str) {
+            return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
     </script>
 </body></html>

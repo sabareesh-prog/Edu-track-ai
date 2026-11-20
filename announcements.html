@@ -4,9 +4,8 @@
     <title>EduTrack AI - Announcements</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&amp;display=swap" rel="stylesheet">
-    <script src="supabaseConfig.js"></script>
-    <script src="supabaseClient.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="script.js"></script>
     <style>
         body {
             font-family: 'Nunito', sans-serif;
@@ -17,7 +16,7 @@
         /* Duolingo-style 3D Button Effect */
         .btn-3d {
             position: relative;
-            transition: all 0.1s active;
+            transition: all 0.1s;
             border-bottom-width: 4px;
         }
         .btn-3d:active {
@@ -29,13 +28,12 @@
         .duo-card {
             border: 2px solid #E5E5E5;
             border-bottom-width: 4px;
-            transition: transform 0.1s ease;
+            transition: transform 0.15s ease;
         }
         .duo-card:active {
             transform: scale(0.98);
         }
 
-        /* Hide scrollbar for clean look */
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
@@ -46,230 +44,210 @@
     </style>
 </head>
 <body>
-    <div class="w-full h-screen flex flex-col bg-white" data-sd-id="1">
+    <div class="w-full h-screen flex flex-col bg-white">
         <!-- Header -->
-        <header class="shrink-0 pt-14 px-6 pb-4 bg-white border-b-2 border-gray-100 flex items-center justify-between" data-sd-id="2">
-            <h1 class="text-2xl font-black tracking-tight" data-sd-id="3">Announcements</h1>
-            <div class="flex items-center gap-2" data-sd-id="4">
-                <div class="flex items-center gap-1" data-sd-id="5">
+        <header class="shrink-0 pt-14 px-6 pb-4 bg-white border-b-2 border-gray-100 flex items-center justify-between">
+            <h1 class="text-2xl font-black tracking-tight">Campus Feed</h1>
+            <div class="flex items-center gap-2">
+                <div id="streak-indicator" class="flex items-center gap-1 cursor-pointer" onclick="showToast('Campus Reader Streak 🔥', `${getStudentProfile().streak} days active! Keep checking daily updates.`, 'lucide:flame', '#FF9600')">
                     <iconify-icon icon="lucide:flame" class="text-[#FF9600] text-xl"></iconify-icon>
-                    <span class="font-black text-[#FF9600]" data-sd-id="6">7</span>
+                    <span id="streak-count" class="font-black text-[#FF9600]">7</span>
                 </div>
             </div>
         </header>
 
         <!-- Main Content Area -->
-        <main class="flex-1 overflow-y-auto px-6 py-6 space-y-4 no-scrollbar" data-sd-id="7">
+        <main class="flex-1 overflow-y-auto px-6 py-6 space-y-4 no-scrollbar">
             
             <!-- Category Chips -->
-            <div class="flex gap-3 overflow-x-auto pb-2 no-scrollbar" data-sd-id="8">
-                <button id="btn-cat-all" class="cat-filter-btn shrink-0 px-5 py-2 rounded-full bg-[#1CB0F6] text-white font-black text-sm uppercase tracking-wide btn-3d border-b-[#1483B8]">
-                    All
+            <div class="flex gap-2.5 overflow-x-auto pb-2 no-scrollbar">
+                <button id="btn-cat-all" class="cat-filter-btn shrink-0 px-5 py-2 rounded-full bg-[#1CB0F6] text-white font-black text-sm uppercase tracking-wide btn-3d border-b-[#1483B8] cursor-pointer">
+                    All (<span id="count-cat-all">0</span>)
                 </button>
-                <button id="btn-cat-academic" class="cat-filter-btn shrink-0 px-5 py-2 rounded-full bg-white text-[#777777] font-black text-sm uppercase tracking-wide border-2 border-[#E5E5E5] border-b-4 active:border-b-2 active:translate-y-[2px]">
-                    Academic
+                <button id="btn-cat-academic" class="cat-filter-btn shrink-0 px-5 py-2 rounded-full bg-white text-[#777777] font-black text-sm uppercase tracking-wide border-2 border-[#E5E5E5] border-b-4 hover:bg-gray-50 cursor-pointer">
+                    Academic (<span id="count-cat-academic">0</span>)
                 </button>
-                <button id="btn-cat-campus" class="cat-filter-btn shrink-0 px-5 py-2 rounded-full bg-white text-[#777777] font-black text-sm uppercase tracking-wide border-2 border-[#E5E5E5] border-b-4 active:border-b-2 active:translate-y-[2px]">
-                    Campus
+                <button id="btn-cat-campus" class="cat-filter-btn shrink-0 px-5 py-2 rounded-full bg-white text-[#777777] font-black text-sm uppercase tracking-wide border-2 border-[#E5E5E5] border-b-4 hover:bg-gray-50 cursor-pointer">
+                    Campus (<span id="count-cat-campus">0</span>)
                 </button>
             </div>
 
-            <!-- Announcement Card: New -->
-            <div class="duo-card rounded-[20px] p-5 bg-white relative cursor-pointer announcement-item" data-category="academic" data-sd-id="12">
-                <div class="flex items-start justify-between mb-3" data-sd-id="13">
-                    <div class="flex items-center gap-3" data-sd-id="14">
-                        <div class="w-12 h-12 rounded-2xl bg-[#1CB0F6]/10 flex items-center justify-center" data-sd-id="15">
-                            <iconify-icon icon="lucide:megaphone" class="text-[#1CB0F6] text-2xl"></iconify-icon>
-                        </div>
-                        <div data-sd-id="16">
-                            <h3 class="font-black text-base" data-sd-id="17">Midterm Schedule</h3>
-                            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider" data-sd-id="18">Prof. Arun • 10m ago</p>
-                        </div>
-                    </div>
-                    <span class="unread-dot flex h-3 w-3 rounded-full bg-[#1CB0F6] ring-4 ring-[#1CB0F6]/10" data-sd-id="19"></span>
-                </div>
-                <p class="text-sm font-bold text-[#4B4B4B] leading-relaxed mb-4" data-sd-id="20">
-                    The finalized midterm exam schedule for the Winter semester has been uploaded. Please check the department portal.
-                </p>
-                <div class="flex items-center gap-2" data-sd-id="21">
-                    <span class="px-3 py-1 bg-[#1CB0F6] text-white text-[10px] font-black rounded-full uppercase" data-sd-id="22">New</span>
-                    <span class="px-3 py-1 bg-gray-100 text-gray-400 text-[10px] font-black rounded-full uppercase" data-sd-id="23">Urgent</span>
-                </div>
-            </div>
-
-            <!-- Announcement Card: Read -->
-            <div class="duo-card rounded-[20px] p-5 bg-white cursor-pointer announcement-item" data-category="campus" data-sd-id="24">
-                <div class="flex items-start justify-between mb-3" data-sd-id="25">
-                    <div class="flex items-center gap-3" data-sd-id="26">
-                        <div class="w-12 h-12 rounded-2xl bg-[#58CC02]/10 flex items-center justify-center" data-sd-id="27">
-                            <iconify-icon icon="lucide:library" class="text-[#58CC02] text-2xl"></iconify-icon>
-                        </div>
-                        <div data-sd-id="28">
-                            <h3 class="font-black text-base text-gray-600" data-sd-id="29">Library Hours Update</h3>
-                            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider" data-sd-id="30">Admin • 2h ago</p>
-                        </div>
-                    </div>
-                </div>
-                <p class="text-sm font-bold text-gray-500 leading-relaxed mb-4" data-sd-id="31">
-                    Great news! The central library will remain open 24/7 starting next Monday to support your study marathons.
-                </p>
-                <div class="flex items-center gap-2" data-sd-id="32">
-                    <span class="px-3 py-1 bg-gray-100 text-gray-400 text-[10px] font-black rounded-full uppercase" data-sd-id="33">Facility</span>
-                </div>
-            </div>
-
-            <!-- Announcement Card: New -->
-            <div class="duo-card rounded-[20px] p-5 bg-white relative cursor-pointer announcement-item" data-category="academic" data-sd-id="34">
-                <div class="flex items-start justify-between mb-3" data-sd-id="35">
-                    <div class="flex items-center gap-3" data-sd-id="36">
-                        <div class="w-12 h-12 rounded-2xl bg-[#FF9600]/10 flex items-center justify-center" data-sd-id="37">
-                            <iconify-icon icon="lucide:sparkles" class="text-[#FF9600] text-2xl"></iconify-icon>
-                        </div>
-                        <div data-sd-id="38">
-                            <h3 class="font-black text-base" data-sd-id="39">New AI Feature!</h3>
-                            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider" data-sd-id="40">AI Team • 5h ago</p>
-                        </div>
-                    </div>
-                    <span class="unread-dot flex h-3 w-3 rounded-full bg-[#1CB0F6] ring-4 ring-[#1CB0F6]/10" data-sd-id="41"></span>
-                </div>
-                <p class="text-sm font-bold text-[#4B4B4B] leading-relaxed mb-4" data-sd-id="42">
-                    Your Academic Assistant can now summarize PDFs directly! Just upload and ask "Summarize this".
-                </p>
-                <div class="flex items-center gap-2" data-sd-id="43">
-                    <span class="px-3 py-1 bg-[#1CB0F6] text-white text-[10px] font-black rounded-full uppercase" data-sd-id="44">New</span>
-                    <span class="px-3 py-1 bg-[#FFC800] text-white text-[10px] font-black rounded-full uppercase" data-sd-id="45">Update</span>
-                </div>
-            </div>
-
-            <!-- Announcement Card: Old -->
-            <div class="duo-card rounded-[20px] p-5 bg-white cursor-pointer announcement-item" data-category="campus" data-sd-id="46">
-                <div class="flex items-start justify-between mb-3" data-sd-id="47">
-                    <div class="flex items-center gap-3" data-sd-id="48">
-                        <div class="w-12 h-12 rounded-2xl bg-gray-100 flex items-center justify-center" data-sd-id="49">
-                            <iconify-icon icon="lucide:calendar" class="text-gray-400 text-2xl"></iconify-icon>
-                        </div>
-                        <div data-sd-id="50">
-                            <h3 class="font-black text-base text-gray-600" data-sd-id="51">Guest Lecture Series</h3>
-                            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider" data-sd-id="52">Dr. Smith • Oct 22</p>
-                        </div>
-                    </div>
-                </div>
-                <p class="text-sm font-bold text-gray-500 leading-relaxed" data-sd-id="53">
-                    Join us for an insightful talk on Quantum Computing. Refreshments will be provided.
-                </p>
+            <!-- Dynamic Announcements Container -->
+            <div id="announcements-list-container" class="space-y-4">
+                <!-- Dynamically populated -->
             </div>
 
             <!-- Empty State Spacer -->
-            <div class="h-10" data-sd-id="54"></div>
+            <div class="h-24"></div>
         </main>
 
         <!-- Bottom Navigation -->
-        <footer class="shrink-0 pb-[34px] bg-white border-t-2 border-[#E5E5E5] px-4 flex items-center justify-between h-[100px] z-50" data-sd-id="55">
-            <a href="student.html" id="nav-home" class="flex flex-col items-center gap-1 group py-2 flex-1" data-sd-id="56">
-                <iconify-icon icon="lucide:home" class="text-2xl text-gray-300 group-hover:text-[#58CC02] transition-colors"></iconify-icon>
-                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest" data-sd-id="57">Home</span>
+        <footer class="shrink-0 pb-[34px] bg-white border-t-2 border-[#E5E5E5] px-4 flex items-center justify-between h-[100px] z-50">
+            <a href="student.html" id="nav-home" class="flex flex-col items-center gap-1 group py-2 flex-1">
+                <div class="w-12 h-8 rounded-xl flex items-center justify-center">
+                    <iconify-icon icon="lucide:home" class="text-2xl text-gray-300 group-hover:text-[#58CC02] transition-colors"></iconify-icon>
+                </div>
+                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Home</span>
             </a>
-            <a href="assignments.html" id="nav-assignments" class="flex flex-col items-center gap-1 group py-2 flex-1" data-sd-id="58">
-                <iconify-icon icon="lucide:book-open" class="text-2xl text-gray-300 group-hover:text-[#58CC02] transition-colors"></iconify-icon>
-                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest" data-sd-id="59">Tasks</span>
+            <a href="assignments.html" id="nav-assignments" class="flex flex-col items-center gap-1 group py-2 flex-1">
+                <div class="w-12 h-8 rounded-xl flex items-center justify-center">
+                    <iconify-icon icon="lucide:book-open" class="text-2xl text-gray-300 group-hover:text-[#58CC02] transition-colors"></iconify-icon>
+                </div>
+                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Tasks</span>
             </a>
-            <a href="assistant.html" id="nav-ai" class="flex flex-col items-center gap-1 group py-2 flex-1 relative -top-2" data-sd-id="60">
-                <div class="w-14 h-14 rounded-2xl bg-[#1CB0F6] btn-3d border-b-[#1483B8] flex items-center justify-center text-white shadow-lg" data-sd-id="61">
+            <a href="assistant.html" id="nav-ai" class="flex flex-col items-center gap-1 group py-2 flex-1 relative -top-2">
+                <div class="w-14 h-14 rounded-2xl bg-[#1CB0F6] btn-3d border-b-[#1483B8] flex items-center justify-center text-white shadow-lg">
                     <iconify-icon icon="lucide:sparkles" class="text-3xl"></iconify-icon>
                 </div>
             </a>
-            <a href="announcements.html" id="nav-announcements" class="flex flex-col items-center gap-1 group py-2 flex-1" data-sd-id="62">
-                <div class="w-12 h-8 rounded-xl bg-[#58CC02]/10 flex items-center justify-center" data-sd-id="63">
+            <a href="announcements.html" id="nav-announcements" class="flex flex-col items-center gap-1 group py-2 flex-1">
+                <div class="w-12 h-8 rounded-xl bg-[#58CC02]/10 flex items-center justify-center">
                     <iconify-icon icon="lucide:bell" class="text-2xl text-[#58CC02]"></iconify-icon>
                 </div>
-                <span class="text-[10px] font-black text-[#58CC02] uppercase tracking-widest" data-sd-id="64">Feed</span>
+                <span class="text-[10px] font-black text-[#58CC02] uppercase tracking-widest">Feed</span>
             </a>
-            <a href="login.html" id="nav-profile" class="flex flex-col items-center gap-1 group py-2 flex-1" data-sd-id="65">
-                <iconify-icon icon="lucide:user-circle" class="text-2xl text-gray-300 group-hover:text-[#58CC02] transition-colors"></iconify-icon>
-                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest" data-sd-id="66">Profile</span>
+            <a href="login.html" id="nav-profile" class="flex flex-col items-center gap-1 group py-2 flex-1">
+                <div class="w-12 h-8 rounded-xl flex items-center justify-center">
+                    <iconify-icon icon="lucide:user-circle" class="text-2xl text-gray-300 group-hover:text-[#58CC02] transition-colors"></iconify-icon>
+                </div>
+                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Profile</span>
             </a>
         </footer>
     </div>
 
-    <!-- Toast -->
-    <div id="toast" class="fixed top-20 left-1/2 -translate-x-1/2 w-[90%] max-w-sm bg-white border-2 border-[#E5E5E5] border-b-4 rounded-2xl p-4 flex items-center gap-4 shadow-2xl z-50 transform translate-y-[-200%] transition-transform duration-300 pointer-events-none">
-        <div id="toast-icon-bg" class="w-12 h-12 rounded-xl bg-[#1CB0F6]/15 text-[#1CB0F6] flex items-center justify-center shrink-0">
-            <iconify-icon id="toast-icon" icon="lucide:bell" class="text-2xl"></iconify-icon>
-        </div>
-        <div>
-            <h5 id="toast-title" class="font-black text-sm uppercase leading-none mb-1 text-[#4B4B4B]">Notification</h5>
-            <p id="toast-msg" class="font-bold text-xs text-gray-500">Notice details</p>
-        </div>
-    </div>
-
     <script>
-        function showToast(title, msg, icon = 'lucide:bell', color = '#1CB0F6') {
-            const toast = document.getElementById('toast');
-            document.getElementById('toast-title').textContent = title;
-            document.getElementById('toast-msg').textContent = msg;
-            const iconBg = document.getElementById('toast-icon-bg');
-            const iconEl = document.getElementById('toast-icon');
-            iconBg.style.backgroundColor = color + '15';
-            iconBg.style.color = color;
-            iconEl.setAttribute('icon', icon);
-
-            toast.style.transform = 'translate(-50%, 0)';
-            setTimeout(() => {
-                toast.style.transform = 'translate(-50%, -200%)';
-            }, 3000);
-        }
+        let currentCategory = 'all';
 
         document.addEventListener('DOMContentLoaded', () => {
-            const catBtns = {
+            const student = getStudentProfile();
+            document.getElementById('streak-count').textContent = student.streak || 7;
+
+            renderAnnouncements();
+
+            // Filter button events
+            document.getElementById('btn-cat-all').addEventListener('click', () => setCategory('all'));
+            document.getElementById('btn-cat-academic').addEventListener('click', () => setCategory('academic'));
+            document.getElementById('btn-cat-campus').addEventListener('click', () => setCategory('campus'));
+        });
+
+        function setCategory(cat) {
+            currentCategory = cat;
+            const catMap = {
                 'all': document.getElementById('btn-cat-all'),
                 'academic': document.getElementById('btn-cat-academic'),
                 'campus': document.getElementById('btn-cat-campus')
             };
-            const cards = document.querySelectorAll('.announcement-item');
 
-            function filterAnnouncements(cat) {
-                Object.keys(catBtns).forEach(k => {
-                    const btn = catBtns[k];
-                    if (k === cat) {
-                        btn.className = 'cat-filter-btn shrink-0 px-5 py-2 rounded-full bg-[#1CB0F6] text-white font-black text-sm uppercase tracking-wide btn-3d border-b-[#1483B8]';
-                    } else {
-                        btn.className = 'cat-filter-btn shrink-0 px-5 py-2 rounded-full bg-white text-[#777777] font-black text-sm uppercase tracking-wide border-2 border-[#E5E5E5] border-b-4 active:border-b-2 active:translate-y-[2px]';
-                    }
-                });
-
-                cards.forEach(c => {
-                    const itemCat = c.getAttribute('data-category');
-                    if (cat === 'all' || itemCat === cat) {
-                        c.style.display = 'block';
-                    } else {
-                        c.style.display = 'none';
-                    }
-                });
-            }
-
-            catBtns.all.addEventListener('click', () => filterAnnouncements('all'));
-            catBtns.academic.addEventListener('click', () => filterAnnouncements('academic'));
-            catBtns.campus.addEventListener('click', () => filterAnnouncements('campus'));
-
-            // Click announcement to mark as read
-            cards.forEach(c => {
-                c.addEventListener('click', () => {
-                    const title = c.querySelector('h3') ? c.querySelector('h3').textContent : 'Notice';
-                    const dot = c.querySelector('.unread-dot');
-                    if (dot) dot.remove();
-                    c.classList.add('opacity-70');
-                    showToast('Marked as Read', `"${title}" has been acknowledged.`, 'lucide:check-circle', '#58CC02');
-                });
+            Object.keys(catMap).forEach(k => {
+                const btn = catMap[k];
+                if (k === cat) {
+                    btn.className = 'cat-filter-btn shrink-0 px-5 py-2 rounded-full bg-[#1CB0F6] text-white font-black text-sm uppercase tracking-wide btn-3d border-b-[#1483B8] cursor-pointer';
+                } else {
+                    btn.className = 'cat-filter-btn shrink-0 px-5 py-2 rounded-full bg-white text-[#777777] font-black text-sm uppercase tracking-wide border-2 border-[#E5E5E5] border-b-4 hover:bg-gray-50 cursor-pointer';
+                }
             });
 
-            // Flame streak icon in header
-            const flame = document.querySelector('header .flex.items-center.gap-1');
-            if (flame) {
-                flame.style.cursor = 'pointer';
-                flame.addEventListener('click', () => {
-                    showToast('7 Day Streak! 🔥', 'Keep reading daily updates to extend your streak!', 'lucide:flame', '#FF9600');
-                });
+            renderAnnouncements();
+        }
+
+        function renderAnnouncements() {
+            const list = getAnnouncements();
+            const container = document.getElementById('announcements-list-container');
+
+            // Update Counts
+            const allCount = list.length;
+            const academicCount = list.filter(a => a.category === 'academic').length;
+            const campusCount = list.filter(a => a.category === 'campus').length;
+
+            document.getElementById('count-cat-all').textContent = allCount;
+            document.getElementById('count-cat-academic').textContent = academicCount;
+            document.getElementById('count-cat-campus').textContent = campusCount;
+
+            // Filter
+            let filtered = list;
+            if (currentCategory !== 'all') {
+                filtered = list.filter(a => a.category === currentCategory);
             }
-        });
+
+            container.innerHTML = '';
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="duo-card rounded-[20px] p-8 bg-white text-center">
+                        <iconify-icon icon="lucide:bell-off" class="text-3xl text-gray-300 mb-2"></iconify-icon>
+                        <p class="font-black text-sm text-[#4B4B4B]">No announcements in this category.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filtered.forEach(item => {
+                const isRead = item.read === true;
+                const card = document.createElement('div');
+                card.className = `duo-card rounded-[20px] p-5 bg-white relative cursor-pointer transition-all ${isRead ? 'opacity-70 bg-gray-50' : 'hover:scale-[1.01]'}`;
+
+                // Icon and Color based on category
+                let iconName = 'lucide:megaphone';
+                let iconColor = '#1CB0F6';
+                if (item.category === 'campus') {
+                    iconName = 'lucide:library';
+                    iconColor = '#58CC02';
+                } else if (item.urgent) {
+                    iconName = 'lucide:alert-circle';
+                    iconColor = '#FF4B4B';
+                }
+
+                // Badges
+                let badges = '';
+                if (item.urgent) {
+                    badges += `<span class="px-3 py-1 bg-[#FF4B4B]/10 text-[#FF4B4B] border border-[#FF4B4B]/20 text-[10px] font-black rounded-full uppercase">Urgent</span>`;
+                }
+                if (item.category) {
+                    badges += `<span class="px-3 py-1 bg-gray-100 text-gray-500 text-[10px] font-black rounded-full uppercase">${escapeHtml(item.category)}</span>`;
+                }
+                if (!isRead) {
+                    badges += `<span class="px-3 py-1 bg-[#1CB0F6] text-white text-[10px] font-black rounded-full uppercase">Unread</span>`;
+                }
+
+                card.innerHTML = `
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0" style="background-color: ${iconColor}15; color: ${iconColor};">
+                                <iconify-icon icon="${iconName}" class="text-2xl"></iconify-icon>
+                            </div>
+                            <div>
+                                <h3 class="font-black text-base ${isRead ? 'text-gray-600' : 'text-[#4B4B4B]'}">${escapeHtml(item.title)}</h3>
+                                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">${escapeHtml(item.author || 'Admin')} • ${escapeHtml(item.time || 'Today')}</p>
+                            </div>
+                        </div>
+                        ${!isRead ? `<span class="unread-dot flex h-3 w-3 rounded-full bg-[#1CB0F6] ring-4 ring-[#1CB0F6]/10 shrink-0"></span>` : ''}
+                    </div>
+                    <p class="text-sm font-bold leading-relaxed mb-4 ${isRead ? 'text-gray-500' : 'text-[#4B4B4B]'}">
+                        ${escapeHtml(item.content)}
+                    </p>
+                    <div class="flex items-center gap-2">
+                        ${badges}
+                    </div>
+                `;
+
+                // Click to toggle read
+                card.addEventListener('click', () => {
+                    item.read = !item.read;
+                    saveAnnouncements(list);
+                    if (item.read) {
+                        showToast('Acknowledged 📖', `Marked "${item.title}" as read.`, 'lucide:check-circle', '#58CC02');
+                    } else {
+                        showToast('Marked as Unread', `"${item.title}" set to unread.`, 'lucide:bell', '#1CB0F6');
+                    }
+                    renderAnnouncements();
+                });
+
+                container.appendChild(card);
+            });
+        }
+
+        function escapeHtml(str) {
+            return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
     </script>
 </body></html>

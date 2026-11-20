@@ -4,9 +4,8 @@
     <title>EduTrack AI - Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&amp;display=swap" rel="stylesheet">
-    <script src="supabaseConfig.js"></script>
-    <script src="supabaseClient.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="script.js"></script>
     <style>
         body {
             font-family: 'Nunito', sans-serif;
@@ -63,92 +62,130 @@
     </style>
 </head>
 <body>
-    <div class="w-full h-screen flex flex-col bg-white" data-sd-id="1">
+    <div class="w-full min-h-screen flex flex-col bg-white">
         <!-- Main Content Scroll Area -->
-        <main class="flex-1 overflow-y-auto pt-14 pb-[34px] px-8 flex flex-col items-center" data-sd-id="2">
+        <main class="flex-1 overflow-y-auto pt-10 pb-12 px-8 flex flex-col items-center max-w-md mx-auto w-full">
             
+            <!-- Already Logged In Banner (if session active) -->
+            <div id="active-session-banner" class="w-full mb-6 p-4 rounded-2xl bg-[#58CC02]/10 border-2 border-[#58CC02]/30 hidden">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-[#58CC02] animate-pulse"></span>
+                        <span class="text-xs font-black uppercase text-[#46A302]">Active Session</span>
+                    </div>
+                    <button onclick="logoutUser()" class="text-xs font-black text-[#FF4B4B] hover:underline uppercase">Log Out</button>
+                </div>
+                <p id="active-session-name" class="font-black text-sm text-[#4B4B4B] mb-2">Logged in as Priya Sharma (Student)</p>
+                <button id="resume-session-btn" class="w-full py-2 bg-[#58CC02] text-white font-black text-xs uppercase rounded-xl btn-3d border-b-[#46A302]">
+                    Go to Dashboard &rarr;
+                </button>
+            </div>
+
             <!-- Mascot Section -->
-            <div class="w-32 h-32 float-mascot mb-6 flex items-center justify-center" data-sd-id="3">
-                <!-- Mascot Owl/Robot -->
-                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full drop-shadow-lg" data-sd-id="4">
+            <div class="w-28 h-28 float-mascot mb-4 flex items-center justify-center">
+                <!-- Mascot Owl -->
+                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full drop-shadow-lg">
                     <circle cx="50" cy="50" r="45" fill="#58CC02"></circle>
                     <path d="M50 20C30 20 20 35 20 55C20 75 35 85 50 85C65 85 80 75 80 55C80 35 70 20 50 20Z" fill="#58CC02" stroke="white" stroke-width="2"></path>
-                    <!-- Eyes -->
                     <circle cx="35" cy="45" r="10" fill="white"></circle>
                     <circle cx="35" cy="45" r="5" fill="#4B4B4B"></circle>
                     <circle cx="65" cy="45" r="10" fill="white"></circle>
                     <circle cx="65" cy="45" r="5" fill="#4B4B4B"></circle>
-                    <!-- Beak/Mouth -->
                     <path d="M44 58L50 64L56 58" stroke="#FFC800" stroke-width="5" stroke-linecap="round"></path>
-                    <!-- Shine -->
                     <circle cx="30" cy="30" r="4" fill="white" fill-opacity="0.3"></circle>
                 </svg>
             </div>
 
             <!-- Branding -->
-            <div class="text-center mb-10" data-sd-id="5">
-                <h1 class="text-3xl font-black tracking-tight text-[#4B4B4B] mb-2" data-sd-id="6">EduTrack AI</h1>
-                <p class="text-[#777777] font-bold text-lg leading-snug max-w-[240px] mx-auto" data-sd-id="7">Learn smarter. Never miss a deadline.</p>
+            <div class="text-center mb-6">
+                <h1 id="page-title" class="text-3xl font-black tracking-tight text-[#4B4B4B] mb-1">EduTrack AI</h1>
+                <p id="page-subtitle" class="text-[#777777] font-bold text-base leading-snug">Learn smarter. Never miss a deadline.</p>
             </div>
 
             <!-- Role Selector -->
-            <div class="w-full mb-8" data-sd-id="8">
-                <p class="text-[13px] font-black text-gray-400 uppercase tracking-widest mb-4 text-center" data-sd-id="9">Who are you?</p>
-                <div class="flex gap-3 justify-center" data-sd-id="10">
+            <div class="w-full mb-6">
+                <p class="text-[12px] font-black text-gray-400 uppercase tracking-widest mb-3 text-center">Select Your Role</p>
+                <div class="flex gap-3 justify-center">
                     <!-- Student -->
-                    <button id="role-student" onclick="selectRole('student')" class="role-btn flex-1 flex flex-col items-center p-3 rounded-2xl duo-card bg-white text-[#58CC02] border-[#E5E5E5] hover:bg-gray-50 transition-all" data-sd-id="11">
+                    <button type="button" id="role-student" onclick="selectRole('student')" class="role-btn flex-1 flex flex-col items-center p-3 rounded-2xl duo-card bg-white text-[#58CC02] border-[#58CC02] hover:bg-gray-50 transition-all cursor-pointer">
                         <iconify-icon icon="lucide:graduation-cap" class="text-2xl mb-1"></iconify-icon>
-                        <span class="text-[11px] font-black uppercase" data-sd-id="12">Student</span>
+                        <span class="text-[11px] font-black uppercase">Student</span>
                     </button>
                     <!-- Faculty -->
-                    <button id="role-faculty" onclick="selectRole('faculty')" class="role-btn flex-1 flex flex-col items-center p-3 rounded-2xl duo-card bg-white text-[#1CB0F6] border-[#E5E5E5] hover:bg-gray-50 transition-all" data-sd-id="13">
+                    <button type="button" id="role-faculty" onclick="selectRole('faculty')" class="role-btn flex-1 flex flex-col items-center p-3 rounded-2xl duo-card bg-white text-[#1CB0F6] border-[#E5E5E5] hover:bg-gray-50 transition-all cursor-pointer">
                         <iconify-icon icon="lucide:book-user" class="text-2xl mb-1"></iconify-icon>
-                        <span class="text-[11px] font-black uppercase" data-sd-id="14">Faculty</span>
+                        <span class="text-[11px] font-black uppercase">Faculty</span>
                     </button>
                     <!-- Admin -->
-                    <button id="role-admin" onclick="selectRole('admin')" class="role-btn flex-1 flex flex-col items-center p-3 rounded-2xl duo-card bg-white text-[#A855F7] border-[#E5E5E5] hover:bg-gray-50 transition-all" data-sd-id="15">
+                    <button type="button" id="role-admin" onclick="selectRole('admin')" class="role-btn flex-1 flex flex-col items-center p-3 rounded-2xl duo-card bg-white text-[#A855F7] border-[#E5E5E5] hover:bg-gray-50 transition-all cursor-pointer">
                         <iconify-icon icon="lucide:shield-check" class="text-2xl mb-1"></iconify-icon>
-                        <span class="text-[11px] font-black uppercase" data-sd-id="16">Admin</span>
+                        <span class="text-[11px] font-black uppercase">Admin</span>
                     </button>
                 </div>
             </div>
 
             <!-- Form -->
-            <div class="w-full space-y-4 mb-8" data-sd-id="17">
+            <form id="auth-form" class="w-full space-y-3.5 mb-6">
                 <div id="signup-name-container" class="relative hidden">
-                    <input type="text" placeholder="Full Name" class="w-full h-14 px-5 rounded-2xl bg-[#F7F7F7] duo-input font-bold text-[#4B4B4B] placeholder:text-gray-400" id="login-name">
+                    <input type="text" placeholder="Full Name" class="w-full h-13 px-5 rounded-2xl bg-[#F7F7F7] duo-input font-bold text-[#4B4B4B] placeholder:text-gray-400" id="login-name">
                 </div>
-                <div class="relative" data-sd-id="18">
-                    <input type="email" placeholder="Email" class="w-full h-14 px-5 rounded-2xl bg-[#F7F7F7] duo-input font-bold text-[#4B4B4B] placeholder:text-gray-400" id="login-email" data-sd-id="19">
+                <div class="relative">
+                    <input type="email" placeholder="Email (e.g. student@edutrack.ai)" required class="w-full h-13 px-5 rounded-2xl bg-[#F7F7F7] duo-input font-bold text-[#4B4B4B] placeholder:text-gray-400" id="login-email">
                 </div>
-                <div class="relative" data-sd-id="20">
-                    <input type="password" placeholder="Password" class="w-full h-14 px-5 rounded-2xl bg-[#F7F7F7] duo-input font-bold text-[#4B4B4B] placeholder:text-gray-400" id="login-password" data-sd-id="21">
+                <div class="relative">
+                    <input type="password" placeholder="Password (password123)" required class="w-full h-13 px-5 rounded-2xl bg-[#F7F7F7] duo-input font-bold text-[#4B4B4B] placeholder:text-gray-400" id="login-password">
                 </div>
-                <div class="text-right" data-sd-id="22">
-                    <a href="#" id="forgot-password-link" class="text-[#1CB0F6] font-black text-sm uppercase tracking-wider" data-sd-id="23">Forgot?</a>
+                <div class="flex items-center justify-between px-1">
+                    <button type="button" id="btn-fill-demo" class="text-[11px] font-black text-gray-400 hover:text-[#58CC02] uppercase tracking-wider">
+                        ⚡ Auto-fill Demo
+                    </button>
+                    <a href="#" id="forgot-password-link" class="text-[#1CB0F6] font-black text-xs uppercase tracking-wider hover:underline">Forgot?</a>
                 </div>
-            </div>
 
-            <!-- Action Button -->
-            <div class="w-full mt-auto" data-sd-id="24">
-                <button type="button" id="login-submit-btn" class="flex items-center justify-center w-full h-14 bg-[#58CC02] border-b-[#46A302] text-white font-black text-lg rounded-2xl btn-3d uppercase tracking-widest shadow-lg cursor-pointer" data-sd-id="25">
+                <!-- Error Notice -->
+                <div id="auth-error-msg" class="hidden p-3 rounded-xl bg-[#FF4B4B]/10 border border-[#FF4B4B]/30 text-[#FF4B4B] text-xs font-bold text-center">
+                </div>
+
+                <!-- Action Button -->
+                <button type="submit" id="login-submit-btn" class="w-full h-14 bg-[#58CC02] border-b-4 border-[#46A302] text-white font-black text-lg rounded-2xl btn-3d uppercase tracking-widest shadow-lg cursor-pointer mt-2">
                     Log In
                 </button>
-                <p class="mt-6 text-center text-[#777777] font-bold text-sm" data-sd-id="26">
-                    <span id="signup-prompt-text">First time here?</span> <a href="#" id="signup-link" class="text-[#1CB0F6] font-black hover:underline cursor-pointer" data-sd-id="27">Sign Up</a>
+            </form>
+
+            <!-- Bottom Toggle Prompt -->
+            <div class="w-full text-center">
+                <p class="text-[#777777] font-bold text-sm">
+                    <span id="signup-prompt-text">First time here?</span>
+                    <a href="#" id="signup-link" class="text-[#1CB0F6] font-black hover:underline cursor-pointer ml-1">Sign Up</a>
                 </p>
+                <div class="mt-4 pt-4 border-t border-gray-100 flex items-center justify-center gap-4 text-xs font-bold text-gray-400">
+                    <a href="student.html" class="hover:text-[#58CC02]">Direct to Student</a>
+                    <span>•</span>
+                    <a href="faculty.html" class="hover:text-[#1CB0F6]">Faculty</a>
+                    <span>•</span>
+                    <a href="admin.html" class="hover:text-[#A855F7]">Admin</a>
+                </div>
             </div>
         </main>
     </div>
 
-    <!-- Toast -->
-    <div id="toast" class="fixed top-20 left-1/2 -translate-x-1/2 w-[90%] max-w-sm bg-white border-2 border-[#E5E5E5] border-b-4 rounded-2xl p-4 flex items-center gap-4 shadow-2xl z-50 transform translate-y-[-200%] transition-transform duration-300 pointer-events-none">
-        <div id="toast-icon-bg" class="w-12 h-12 rounded-xl bg-[#58CC02]/15 text-[#58CC02] flex items-center justify-center shrink-0">
-            <iconify-icon id="toast-icon" icon="lucide:check-circle" class="text-2xl"></iconify-icon>
-        </div>
-        <div>
-            <h5 id="toast-title" class="font-black text-sm uppercase leading-none mb-1 text-[#4B4B4B]">Notification</h5>
-            <p id="toast-msg" class="font-bold text-xs text-gray-500">Notice details</p>
+    <!-- Forgot Password Modal -->
+    <div id="forgot-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 hidden">
+        <div class="bg-white rounded-[28px] duo-card max-w-sm w-full p-6 text-center shadow-2xl relative">
+            <button id="close-forgot-modal" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 hover:bg-gray-200">
+                <iconify-icon icon="lucide:x" class="text-xl"></iconify-icon>
+            </button>
+            <div class="w-14 h-14 rounded-2xl bg-[#1CB0F6]/15 text-[#1CB0F6] flex items-center justify-center mx-auto mb-3">
+                <iconify-icon icon="lucide:key-round" class="text-3xl"></iconify-icon>
+            </div>
+            <h3 class="text-xl font-black text-[#4B4B4B] mb-1">Reset Password</h3>
+            <p class="text-xs font-bold text-gray-400 mb-4">Enter your registered email address to receive reset instructions.</p>
+            <form id="forgot-form" class="space-y-4">
+                <input type="email" id="forgot-email-input" placeholder="student@edutrack.ai" required class="w-full h-12 px-4 rounded-xl bg-[#F7F7F7] duo-input font-bold text-[#4B4B4B] text-sm">
+                <button type="submit" class="w-full py-3.5 bg-[#1CB0F6] text-white font-black text-xs uppercase tracking-wider rounded-xl btn-3d border-b-[#1483B8]">
+                    Send Reset Link (Demo)
+                </button>
+            </form>
         </div>
     </div>
 
@@ -156,21 +193,11 @@
         let currentRole = 'student';
         let isSignUpMode = false;
 
-        function showToast(title, msg, icon = 'lucide:check-circle', color = '#58CC02') {
-            const toast = document.getElementById('toast');
-            document.getElementById('toast-title').textContent = title;
-            document.getElementById('toast-msg').textContent = msg;
-            const iconBg = document.getElementById('toast-icon-bg');
-            const iconEl = document.getElementById('toast-icon');
-            iconBg.style.backgroundColor = color + '15';
-            iconBg.style.color = color;
-            iconEl.setAttribute('icon', icon);
-
-            toast.style.transform = 'translate(-50%, 0)';
-            setTimeout(() => {
-                toast.style.transform = 'translate(-50%, -200%)';
-            }, 3500);
-        }
+        const roleCreds = {
+            student: { email: 'student@edutrack.ai', password: 'password123', redirect: 'student.html' },
+            faculty: { email: 'faculty@edutrack.ai', password: 'password123', redirect: 'faculty.html' },
+            admin:   { email: 'admin@edutrack.ai', password: 'password123', redirect: 'admin.html' }
+        };
 
         function selectRole(role) {
             currentRole = role;
@@ -182,7 +209,7 @@
             });
 
             const activeBtn = document.getElementById('role-' + role);
-            const loginBtn = document.getElementById('login-submit-btn');
+            const submitBtn = document.getElementById('login-submit-btn');
             
             let color = '#58CC02';
             let darkColor = '#46A302';
@@ -198,82 +225,191 @@
                 darkColor = '#7E22CE';
             }
 
-            activeBtn.style.borderColor = color;
-            activeBtn.style.backgroundColor = color + '08';
-            activeBtn.style.borderBottomWidth = '2px';
-            activeBtn.style.transform = 'translateY(2px)';
+            if (activeBtn) {
+                activeBtn.style.borderColor = color;
+                activeBtn.style.backgroundColor = color + '08';
+                activeBtn.style.borderBottomWidth = '2px';
+                activeBtn.style.transform = 'translateY(2px)';
+            }
             
-            loginBtn.style.backgroundColor = color;
-            loginBtn.style.borderBottomColor = darkColor;
+            if (submitBtn) {
+                submitBtn.style.backgroundColor = color;
+                submitBtn.style.borderBottomColor = darkColor;
+            }
         }
 
-        // Toggle between Log In and Sign Up
-        const signupLink = document.getElementById('signup-link');
-        const signupNameContainer = document.getElementById('signup-name-container');
-        const submitBtn = document.getElementById('login-submit-btn');
-        const promptText = document.getElementById('signup-prompt-text');
-
-        signupLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            isSignUpMode = !isSignUpMode;
-
-            if (isSignUpMode) {
-                signupNameContainer.classList.remove('hidden');
-                submitBtn.textContent = 'Create Account';
-                promptText.textContent = 'Already have an account?';
-                signupLink.textContent = 'Log In';
-                document.querySelector('h1').textContent = 'Join EduTrack';
-            } else {
-                signupNameContainer.classList.add('hidden');
-                submitBtn.textContent = 'Log In';
-                promptText.textContent = 'First time here?';
-                signupLink.textContent = 'Sign Up';
-                document.querySelector('h1').textContent = 'EduTrack AI';
+        function fillDemoCreds() {
+            const creds = roleCreds[currentRole];
+            if (creds) {
+                document.getElementById('login-email').value = creds.email;
+                document.getElementById('login-password').value = creds.password;
+                showToast('Demo Credentials Filled', `${currentRole.toUpperCase()}: ${creds.email}`, 'lucide:sparkles', '#1CB0F6');
             }
-        });
-
-        // Forgot password
-        document.getElementById('forgot-password-link').addEventListener('click', (e) => {
-            e.preventDefault();
-            const email = document.getElementById('login-email').value.trim() || 'student@university.edu';
-            showToast('Reset Link Sent! ✉️', `Password reset instructions sent to ${email}`, 'lucide:mail', '#1CB0F6');
-        });
-
-        // Login / Sign Up action handler
-        submitBtn.addEventListener('click', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('login-email').value.trim();
-            const password = document.getElementById('login-password').value.trim();
-
-            if (isSignUpMode) {
-                const name = document.getElementById('login-name').value.trim() || 'New User';
-                // Sign up via Supabase if connected
-                if (window.eduSupabase && window.eduSupabase.isConnected() && email && password) {
-                    await window.eduSupabase.signUp(email, password, { full_name: name, role: currentRole });
-                }
-                showToast('Welcome Aboard! 🎉', `Account created as ${currentRole.toUpperCase()}`, 'lucide:user-check', '#58CC02');
-            } else {
-                // Log in via Supabase if connected
-                if (window.eduSupabase && window.eduSupabase.isConnected() && email && password) {
-                    await window.eduSupabase.signIn(email, password);
-                }
-                showToast('Logging In...', `Routing to ${currentRole.toUpperCase()} dashboard`, 'lucide:loader', '#58CC02');
-            }
-
-            setTimeout(() => {
-                if (currentRole === 'faculty') {
-                    window.location.href = 'faculty.html';
-                } else if (currentRole === 'admin') {
-                    window.location.href = 'admin.html';
-                } else {
-                    window.location.href = 'student.html';
-                }
-            }, 600);
-        });
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
             selectRole('student');
+            fillDemoCreds();
+
+            // Check if already logged in
+            const session = getSession();
+            if (session.isLoggedIn && session.user) {
+                const banner = document.getElementById('active-session-banner');
+                const nameEl = document.getElementById('active-session-name');
+                const resumeBtn = document.getElementById('resume-session-btn');
+                if (banner && nameEl) {
+                    banner.classList.remove('hidden');
+                    nameEl.textContent = `Logged in as ${session.user.name || 'User'} (${(session.user.role || 'Student').toUpperCase()})`;
+                    resumeBtn.addEventListener('click', () => {
+                        const targetRole = (session.user.role || 'student').toLowerCase();
+                        if (targetRole === 'faculty') window.location.href = 'faculty.html';
+                        else if (targetRole === 'admin') window.location.href = 'admin.html';
+                        else window.location.href = 'student.html';
+                    });
+                }
+            }
+
+            // Auto-fill demo button
+            document.getElementById('btn-fill-demo').addEventListener('click', fillDemoCreds);
+
+            // Toggle between Log In and Sign Up
+            const signupLink = document.getElementById('signup-link');
+            const signupNameContainer = document.getElementById('signup-name-container');
+            const submitBtn = document.getElementById('login-submit-btn');
+            const promptText = document.getElementById('signup-prompt-text');
+            const errorMsg = document.getElementById('auth-error-msg');
+
+            signupLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                isSignUpMode = !isSignUpMode;
+                errorMsg.classList.add('hidden');
+
+                if (isSignUpMode) {
+                    signupNameContainer.classList.remove('hidden');
+                    submitBtn.textContent = 'Create Account';
+                    promptText.textContent = 'Already have an account?';
+                    signupLink.textContent = 'Log In';
+                    document.getElementById('page-title').textContent = 'Join EduTrack';
+                    document.getElementById('page-subtitle').textContent = `Sign up as a ${currentRole.toUpperCase()}`;
+                    document.getElementById('login-name').focus();
+                } else {
+                    signupNameContainer.classList.add('hidden');
+                    submitBtn.textContent = 'Log In';
+                    promptText.textContent = 'First time here?';
+                    signupLink.textContent = 'Sign Up';
+                    document.getElementById('page-title').textContent = 'EduTrack AI';
+                    document.getElementById('page-subtitle').textContent = 'Learn smarter. Never miss a deadline.';
+                    fillDemoCreds();
+                }
+            });
+
+            // Forgot Password Modal
+            const forgotModal = document.getElementById('forgot-modal');
+            const forgotLink = document.getElementById('forgot-password-link');
+            const closeForgot = document.getElementById('close-forgot-modal');
+            const forgotForm = document.getElementById('forgot-form');
+
+            forgotLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                const curEmail = document.getElementById('login-email').value.trim();
+                if (curEmail) document.getElementById('forgot-email-input').value = curEmail;
+                forgotModal.classList.remove('hidden');
+            });
+
+            closeForgot.addEventListener('click', () => forgotModal.classList.add('hidden'));
+            forgotModal.addEventListener('click', (e) => {
+                if (e.target === forgotModal) forgotModal.classList.add('hidden');
+            });
+
+            forgotForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = document.getElementById('forgot-email-input').value.trim();
+                forgotModal.classList.add('hidden');
+                showToast('Reset Link Sent! ✉️', `Demo reset link sent to ${email}`, 'lucide:mail', '#1CB0F6');
+            });
+
+            // Form Submit: Login or Sign Up
+            document.getElementById('auth-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                errorMsg.classList.add('hidden');
+
+                const email = document.getElementById('login-email').value.trim();
+                const password = document.getElementById('login-password').value.trim();
+                const accounts = getAccounts();
+
+                if (isSignUpMode) {
+                    const name = document.getElementById('login-name').value.trim() || 'New User';
+                    if (!email || !password) {
+                        errorMsg.textContent = 'Please fill in all fields.';
+                        errorMsg.classList.remove('hidden');
+                        return;
+                    }
+
+                    // Check if email already exists
+                    const existing = accounts.find(a => a.email.toLowerCase() === email.toLowerCase());
+                    if (existing) {
+                        errorMsg.textContent = 'An account with this email already exists. Please log in.';
+                        errorMsg.classList.remove('hidden');
+                        return;
+                    }
+
+                    // Create new account
+                    const newUser = {
+                        id: 'acc_' + Date.now(),
+                        name,
+                        email,
+                        password,
+                        role: currentRole,
+                        status: 'Active'
+                    };
+                    accounts.push(newUser);
+                    saveAccounts(accounts);
+
+                    // Update session
+                    setSession({ name: newUser.name, email: newUser.email, role: currentRole });
+
+                    // Update student profile if student
+                    if (currentRole === 'student') {
+                        const student = getStudentProfile();
+                        student.name = newUser.name;
+                        student.email = newUser.email;
+                        saveStudentProfile(student);
+                    }
+
+                    showToast('Account Created! 🎉', `Welcome, ${name}! Redirecting...`, 'lucide:user-check', '#58CC02');
+                    setTimeout(() => {
+                        window.location.href = roleCreds[currentRole].redirect;
+                    }, 700);
+
+                } else {
+                    // Log In validation
+                    const matchedUser = accounts.find(a => a.email.toLowerCase() === email.toLowerCase() && a.password === password);
+
+                    if (matchedUser) {
+                        const role = matchedUser.role || currentRole;
+                        setSession({ name: matchedUser.name, email: matchedUser.email, role });
+                        
+                        // Sync student profile if student
+                        if (role === 'student') {
+                            const student = getStudentProfile();
+                            student.name = matchedUser.name;
+                            student.email = matchedUser.email;
+                            saveStudentProfile(student);
+                        }
+
+                        showToast('Welcome Back! 👋', `Logging in as ${matchedUser.name}`, 'lucide:check-circle', '#58CC02');
+                        setTimeout(() => {
+                            if (role === 'faculty') window.location.href = 'faculty.html';
+                            else if (role === 'admin') window.location.href = 'admin.html';
+                            else window.location.href = 'student.html';
+                        }, 600);
+                    } else {
+                        errorMsg.textContent = 'Invalid email or password. Click "Auto-fill Demo" to test credentials.';
+                        errorMsg.classList.remove('hidden');
+                        showToast('Login Failed', 'Incorrect email or password.', 'lucide:alert-circle', '#FF4B4B');
+                    }
+                }
+            });
         });
     </script>
-
 </body></html>

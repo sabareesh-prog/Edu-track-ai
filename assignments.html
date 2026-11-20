@@ -4,9 +4,8 @@
     <title>EduTrack AI - Assignments</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&amp;display=swap" rel="stylesheet">
-    <script src="supabaseConfig.js"></script>
-    <script src="supabaseClient.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="script.js"></script>
     <style>
         body {
             font-family: 'Nunito', sans-serif;
@@ -31,22 +30,18 @@
             border-bottom-width: 4px;
             transition: all 0.2s ease;
         }
-        .duo-card:active {
-            border-bottom-width: 2px;
-            transform: translateY(2px);
-        }
 
         /* Custom Checkbox Animation */
         .checkbox-container input:checked ~ .checkmark {
             background-color: #58CC02;
             border-color: #58CC02;
-            transform: scale(1.1);
+            transform: scale(1.05);
         }
         .checkbox-container .checkmark {
             transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        /* Modal Blur */
+        /* Modal Overlay */
         .modal-overlay {
             background-color: rgba(0, 0, 0, 0.4);
             backdrop-filter: blur(4px);
@@ -58,7 +53,15 @@
             color: #58CC02;
         }
 
-        /* Hide scrollbar */
+        /* Highlight animation for targeted card */
+        @keyframes pulseBorder {
+            0%, 100% { outline: 3px solid #1CB0F6; transform: scale(1.02); }
+            50% { outline: 3px solid #58CC02; transform: scale(1); }
+        }
+        .highlight-card {
+            animation: pulseBorder 1s ease-in-out 3 forwards;
+        }
+
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
@@ -69,395 +72,412 @@
     </style>
 </head>
 <body>
-    <div class="w-full h-screen flex flex-col bg-white" data-sd-id="1">
+    <div class="w-full h-screen flex flex-col bg-white">
         <!-- Header -->
-        <header class="shrink-0 pt-14 px-6 pb-2 bg-white" data-sd-id="2">
-            <div class="flex items-center justify-between mb-4" data-sd-id="3">
-                <h1 class="text-2xl font-black tracking-tight" data-sd-id="4">Assignments</h1>
-                <div class="flex items-center gap-1 bg-[#F7F7F7] px-3 py-1 rounded-full border-2 border-[#E5E5E5]" data-sd-id="5">
+        <header class="shrink-0 pt-14 px-6 pb-2 bg-white border-b-2 border-gray-100">
+            <div class="flex items-center justify-between mb-4">
+                <h1 class="text-2xl font-black tracking-tight">Assignments</h1>
+                <div id="header-xp-badge" class="flex items-center gap-1.5 bg-[#F7F7F7] px-3 py-1 rounded-full border-2 border-[#E5E5E5] cursor-pointer" onclick="showToast('Your Total Points', `${getStudentProfile().points} XP collected!`, 'lucide:zap', '#FFC800')">
                     <iconify-icon icon="lucide:zap" class="text-[#FFC800] text-lg"></iconify-icon>
-                    <span class="font-black text-sm" data-sd-id="6">1.2k</span>
+                    <span id="xp-display" class="font-black text-sm">1.2k</span>
                 </div>
             </div>
 
-            <!-- Tabs -->
-            <nav class="flex border-b-2 border-[#E5E5E5]" data-sd-id="7">
-                <button id="tab-all" class="flex-1 py-3 text-sm font-black uppercase tracking-wider tab-active" data-sd-id="8">All</button>
-                <button id="tab-pending" class="flex-1 py-3 text-sm font-black uppercase tracking-wider text-gray-400" data-sd-id="9">Pending</button>
-                <button id="tab-completed" class="flex-1 py-3 text-sm font-black uppercase tracking-wider text-gray-400" data-sd-id="10">Done</button>
+            <!-- Filter Tabs -->
+            <nav class="flex border-b-2 border-[#E5E5E5]">
+                <button id="tab-all" class="flex-1 py-3 text-sm font-black uppercase tracking-wider tab-active transition-colors">All (<span id="count-all">0</span>)</button>
+                <button id="tab-pending" class="flex-1 py-3 text-sm font-black uppercase tracking-wider text-gray-400 transition-colors">Pending (<span id="count-pending">0</span>)</button>
+                <button id="tab-completed" class="flex-1 py-3 text-sm font-black uppercase tracking-wider text-gray-400 transition-colors">Done (<span id="count-completed">0</span>)</button>
             </nav>
         </header>
 
-        <!-- Main Content -->
-        <main class="flex-1 overflow-y-auto px-6 py-6 space-y-4 no-scrollbar" data-sd-id="11">
-            
-            <!-- Assignment Card: Overdue/Critical -->
-            <div class="duo-card rounded-[20px] p-4 flex gap-4 bg-white" data-sd-id="12">
-                <label class="checkbox-container relative flex items-center justify-center cursor-pointer" data-sd-id="13">
-                    <input type="checkbox" class="hidden" data-sd-id="14">
-                    <div class="checkmark w-8 h-8 rounded-lg border-2 border-[#E5E5E5] flex items-center justify-center bg-white shadow-inner" data-sd-id="15">
-                        <iconify-icon icon="lucide:check" class="text-white text-xl"></iconify-icon>
-                    </div>
-                </label>
-                <div class="flex-1" data-sd-id="16">
-                    <div class="flex items-center justify-between mb-1" data-sd-id="17">
-                        <h3 class="font-black text-lg leading-tight" data-sd-id="18">Physics Lab Report</h3>
-                        <span class="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-[#FF4B4B]/10 text-[#FF4B4B] border border-[#FF4B4B]/20" data-sd-id="19">Today</span>
-                    </div>
-                    <p class="text-sm font-bold text-gray-400 mb-3" data-sd-id="20">Thermodynamics</p>
-                    <div class="flex items-center gap-2" data-sd-id="21">
-                        <span class="text-[11px] font-black uppercase bg-[#1CB0F6] text-white px-2 py-1 rounded-lg" data-sd-id="22">In Progress</span>
-                        <span class="text-[11px] font-bold text-[#FF4B4B] flex items-center gap-1" data-sd-id="23">
-                            <iconify-icon icon="lucide:clock" class="text-sm"></iconify-icon>
-                            2:30 PM
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Assignment Card: Pending -->
-            <div class="duo-card rounded-[20px] p-4 flex gap-4 bg-white" data-sd-id="24">
-                <label class="checkbox-container relative flex items-center justify-center cursor-pointer" data-sd-id="25">
-                    <input type="checkbox" class="hidden" data-sd-id="26">
-                    <div class="checkmark w-8 h-8 rounded-lg border-2 border-[#E5E5E5] flex items-center justify-center bg-white shadow-inner" data-sd-id="27">
-                        <iconify-icon icon="lucide:check" class="text-white text-xl"></iconify-icon>
-                    </div>
-                </label>
-                <div class="flex-1" data-sd-id="28">
-                    <div class="flex items-center justify-between mb-1" data-sd-id="29">
-                        <h3 class="font-black text-lg leading-tight" data-sd-id="30">Data Structures HW</h3>
-                        <span class="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-[#FF9600]/10 text-[#FF9600] border border-[#FF9600]/20" data-sd-id="31">Tomorrow</span>
-                    </div>
-                    <p class="text-sm font-bold text-gray-400 mb-3" data-sd-id="32">Computer Science</p>
-                    <div class="flex items-center gap-2" data-sd-id="33">
-                        <span class="text-[11px] font-black uppercase bg-gray-100 text-gray-400 px-2 py-1 rounded-lg border border-[#E5E5E5]" data-sd-id="34">Not Started</span>
-                        <span class="text-[11px] font-bold text-gray-400" data-sd-id="35">Oct 26</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Assignment Card: Completed -->
-            <div class="duo-card rounded-[20px] p-4 flex gap-4 bg-gray-50 opacity-70" data-sd-id="36">
-                <label class="checkbox-container relative flex items-center justify-center cursor-pointer" data-sd-id="37">
-                    <input type="checkbox" checked="" class="hidden" data-sd-id="38">
-                    <div class="checkmark w-8 h-8 rounded-lg border-2 border-[#58CC02] flex items-center justify-center bg-[#58CC02] shadow-inner" data-sd-id="39">
-                        <iconify-icon icon="lucide:check" class="text-white text-xl"></iconify-icon>
-                    </div>
-                </label>
-                <div class="flex-1" data-sd-id="40">
-                    <div class="flex items-center justify-between mb-1" data-sd-id="41">
-                        <h3 class="font-black text-lg leading-tight line-through text-gray-400" data-sd-id="42">Algebra Quiz 4</h3>
-                    </div>
-                    <p class="text-sm font-bold text-gray-400 mb-3" data-sd-id="43">Mathematics</p>
-                    <div class="flex items-center gap-2" data-sd-id="44">
-                        <span class="text-[11px] font-black uppercase bg-[#58CC02] text-white px-2 py-1 rounded-lg" data-sd-id="45">Completed</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Assignment Card: Safe -->
-            <div class="duo-card rounded-[20px] p-4 flex gap-4 bg-white" data-sd-id="46">
-                <label class="checkbox-container relative flex items-center justify-center cursor-pointer" data-sd-id="47">
-                    <input type="checkbox" class="hidden" data-sd-id="48">
-                    <div class="checkmark w-8 h-8 rounded-lg border-2 border-[#E5E5E5] flex items-center justify-center bg-white shadow-inner" data-sd-id="49">
-                        <iconify-icon icon="lucide:check" class="text-white text-xl"></iconify-icon>
-                    </div>
-                </label>
-                <div class="flex-1" data-sd-id="50">
-                    <div class="flex items-center justify-between mb-1" data-sd-id="51">
-                        <h3 class="font-black text-lg leading-tight" data-sd-id="52">History Essay</h3>
-                        <span class="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-[#58CC02]/10 text-[#58CC02] border border-[#58CC02]/20" data-sd-id="53">Oct 30</span>
-                    </div>
-                    <p class="text-sm font-bold text-gray-400 mb-3" data-sd-id="54">Modern History</p>
-                    <div class="flex items-center gap-2" data-sd-id="55">
-                        <span class="text-[11px] font-black uppercase bg-gray-100 text-gray-400 px-2 py-1 rounded-lg border border-[#E5E5E5]" data-sd-id="56">Not Started</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Spacer -->
-            <div class="h-20" data-sd-id="57"></div>
+        <!-- Main Content (Task List) -->
+        <main id="tasks-container" class="flex-1 overflow-y-auto px-6 py-6 space-y-4 no-scrollbar">
+            <!-- Dynamically populated -->
         </main>
 
-        <!-- Floating Action Button -->
-        <button id="open-modal-btn" class="fixed right-6 bottom-[120px] w-14 h-14 bg-[#1CB0F6] rounded-2xl btn-3d border-b-[#1483B8] text-white flex items-center justify-center shadow-lg z-40" data-sd-id="58">
+        <!-- Floating Action Button (+ New Task) -->
+        <button id="open-modal-btn" class="fixed right-6 bottom-[120px] w-14 h-14 bg-[#1CB0F6] rounded-2xl btn-3d border-b-[#1483B8] text-white flex items-center justify-center shadow-lg z-40 cursor-pointer" title="Add Assignment">
             <iconify-icon icon="lucide:plus" class="text-3xl"></iconify-icon>
         </button>
 
         <!-- Bottom Navigation -->
-        <footer class="shrink-0 pb-[34px] bg-white border-t-2 border-[#E5E5E5] px-4 flex items-center justify-between h-[100px] z-50" data-sd-id="59">
-            <a href="student.html" id="nav-home-link" class="flex flex-col items-center gap-1 group py-2 flex-1" data-sd-id="60">
-                <iconify-icon icon="lucide:home" class="text-2xl text-gray-300 group-hover:text-[#58CC02] transition-colors"></iconify-icon>
-                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest" data-sd-id="61">Home</span>
+        <footer class="shrink-0 pb-[34px] bg-white border-t-2 border-[#E5E5E5] px-4 flex items-center justify-between h-[100px] z-50">
+            <a href="student.html" id="nav-home" class="flex flex-col items-center gap-1 group py-2 flex-1">
+                <div class="w-12 h-8 rounded-xl flex items-center justify-center">
+                    <iconify-icon icon="lucide:home" class="text-2xl text-gray-300 group-hover:text-[#58CC02] transition-colors"></iconify-icon>
+                </div>
+                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Home</span>
             </a>
-            <a href="assignments.html" id="nav-tasks-link" class="flex flex-col items-center gap-1 group py-2 flex-1" data-sd-id="62">
-                <div class="w-12 h-8 rounded-xl bg-[#58CC02]/10 flex items-center justify-center" data-sd-id="63">
+            <a href="assignments.html" id="nav-assignments" class="flex flex-col items-center gap-1 group py-2 flex-1">
+                <div class="w-12 h-8 rounded-xl bg-[#58CC02]/10 flex items-center justify-center">
                     <iconify-icon icon="lucide:book-open" class="text-2xl text-[#58CC02]"></iconify-icon>
                 </div>
-                <span class="text-[10px] font-black text-[#58CC02] uppercase tracking-widest" data-sd-id="64">Tasks</span>
+                <span class="text-[10px] font-black text-[#58CC02] uppercase tracking-widest">Tasks</span>
             </a>
-            <a href="assistant.html" id="nav-ai-link" class="flex flex-col items-center gap-1 group py-2 flex-1 relative -top-2" data-sd-id="65">
-                <div class="w-14 h-14 rounded-2xl bg-[#1CB0F6] btn-3d border-b-[#1483B8] flex items-center justify-center text-white shadow-lg" data-sd-id="66">
+            <a href="assistant.html" id="nav-ai" class="flex flex-col items-center gap-1 group py-2 flex-1 relative -top-2">
+                <div class="w-14 h-14 rounded-2xl bg-[#1CB0F6] btn-3d border-b-[#1483B8] flex items-center justify-center text-white shadow-lg">
                     <iconify-icon icon="lucide:sparkles" class="text-3xl"></iconify-icon>
                 </div>
             </a>
-            <a href="announcements.html" id="nav-feed-link" class="flex flex-col items-center gap-1 group py-2 flex-1" data-sd-id="67">
-                <iconify-icon icon="lucide:bell" class="text-2xl text-gray-300 group-hover:text-[#58CC02] transition-colors"></iconify-icon>
-                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest" data-sd-id="68">Feed</span>
+            <a href="announcements.html" id="nav-announcements" class="flex flex-col items-center gap-1 group py-2 flex-1">
+                <div class="w-12 h-8 rounded-xl flex items-center justify-center">
+                    <iconify-icon icon="lucide:bell" class="text-2xl text-gray-300 group-hover:text-[#58CC02] transition-colors"></iconify-icon>
+                </div>
+                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Feed</span>
             </a>
-            <a href="login.html" id="nav-profile-link" class="flex flex-col items-center gap-1 group py-2 flex-1">
-                <iconify-icon icon="lucide:user-circle" class="text-2xl text-gray-300 group-hover:text-[#58CC02] transition-colors"></iconify-icon>
+            <a href="login.html" id="nav-profile" class="flex flex-col items-center gap-1 group py-2 flex-1">
+                <div class="w-12 h-8 rounded-xl flex items-center justify-center">
+                    <iconify-icon icon="lucide:user-circle" class="text-2xl text-gray-300 group-hover:text-[#58CC02] transition-colors"></iconify-icon>
+                </div>
                 <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Profile</span>
             </a>
         </footer>
 
-        <!-- Add Assignment Modal (Hidden by Default) -->
-        <div id="add-modal" class="fixed inset-0 z-[60] hidden" data-sd-id="69">
-            <div class="modal-overlay absolute inset-0" data-sd-id="70"></div>
-            <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-[32px] p-6 pb-12 shadow-2xl transform translate-y-0 transition-transform duration-300 border-t-4 border-[#E5E5E5]" data-sd-id="71">
-                <div class="w-12 h-1.5 bg-[#E5E5E5] rounded-full mx-auto mb-6" data-sd-id="72"></div>
+        <!-- Add Assignment Modal -->
+        <div id="add-modal" class="fixed inset-0 z-[60] hidden">
+            <div id="modal-backdrop" class="modal-overlay absolute inset-0"></div>
+            <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-[32px] p-6 pb-12 shadow-2xl transform translate-y-0 transition-transform duration-300 border-t-4 border-[#E5E5E5] max-w-lg mx-auto">
+                <div class="w-12 h-1.5 bg-[#E5E5E5] rounded-full mx-auto mb-6"></div>
                 
-                <div class="flex items-center justify-between mb-6" data-sd-id="73">
-                    <h2 class="text-2xl font-black" data-sd-id="74">New Task</h2>
-                    <button id="close-modal-btn" class="w-8 h-8 flex items-center justify-center text-gray-400" data-sd-id="75">
-                        <iconify-icon icon="lucide:x" class="text-2xl"></iconify-icon>
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-black">New Assignment</h2>
+                    <button id="close-modal-btn" type="button" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-full bg-gray-100">
+                        <iconify-icon icon="lucide:x" class="text-xl"></iconify-icon>
                     </button>
                 </div>
 
-                <form id="new-task-form" class="space-y-6" data-sd-id="76">
-                    <div class="space-y-2" data-sd-id="77">
-                        <label class="text-sm font-black uppercase tracking-wider text-gray-400" data-sd-id="78">Assignment Title</label>
-                        <input type="text" id="new-task-title" required placeholder="e.g. Physics Lab Report" class="w-full p-4 bg-[#F7F7F7] border-2 border-[#E5E5E5] rounded-2xl font-bold focus:outline-none focus:border-[#1CB0F6] transition-colors" data-sd-id="79">
+                <form id="new-task-form" class="space-y-4">
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-black uppercase tracking-wider text-gray-400">Assignment Title</label>
+                        <input type="text" id="new-task-title" required placeholder="e.g. Physics Lab Report" class="w-full p-4 bg-[#F7F7F7] border-2 border-[#E5E5E5] rounded-2xl font-bold focus:outline-none focus:border-[#1CB0F6] transition-colors">
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4" data-sd-id="80">
-                        <div class="space-y-2" data-sd-id="81">
-                            <label class="text-sm font-black uppercase tracking-wider text-gray-400" data-sd-id="82">Subject</label>
-                            <div class="relative" data-sd-id="83">
-                                <select id="new-task-subject" class="w-full p-4 bg-[#F7F7F7] border-2 border-[#E5E5E5] rounded-2xl font-bold focus:outline-none focus:border-[#1CB0F6] appearance-none" data-sd-id="84">
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-black uppercase tracking-wider text-gray-400">Subject</label>
+                            <div class="relative">
+                                <select id="new-task-subject" class="w-full p-4 bg-[#F7F7F7] border-2 border-[#E5E5E5] rounded-2xl font-bold focus:outline-none focus:border-[#1CB0F6] appearance-none text-sm">
                                     <option value="Computer Science">Computer Science</option>
-                                    <option value="Science">Science</option>
-                                    <option value="Math">Math</option>
+                                    <option value="Physics 101">Physics 101</option>
+                                    <option value="Math 150">Math 150</option>
                                     <option value="History">History</option>
                                     <option value="Literature">Literature</option>
                                 </select>
-                                <iconify-icon icon="lucide:chevron-down" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"></iconify-icon>
+                                <iconify-icon icon="lucide:chevron-down" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></iconify-icon>
                             </div>
                         </div>
-                        <div class="space-y-2" data-sd-id="88">
-                            <label class="text-sm font-black uppercase tracking-wider text-gray-400" data-sd-id="89">Deadline</label>
-                            <input type="date" id="new-task-date" class="w-full p-4 bg-[#F7F7F7] border-2 border-[#E5E5E5] rounded-2xl font-bold focus:outline-none focus:border-[#1CB0F6]" data-sd-id="90">
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-black uppercase tracking-wider text-gray-400">Deadline</label>
+                            <input type="date" id="new-task-date" required class="w-full p-4 bg-[#F7F7F7] border-2 border-[#E5E5E5] rounded-2xl font-bold focus:outline-none focus:border-[#1CB0F6] text-sm">
                         </div>
                     </div>
 
-                    <div class="space-y-2" data-sd-id="91">
-                        <label class="text-sm font-black uppercase tracking-wider text-gray-400" data-sd-id="92">Status</label>
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-black uppercase tracking-wider text-gray-400">Initial Status</label>
                         <div class="grid grid-cols-3 gap-2" id="status-button-group">
-                            <button type="button" data-status="pending" class="status-choice-btn py-3 bg-[#1CB0F6]/10 border-2 border-[#1CB0F6] text-[#1CB0F6] rounded-xl text-xs font-black uppercase">Not Started</button>
-                            <button type="button" data-status="in-progress" class="status-choice-btn py-3 bg-white border-2 border-[#E5E5E5] text-gray-400 rounded-xl text-xs font-black uppercase">In Progress</button>
-                            <button type="button" data-status="completed" class="status-choice-btn py-3 bg-white border-2 border-[#E5E5E5] text-gray-400 rounded-xl text-xs font-black uppercase">Completed</button>
+                            <button type="button" data-status="Not Started" class="status-choice-btn py-3 bg-[#1CB0F6]/10 border-2 border-[#1CB0F6] text-[#1CB0F6] rounded-xl text-xs font-black uppercase transition-all">Not Started</button>
+                            <button type="button" data-status="In Progress" class="status-choice-btn py-3 bg-white border-2 border-[#E5E5E5] text-gray-400 rounded-xl text-xs font-black uppercase transition-all">In Progress</button>
+                            <button type="button" data-status="Completed" class="status-choice-btn py-3 bg-white border-2 border-[#E5E5E5] text-gray-400 rounded-xl text-xs font-black uppercase transition-all">Completed</button>
                         </div>
                     </div>
 
-                    <button type="submit" id="btn-submit-task" class="w-full py-4 bg-[#58CC02] border-b-4 border-[#46A302] rounded-2xl text-white font-black uppercase tracking-widest btn-3d active:translate-y-1 active:border-b-0 mt-4" data-sd-id="97">
-                        Add Assignment
+                    <button type="submit" id="btn-submit-task" class="w-full py-4 bg-[#58CC02] border-b-4 border-[#46A302] rounded-2xl text-white font-black uppercase tracking-widest btn-3d active:translate-y-1 active:border-b-0 mt-3 cursor-pointer">
+                        Add Assignment (+100 XP)
                     </button>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- Achievement Toast Notification -->
-    <div id="toast" class="fixed top-20 left-1/2 -translate-x-1/2 w-[90%] max-w-sm bg-white border-2 border-[#E5E5E5] border-b-4 rounded-2xl p-4 flex items-center gap-4 shadow-2xl z-50 transform translate-y-[-200%] transition-transform duration-300 pointer-events-none">
-        <div id="toast-icon-bg" class="w-12 h-12 rounded-xl bg-[#58CC02]/15 text-[#58CC02] flex items-center justify-center shrink-0">
-            <iconify-icon id="toast-icon" icon="lucide:check-circle" class="text-2xl"></iconify-icon>
-        </div>
-        <div>
-            <h5 id="toast-title" class="font-black text-sm uppercase leading-none mb-1 text-[#4B4B4B]">Notification</h5>
-            <p id="toast-msg" class="font-bold text-xs text-gray-500">Operation succeeded</p>
-        </div>
-    </div>
-
     <script>
-        function showToast(title, msg, icon = 'lucide:check-circle', color = '#58CC02') {
-            const toast = document.getElementById('toast');
-            document.getElementById('toast-title').textContent = title;
-            document.getElementById('toast-msg').textContent = msg;
-            const iconBg = document.getElementById('toast-icon-bg');
-            const iconEl = document.getElementById('toast-icon');
-            iconBg.style.backgroundColor = color + '15';
-            iconBg.style.color = color;
-            iconEl.setAttribute('icon', icon);
-
-            toast.style.transform = 'translate(-50%, 0)';
-            setTimeout(() => {
-                toast.style.transform = 'translate(-50%, -200%)';
-            }, 3000);
-        }
+        let currentFilter = 'all';
+        let selectedStatus = 'Not Started';
 
         document.addEventListener('DOMContentLoaded', () => {
-            const openBtn = document.getElementById('open-modal-btn');
-            const closeBtn = document.getElementById('close-modal-btn');
-            const modal = document.getElementById('add-modal');
-            const overlay = modal.querySelector('.modal-overlay');
-            const taskForm = document.getElementById('new-task-form');
-            const mainContainer = document.querySelector('main');
+            // Set default date picker to tomorrow
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            document.getElementById('new-task-date').value = tomorrow.toISOString().split('T')[0];
+
+            // Render tasks initially
+            renderTaskList();
+            updateHeaderXP();
+
+            // Check URL parameters: action=new or highlight=<id>
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('action') === 'new') {
+                openAddModal();
+            }
+
+            const highlightId = urlParams.get('highlight');
+            if (highlightId) {
+                setTimeout(() => {
+                    const targetEl = document.getElementById(highlightId);
+                    if (targetEl) {
+                        targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        targetEl.classList.add('highlight-card');
+                    }
+                }, 300);
+            }
+
+            // Filter Tabs
+            document.getElementById('tab-all').addEventListener('click', () => setFilter('all'));
+            document.getElementById('tab-pending').addEventListener('click', () => setFilter('pending'));
+            document.getElementById('tab-completed').addEventListener('click', () => setFilter('completed'));
 
             // Modal Controls
-            openBtn.addEventListener('click', () => {
-                modal.classList.remove('hidden');
-                document.getElementById('new-task-title').focus();
-            });
+            const modal = document.getElementById('add-modal');
+            const openModalBtn = document.getElementById('open-modal-btn');
+            const closeModalBtn = document.getElementById('close-modal-btn');
+            const backdrop = document.getElementById('modal-backdrop');
 
-            const closeModal = () => modal.classList.add('hidden');
-            closeBtn.addEventListener('click', closeModal);
-            overlay.addEventListener('click', closeModal);
+            openModalBtn.addEventListener('click', openAddModal);
+            closeModalBtn.addEventListener('click', closeAddModal);
+            backdrop.addEventListener('click', closeAddModal);
 
-            // Status selection inside modal
-            let selectedStatus = 'pending';
+            // Status picker buttons in form
             const statusBtns = document.querySelectorAll('.status-choice-btn');
             statusBtns.forEach(btn => {
                 btn.addEventListener('click', () => {
-                    statusBtns.forEach(b => {
-                        b.className = 'status-choice-btn py-3 bg-white border-2 border-[#E5E5E5] text-gray-400 rounded-xl text-xs font-black uppercase';
-                    });
-                    btn.className = 'status-choice-btn py-3 bg-[#1CB0F6]/10 border-2 border-[#1CB0F6] text-[#1CB0F6] rounded-xl text-xs font-black uppercase';
                     selectedStatus = btn.getAttribute('data-status');
+                    statusBtns.forEach(b => {
+                        b.classList.remove('bg-[#1CB0F6]/10', 'border-[#1CB0F6]', 'text-[#1CB0F6]', 'bg-[#58CC02]/10', 'border-[#58CC02]', 'text-[#58CC02]');
+                        b.classList.add('bg-white', 'border-[#E5E5E5]', 'text-gray-400');
+                    });
+                    if (selectedStatus === 'Completed') {
+                        btn.classList.replace('bg-white', 'bg-[#58CC02]/10');
+                        btn.classList.replace('border-[#E5E5E5]', 'border-[#58CC02]');
+                        btn.classList.replace('text-gray-400', 'text-[#58CC02]');
+                    } else {
+                        btn.classList.replace('bg-white', 'bg-[#1CB0F6]/10');
+                        btn.classList.replace('border-[#E5E5E5]', 'border-[#1CB0F6]');
+                        btn.classList.replace('text-gray-400', 'text-[#1CB0F6]');
+                    }
                 });
             });
 
-            // Tab filtering: All, Pending, Completed
-            let currentTab = 'all';
-            const tabs = {
-                'all': document.getElementById('tab-all'),
-                'pending': document.getElementById('tab-pending'),
-                'completed': document.getElementById('tab-completed')
-            };
-
-            function filterCards(filter) {
-                currentTab = filter;
-                Object.keys(tabs).forEach(k => {
-                    if (k === filter) {
-                        tabs[k].className = 'flex-1 py-3 text-sm font-black uppercase tracking-wider tab-active';
-                    } else {
-                        tabs[k].className = 'flex-1 py-3 text-sm font-black uppercase tracking-wider text-gray-400';
-                    }
-                });
-
-                const cards = document.querySelectorAll('.task-card, .duo-card[data-task-id]');
-                cards.forEach(card => {
-                    const cb = card.querySelector('input[type="checkbox"]');
-                    const isCompleted = cb && cb.checked;
-                    if (filter === 'all') {
-                        card.style.display = 'flex';
-                    } else if (filter === 'pending') {
-                        card.style.display = isCompleted ? 'none' : 'flex';
-                    } else if (filter === 'completed') {
-                        card.style.display = isCompleted ? 'flex' : 'none';
-                    }
-                });
-            }
-
-            tabs.all.addEventListener('click', () => filterCards('all'));
-            tabs.pending.addEventListener('click', () => filterCards('pending'));
-            tabs.completed.addEventListener('click', () => filterCards('completed'));
-
-            // Checkbox handler function
-            function bindCheckbox(cb) {
-                cb.addEventListener('change', async function() {
-                    const card = this.closest('.duo-card');
-                    const title = card.querySelector('h3') ? card.querySelector('h3').textContent : 'Assignment';
-                    const taskId = card.getAttribute('data-task-id');
-
-                    if (this.checked) {
-                        card.classList.add('opacity-50');
-                        showToast('Goal Accomplished! 🎉', `+150 XP for "${title}"`, 'lucide:award', '#58CC02');
-                    } else {
-                        card.classList.remove('opacity-50');
-                        showToast('Task Reopened', `"${title}" moved back to pending`, 'lucide:rotate-ccw', '#1CB0F6');
-                    }
-
-                    // Save to Supabase
-                    if (window.eduSupabase && window.eduSupabase.isConnected() && taskId) {
-                        await window.eduSupabase.toggleAssignment(taskId, this.checked);
-                    }
-
-                    // Refresh tab view if filtering
-                    if (currentTab !== 'all') {
-                        filterCards(currentTab);
-                    }
-                });
-            }
-
-            // Bind existing checkboxes
-            document.querySelectorAll('.checkbox-container input').forEach(bindCheckbox);
-
-            // Add Assignment Form Submit
-            taskForm.addEventListener('submit', async (e) => {
+            // Form Submit: Add Assignment
+            document.getElementById('new-task-form').addEventListener('submit', (e) => {
                 e.preventDefault();
                 const title = document.getElementById('new-task-title').value.trim();
                 const subject = document.getElementById('new-task-subject').value;
-                const deadline = document.getElementById('new-task-date').value || 'Tomorrow';
-                const isCompleted = selectedStatus === 'completed';
+                const deadline = document.getElementById('new-task-date').value;
 
-                const newCard = document.createElement('div');
-                newCard.className = `duo-card rounded-[20px] p-4 bg-white flex items-center justify-between transition-all task-card ${isCompleted ? 'opacity-50' : ''}`;
-                newCard.setAttribute('data-task-id', 'task_' + Date.now());
-                newCard.innerHTML = `
-                    <div class="flex items-center gap-4">
-                        <label class="checkbox-container relative flex items-center cursor-pointer">
-                            <input type="checkbox" class="sr-only peer" ${isCompleted ? 'checked' : ''}>
-                            <div class="w-8 h-8 rounded-xl border-2 border-[#E5E5E5] bg-[#F7F7F7] flex items-center justify-center checkmark peer-checked:bg-[#58CC02] peer-checked:border-[#58CC02] peer-checked:text-white transition-all">
-                                <iconify-icon icon="lucide:check" class="text-xl"></iconify-icon>
-                            </div>
-                        </label>
-                        <div>
-                            <span class="text-[10px] font-black uppercase text-[#1CB0F6] tracking-wider">${escapeHtml(subject)}</span>
-                            <h3 class="font-black text-base text-[#4B4B4B]">${escapeHtml(title)}</h3>
-                            <div class="flex items-center gap-2 mt-1">
-                                <span class="text-xs font-bold text-gray-400 flex items-center gap-1">
-                                    <iconify-icon icon="lucide:clock" class="text-sm"></iconify-icon> Due ${escapeHtml(deadline)}
-                                </span>
-                                <span class="text-xs font-black text-[#58CC02]">+100 XP</span>
+                if (!title) {
+                    showToast('Validation Error', 'Please enter an assignment title.', 'lucide:alert-circle', '#FF4B4B');
+                    return;
+                }
+
+                const newTask = {
+                    id: 'task_' + Date.now(),
+                    title,
+                    subject,
+                    deadline,
+                    status: selectedStatus,
+                    xp: 100
+                };
+
+                addTask(newTask);
+
+                if (selectedStatus === 'Completed') {
+                    addPoints(100);
+                    showToast('Assignment Added! 🎉', `+100 XP awarded for completion!`, 'lucide:zap', '#58CC02');
+                } else {
+                    showToast('Task Created', `"${title}" added to your planner.`, 'lucide:check-circle', '#1CB0F6');
+                }
+
+                // Reset and close
+                document.getElementById('new-task-form').reset();
+                document.getElementById('new-task-date').value = tomorrow.toISOString().split('T')[0];
+                closeAddModal();
+                renderTaskList();
+                updateHeaderXP();
+            });
+        });
+
+        function updateHeaderXP() {
+            const student = getStudentProfile();
+            const xpDisplay = document.getElementById('xp-display');
+            if (xpDisplay) {
+                xpDisplay.textContent = (student.points >= 1000)
+                    ? (student.points / 1000).toFixed(1) + 'k'
+                    : student.points;
+            }
+        }
+
+        function openAddModal() {
+            const modal = document.getElementById('add-modal');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('new-task-title').focus();
+            }, 100);
+        }
+
+        function closeAddModal() {
+            const modal = document.getElementById('add-modal');
+            modal.classList.add('hidden');
+        }
+
+        function setFilter(filter) {
+            currentFilter = filter;
+            ['all', 'pending', 'completed'].forEach(f => {
+                const tab = document.getElementById('tab-' + f);
+                if (f === filter) {
+                    tab.className = 'flex-1 py-3 text-sm font-black uppercase tracking-wider tab-active transition-colors';
+                } else {
+                    tab.className = 'flex-1 py-3 text-sm font-black uppercase tracking-wider text-gray-400 transition-colors';
+                }
+            });
+            renderTaskList();
+        }
+
+        function renderTaskList() {
+            const container = document.getElementById('tasks-container');
+            const tasks = getTasks();
+
+            // Update Counts in Header Tabs
+            const countAll = tasks.length;
+            const countPending = tasks.filter(t => t.status !== 'Completed').length;
+            const countCompleted = tasks.filter(t => t.status === 'Completed').length;
+
+            document.getElementById('count-all').textContent = countAll;
+            document.getElementById('count-pending').textContent = countPending;
+            document.getElementById('count-completed').textContent = countCompleted;
+
+            // Filter
+            let filtered = tasks;
+            if (currentFilter === 'pending') {
+                filtered = tasks.filter(t => t.status !== 'Completed');
+            } else if (currentFilter === 'completed') {
+                filtered = tasks.filter(t => t.status === 'Completed');
+            }
+
+            container.innerHTML = '';
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="duo-card rounded-[24px] p-8 bg-white text-center mt-6">
+                        <div class="w-16 h-16 rounded-full bg-[#58CC02]/15 text-[#58CC02] flex items-center justify-center mx-auto mb-3">
+                            <iconify-icon icon="lucide:check-circle-2" class="text-3xl"></iconify-icon>
+                        </div>
+                        <h3 class="text-lg font-black text-[#4B4B4B] mb-1">No assignments here!</h3>
+                        <p class="text-xs font-bold text-gray-400 mb-4">You're all caught up with your study targets.</p>
+                        <button onclick="openAddModal()" class="px-5 py-2.5 bg-[#58CC02] text-white font-black text-xs uppercase rounded-xl btn-3d border-b-[#46A302]">
+                            + Add New Assignment
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            filtered.forEach(task => {
+                const isCompleted = task.status === 'Completed';
+                const statusInfo = getDeadlineStatus(task.deadline);
+                
+                // Card element
+                const card = document.createElement('div');
+                card.id = task.id;
+                card.className = `duo-card rounded-[20px] p-4 flex gap-4 bg-white transition-all ${isCompleted ? 'opacity-70 bg-gray-50' : ''}`;
+
+                // Status Pill styling
+                let pillBg = 'bg-gray-100 text-gray-400 border border-[#E5E5E5]';
+                if (task.status === 'In Progress') {
+                    pillBg = 'bg-[#1CB0F6] text-white';
+                } else if (task.status === 'Completed') {
+                    pillBg = 'bg-[#58CC02] text-white';
+                }
+
+                // Deadline pill formatting
+                let deadlineBadge = '';
+                if (task.deadline) {
+                    deadlineBadge = `<span class="text-[10px] font-black uppercase px-2 py-0.5 rounded-full ${statusInfo.class}">${statusInfo.label}</span>`;
+                }
+
+                card.innerHTML = `
+                    <!-- Checkbox -->
+                    <label class="checkbox-container relative flex items-center justify-center cursor-pointer shrink-0 mt-0.5" title="Toggle completion">
+                        <input type="checkbox" ${isCompleted ? 'checked' : ''} class="hidden task-checkbox">
+                        <div class="checkmark w-8 h-8 rounded-lg border-2 ${isCompleted ? 'border-[#58CC02] bg-[#58CC02]' : 'border-[#E5E5E5] bg-white'} flex items-center justify-center shadow-inner">
+                            <iconify-icon icon="lucide:check" class="text-white text-xl"></iconify-icon>
+                        </div>
+                    </label>
+
+                    <!-- Details -->
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-start justify-between gap-2 mb-1">
+                            <h3 class="font-black text-base leading-tight text-[#4B4B4B] ${isCompleted ? 'line-through text-gray-400' : ''}">
+                                ${escapeHtml(task.title)}
+                            </h3>
+                            <div class="shrink-0 flex items-center gap-1.5">
+                                ${deadlineBadge}
+                                <!-- Delete Button -->
+                                <button class="delete-task-btn text-gray-300 hover:text-[#FF4B4B] p-1 transition-colors" title="Delete task">
+                                    <iconify-icon icon="lucide:trash-2" class="text-base"></iconify-icon>
+                                </button>
                             </div>
                         </div>
+                        <p class="text-xs font-bold text-gray-400 mb-2.5">${escapeHtml(task.subject || 'Course')}</p>
+                        
+                        <div class="flex items-center gap-2">
+                            <!-- Tap to cycle status -->
+                            <button type="button" class="cycle-status-btn text-[11px] font-black uppercase px-2.5 py-1 rounded-lg ${pillBg} cursor-pointer hover:opacity-90 active:scale-95 transition-all" title="Click to cycle status">
+                                ${task.status}
+                            </button>
+                            <span class="text-[11px] font-bold text-gray-400 flex items-center gap-1 ml-auto">
+                                <iconify-icon icon="lucide:calendar" class="text-sm"></iconify-icon>
+                                ${task.deadline || 'No date'}
+                            </span>
+                        </div>
                     </div>
-                    <span class="text-[11px] font-black uppercase ${isCompleted ? 'bg-[#58CC02]/10 text-[#58CC02]' : 'bg-gray-100 text-gray-400'} px-2 py-1 rounded-lg border border-[#E5E5E5]">
-                        ${isCompleted ? 'Done' : 'Pending'}
-                    </span>
                 `;
 
-                // Insert before spacer
-                const spacer = mainContainer.querySelector('.h-20');
-                if (spacer) {
-                    mainContainer.insertBefore(newCard, spacer);
-                } else {
-                    mainContainer.appendChild(newCard);
-                }
+                // Event: Checkbox toggle
+                const checkbox = card.querySelector('.task-checkbox');
+                checkbox.addEventListener('change', () => {
+                    const newStatus = checkbox.checked ? 'Completed' : 'Not Started';
+                    updateTaskStatus(task.id, newStatus);
+                    renderTaskList();
+                    updateHeaderXP();
+                });
 
-                // Bind new checkbox
-                bindCheckbox(newCard.querySelector('input[type="checkbox"]'));
+                // Event: Status pill tap to cycle: Not Started -> In Progress -> Completed -> Not Started
+                const cycleBtn = card.querySelector('.cycle-status-btn');
+                cycleBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    let nextStatus = 'In Progress';
+                    if (task.status === 'Not Started') nextStatus = 'In Progress';
+                    else if (task.status === 'In Progress') nextStatus = 'Completed';
+                    else if (task.status === 'Completed') nextStatus = 'Not Started';
 
-                // Save to Supabase
-                if (window.eduSupabase && window.eduSupabase.isConnected()) {
-                    await window.eduSupabase.addAssignment({
-                        title,
-                        course: subject,
-                        due_date: new Date().toISOString(),
-                        status: isCompleted ? 'completed' : 'pending',
-                        xp_reward: 100
-                    });
-                }
+                    updateTaskStatus(task.id, nextStatus);
+                    renderTaskList();
+                    updateHeaderXP();
+                });
 
-                closeModal();
-                taskForm.reset();
-                showToast('Assignment Added! 🚀', `"${title}" has been saved.`, 'lucide:plus-circle', '#58CC02');
+                // Event: Delete task with confirmation
+                const delBtn = card.querySelector('.delete-task-btn');
+                delBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (confirm(`Delete assignment "${task.title}"?`)) {
+                        deleteTask(task.id);
+                        showToast('Task Deleted', `"${task.title}" was removed.`, 'lucide:trash', '#FF4B4B');
+                        renderTaskList();
+                        updateHeaderXP();
+                    }
+                });
+
+                container.appendChild(card);
             });
 
-            function escapeHtml(s) {
-                return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-            }
-        });
-    </script>
+            // Bottom spacer
+            const spacer = document.createElement('div');
+            spacer.className = 'h-24';
+            container.appendChild(spacer);
+        }
 
+        function escapeHtml(str) {
+            return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+    </script>
 </body></html>

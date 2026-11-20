@@ -4,9 +4,8 @@
     <title>EduTrack AI - Student Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&amp;display=swap" rel="stylesheet">
-    <script src="supabaseConfig.js"></script>
-    <script src="supabaseClient.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="script.js"></script>
     <style>
         body {
             font-family: 'Nunito', sans-serif;
@@ -17,7 +16,7 @@
         /* Duolingo-style 3D Button Effect */
         .btn-3d {
             position: relative;
-            transition: all 0.1s active;
+            transition: all 0.1s;
             border-bottom-width: 4px;
         }
         .btn-3d:active {
@@ -29,15 +28,11 @@
         .duo-card {
             border: 2px solid #E5E5E5;
             border-bottom-width: 4px;
+            transition: all 0.15s ease;
         }
-
-        /* Progress Ring Animation */
-        @keyframes progress {
-            0% { stroke-dasharray: 0 100; }
-        }
-        .progress-ring {
-            stroke-dasharray: 75 100;
-            animation: progress 1s ease-out forwards;
+        .duo-card:active {
+            transform: translateY(2px);
+            border-bottom-width: 2px;
         }
 
         /* Mascot float animation */
@@ -51,67 +46,66 @@
     </style>
 </head>
 <body>
-    <div class="w-full h-screen flex flex-col bg-white" data-sd-id="1">
+    <div class="w-full h-screen flex flex-col bg-white">
         <!-- Header / Stats Bar -->
-        <header class="shrink-0 pt-14 px-6 pb-4 bg-white border-b-2 border-gray-100 flex items-center justify-between" data-sd-id="2">
-            <div class="flex items-center gap-3" data-sd-id="3">
-                <div class="w-10 h-10 rounded-xl bg-[#58CC02] flex items-center justify-center text-white shadow-sm" data-sd-id="4">
+        <header class="shrink-0 pt-14 px-6 pb-4 bg-white border-b-2 border-gray-100 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-[#58CC02] flex items-center justify-center text-white shadow-sm cursor-pointer" onclick="showProfileModal(getStudentProfile())">
                     <iconify-icon icon="lucide:user" class="text-2xl"></iconify-icon>
                 </div>
-                <div data-sd-id="5">
-                    <h1 class="text-xl font-extrabold tracking-tight leading-none" data-sd-id="6">Hi Priya!</h1>
-                    <p class="text-sm font-bold text-gray-400 uppercase tracking-wider" data-sd-id="7">Level 12</p>
+                <div>
+                    <h1 id="header-student-name" class="text-xl font-extrabold tracking-tight leading-none">Hi Priya!</h1>
+                    <p id="header-student-level" class="text-sm font-bold text-gray-400 uppercase tracking-wider">Level 12</p>
                 </div>
             </div>
             
-            <div class="flex items-center gap-4" data-sd-id="8">
-                <div class="flex items-center gap-1" data-sd-id="9">
+            <div class="flex items-center gap-4">
+                <div id="streak-badge" class="flex items-center gap-1 cursor-pointer">
                     <iconify-icon icon="lucide:flame" class="text-[#FF9600] text-2xl"></iconify-icon>
-                    <span class="font-black text-[#FF9600]" data-sd-id="10">7</span>
+                    <span id="header-streak-count" class="font-black text-[#FF9600]">7</span>
                 </div>
-                <div class="flex items-center gap-1" data-sd-id="11">
+                <div id="points-badge" class="flex items-center gap-1 cursor-pointer">
                     <iconify-icon icon="lucide:zap" class="text-[#FFC800] text-2xl"></iconify-icon>
-                    <span class="font-black text-[#FFC800]" data-sd-id="12">1.2k</span>
+                    <span id="header-points-count" class="font-black text-[#FFC800]">1.2k</span>
                 </div>
             </div>
         </header>
 
         <!-- Main Content Scroll Area -->
-        <main class="flex-1 overflow-y-auto px-6 py-6 space-y-8" data-sd-id="13">
+        <main class="flex-1 overflow-y-auto px-6 py-6 space-y-8">
             
             <!-- Daily Goal / Progress Ring -->
-            <section class="duo-card rounded-[20px] p-5 flex items-center gap-6 bg-white" data-sd-id="14">
-                <div class="relative w-24 h-24 flex items-center justify-center" data-sd-id="15">
-                    <svg viewBox="0 0 36 36" class="w-full h-full transform -rotate-90" data-sd-id="16">
+            <section id="daily-goal-card" class="duo-card rounded-[20px] p-5 flex items-center gap-6 bg-white cursor-pointer">
+                <div class="relative w-24 h-24 flex items-center justify-center shrink-0">
+                    <svg viewBox="0 0 36 36" class="w-full h-full transform -rotate-90">
                         <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#E5E5E5" stroke-width="3"></path>
-                        <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#58CC02" stroke-width="3" stroke-linecap="round" class="progress-ring"></path>
+                        <path id="progress-ring-circle" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#58CC02" stroke-width="3" stroke-linecap="round" stroke-dasharray="75 100" style="transition: stroke-dasharray 1s ease-out;"></path>
                     </svg>
-                    <div class="absolute inset-0 flex flex-col items-center justify-center" data-sd-id="17">
-                        <span class="text-2xl font-black text-[#4B4B4B]" data-sd-id="18">3/4</span>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center">
+                        <span id="goal-ratio-text" class="text-2xl font-black text-[#4B4B4B]">3/4</span>
                     </div>
                 </div>
-                <div class="flex-1" data-sd-id="19">
-                    <h2 class="text-lg font-black leading-tight" data-sd-id="20">Daily Goal</h2>
-                    <p class="text-[#777777] font-bold text-sm" data-sd-id="21">One more assignment to hit your streak!</p>
-                    <div class="mt-3 px-3 py-1 bg-[#58CC02] text-white text-[10px] font-black uppercase tracking-widest rounded-full inline-block" data-sd-id="22">
+                <div class="flex-1">
+                    <h2 class="text-lg font-black leading-tight">Daily Goal</h2>
+                    <p id="goal-subtitle" class="text-[#777777] font-bold text-sm">One more assignment to hit your streak!</p>
+                    <div id="goal-percent-badge" class="mt-3 px-3 py-1 bg-[#58CC02] text-white text-[10px] font-black uppercase tracking-widest rounded-full inline-block">
                         75% COMPLETE
                     </div>
                 </div>
             </section>
 
             <!-- AI Study Suggestion -->
-            <section class="relative bg-[#1CB0F6] rounded-[20px] p-6 text-white overflow-hidden shadow-lg shadow-blue-100" data-sd-id="23">
-                <div class="relative z-10 pr-20" data-sd-id="24">
-                    <h3 class="text-xl font-black mb-1" data-sd-id="25">Study Tip!</h3>
-                    <p class="font-bold opacity-90 leading-snug" data-sd-id="26">"You have 2 assignments due soon. Start with <span class="underline" data-sd-id="27">Data Structures</span> today!"</p>
-                    <button onclick="window.location.href='assistant.html'" class="mt-4 bg-white text-[#1CB0F6] hover:bg-gray-50 px-4 py-2 rounded-xl font-black text-sm btn-3d border-b-[#E5E5E5] active:border-b-0 uppercase tracking-wide cursor-pointer" data-sd-id="28">
+            <section class="relative bg-[#1CB0F6] rounded-[20px] p-6 text-white overflow-hidden shadow-lg shadow-blue-100">
+                <div class="relative z-10 pr-20">
+                    <h3 class="text-xl font-black mb-1">Study Tip!</h3>
+                    <p id="study-tip-text" class="font-bold opacity-90 leading-snug">"You have urgent tasks due. Start with your top priority today!"</p>
+                    <button id="btn-lets-go" class="mt-4 bg-white text-[#1CB0F6] hover:bg-gray-50 px-5 py-2.5 rounded-xl font-black text-sm btn-3d border-b-[#E5E5E5] active:border-b-0 uppercase tracking-wide cursor-pointer">
                         Let's Go 🚀
                     </button>
                 </div>
-                <!-- Mascot Owl/Robot (Absolute) -->
-                <div id="student-mascot" class="absolute -right-2 -bottom-2 w-32 h-32 float-mascot cursor-pointer opacity-90 hover:scale-105 transition-transform" data-sd-id="29">
-                   <!-- Simple SVG Mascot Shape -->
-                   <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" data-sd-id="30">
+                <!-- Mascot Owl (Absolute) -->
+                <div id="student-mascot" class="absolute -right-2 -bottom-2 w-32 h-32 float-mascot cursor-pointer opacity-90 hover:scale-105 transition-transform" title="Click me for a tip!">
+                   <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                        <circle cx="50" cy="50" r="45" fill="#FFFFFF" fill-opacity="0.2"></circle>
                        <path d="M50 20C30 20 20 35 20 55C20 75 35 85 50 85C65 85 80 75 80 55C80 35 70 20 50 20Z" fill="#58CC02" stroke="white" stroke-width="3"></path>
                        <circle cx="35" cy="45" r="8" fill="white"></circle>
@@ -124,206 +118,291 @@
             </section>
 
             <!-- Quick Actions Grid -->
-            <div class="grid grid-cols-3 gap-4" data-sd-id="31">
-                <a href="assignments.html" id="action-add-btn" class="flex flex-col items-center justify-center p-4 rounded-[20px] duo-card bg-white active:bg-gray-50 transition-colors" data-sd-id="32">
-                    <div class="w-12 h-12 rounded-full bg-[#58CC02]/10 flex items-center justify-center mb-2" data-sd-id="33">
+            <div class="grid grid-cols-3 gap-4">
+                <a href="assignments.html?action=new" id="action-add-btn" class="flex flex-col items-center justify-center p-4 rounded-[20px] duo-card bg-white active:bg-gray-50 transition-colors">
+                    <div class="w-12 h-12 rounded-full bg-[#58CC02]/10 flex items-center justify-center mb-2">
                         <iconify-icon icon="lucide:plus" class="text-[#58CC02] text-2xl"></iconify-icon>
                     </div>
-                    <span class="text-[12px] font-black text-gray-500 uppercase" data-sd-id="34">Add Task</span>
+                    <span class="text-[12px] font-black text-gray-500 uppercase">Add Task</span>
                 </a>
-                <a href="assistant.html" id="action-upload-btn" class="flex flex-col items-center justify-center p-4 rounded-[20px] duo-card bg-white active:bg-gray-50 transition-colors" data-sd-id="35">
-                    <div class="w-12 h-12 rounded-full bg-[#1CB0F6]/10 flex items-center justify-center mb-2" data-sd-id="36">
+                <a href="assistant.html?action=upload" id="action-upload-btn" class="flex flex-col items-center justify-center p-4 rounded-[20px] duo-card bg-white active:bg-gray-50 transition-colors">
+                    <div class="w-12 h-12 rounded-full bg-[#1CB0F6]/10 flex items-center justify-center mb-2">
                         <iconify-icon icon="lucide:file-up" class="text-[#1CB0F6] text-2xl"></iconify-icon>
                     </div>
-                    <span class="text-[12px] font-black text-gray-500 uppercase" data-sd-id="37">Upload</span>
+                    <span class="text-[12px] font-black text-gray-500 uppercase">Upload</span>
                 </a>
-                <a href="assistant.html" id="action-ai-btn" class="flex flex-col items-center justify-center p-4 rounded-[20px] duo-card bg-white active:bg-gray-50 transition-colors" data-sd-id="38">
-                    <div class="w-12 h-12 rounded-full bg-[#FFC800]/10 flex items-center justify-center mb-2" data-sd-id="39">
+                <a href="assistant.html?action=focus" id="action-ai-btn" class="flex flex-col items-center justify-center p-4 rounded-[20px] duo-card bg-white active:bg-gray-50 transition-colors">
+                    <div class="w-12 h-12 rounded-full bg-[#FFC800]/10 flex items-center justify-center mb-2">
                         <iconify-icon icon="lucide:brain" class="text-[#FFC800] text-2xl"></iconify-icon>
                     </div>
-                    <span class="text-[12px] font-black text-gray-500 uppercase" data-sd-id="40">Ask AI</span>
+                    <span class="text-[12px] font-black text-gray-500 uppercase">Ask AI</span>
                 </a>
             </div>
 
             <!-- Upcoming Deadlines -->
-            <section class="space-y-4" data-sd-id="41">
-                <div class="flex items-center justify-between" data-sd-id="42">
-                    <h3 class="text-xl font-black" data-sd-id="43">Upcoming</h3>
-                    <a href="assignments.html" id="view-all-deadlines" class="text-[#1CB0F6] font-black text-sm uppercase tracking-wider" data-sd-id="44">See All</a>
+            <section class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-black">Upcoming</h3>
+                    <a href="assignments.html" id="view-all-deadlines" class="text-[#1CB0F6] font-black text-sm uppercase tracking-wider hover:underline">See All</a>
                 </div>
                 
-                <!-- Deadline Card: Critical -->
-                <div class="duo-card rounded-[20px] p-4 flex items-center gap-4 bg-white border-l-[8px] border-l-[#FF4B4B]" data-sd-id="45">
-                    <div class="w-14 h-14 bg-[#FF4B4B]/10 rounded-xl flex flex-col items-center justify-center text-[#FF4B4B]" data-sd-id="46">
-                        <span class="text-xs font-black leading-none uppercase" data-sd-id="47">Oct</span>
-                        <span class="text-xl font-black leading-none" data-sd-id="48">24</span>
-                    </div>
-                    <div class="flex-1" data-sd-id="49">
-                        <h4 class="font-black text-lg leading-tight" data-sd-id="50">Physics Lab Report</h4>
-                        <p class="text-sm font-bold text-[#FF4B4B] flex items-center gap-1" data-sd-id="51">
-                            <iconify-icon icon="lucide:clock"></iconify-icon>
-                            Due in 2 hours!
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Deadline Card: Soon -->
-                <div class="duo-card rounded-[20px] p-4 flex items-center gap-4 bg-white border-l-[8px] border-l-[#FF9600]" data-sd-id="52">
-                    <div class="w-14 h-14 bg-[#FF9600]/10 rounded-xl flex flex-col items-center justify-center text-[#FF9600]" data-sd-id="53">
-                        <span class="text-xs font-black leading-none uppercase" data-sd-id="54">Oct</span>
-                        <span class="text-xl font-black leading-none" data-sd-id="55">26</span>
-                    </div>
-                    <div class="flex-1" data-sd-id="56">
-                        <h4 class="font-black text-lg leading-tight" data-sd-id="57">Data Structures HW</h4>
-                        <p class="text-sm font-bold text-gray-400" data-sd-id="58">Computer Science</p>
-                    </div>
-                </div>
-
-                <!-- Deadline Card: Safe -->
-                <div class="duo-card rounded-[20px] p-4 flex items-center gap-4 bg-white border-l-[8px] border-l-[#58CC02]" data-sd-id="59">
-                    <div class="w-14 h-14 bg-[#58CC02]/10 rounded-xl flex flex-col items-center justify-center text-[#58CC02]" data-sd-id="60">
-                        <span class="text-xs font-black leading-none uppercase" data-sd-id="61">Oct</span>
-                        <span class="text-xl font-black leading-none" data-sd-id="62">29</span>
-                    </div>
-                    <div class="flex-1" data-sd-id="63">
-                        <h4 class="font-black text-lg leading-tight" data-sd-id="64">Math Integration Quiz</h4>
-                        <p class="text-sm font-bold text-gray-400" data-sd-id="65">Advanced Calculus</p>
-                    </div>
+                <!-- Upcoming Tasks List (Populated Dynamically) -->
+                <div id="upcoming-tasks-list" class="space-y-3">
                 </div>
             </section>
 
             <!-- Announcements Preview -->
-            <section class="space-y-4" data-sd-id="66">
-                <div class="flex items-center justify-between" data-sd-id="67">
-                    <h3 class="text-xl font-black" data-sd-id="68">Announcements</h3>
+            <section class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-black">Announcements</h3>
+                    <a href="announcements.html" class="text-[#1CB0F6] font-black text-sm uppercase tracking-wider hover:underline">Feed</a>
                 </div>
-                <div class="duo-card rounded-[20px] p-5 bg-[#F7F7F7] border-none" data-sd-id="69">
-                    <div class="flex items-center gap-3 mb-3" data-sd-id="70">
-                        <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center border-2 border-[#E5E5E5]" data-sd-id="71">
+                <div id="latest-announcement-card" class="duo-card rounded-[20px] p-5 bg-[#F7F7F7] border-none cursor-pointer">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center border-2 border-[#E5E5E5]">
                             <iconify-icon icon="lucide:megaphone" class="text-[#1CB0F6] text-xl"></iconify-icon>
                         </div>
-                        <div data-sd-id="72">
-                            <p class="font-black text-sm" data-sd-id="73">Faculty Notice</p>
-                            <p class="text-xs font-bold text-gray-400" data-sd-id="74">Today, 10:30 AM</p>
+                        <div>
+                            <p id="announcement-title" class="font-black text-sm">Campus Notice</p>
+                            <p id="announcement-meta" class="text-xs font-bold text-gray-400">Loading...</p>
                         </div>
-                        <span class="ml-auto w-3 h-3 bg-[#1CB0F6] rounded-full" data-sd-id="75"></span>
+                        <span id="announcement-badge" class="ml-auto w-3 h-3 bg-[#1CB0F6] rounded-full"></span>
                     </div>
-                    <p class="font-bold text-sm leading-relaxed text-[#4B4B4B]" data-sd-id="76">
-                        The library hours have been extended until 10:00 PM for the upcoming midterms week. Happy studying!
+                    <p id="announcement-snippet" class="font-bold text-sm leading-relaxed text-[#4B4B4B]">
+                        Stay tuned for upcoming updates.
                     </p>
                 </div>
             </section>
 
             <!-- Spacer for Nav -->
-            <div class="h-10" data-sd-id="77"></div>
+            <div class="h-10"></div>
         </main>
 
         <!-- Bottom Navigation -->
-        <footer class="shrink-0 pb-[34px] bg-white border-t-2 border-[#E5E5E5] px-4 flex items-center justify-between h-[100px] z-50" data-sd-id="78">
-            <a href="student.html" id="nav-home" class="flex flex-col items-center gap-1 group py-2 flex-1" data-sd-id="79">
-                <div class="w-12 h-8 rounded-xl bg-[#58CC02]/10 flex items-center justify-center" data-sd-id="80">
+        <footer class="shrink-0 pb-[34px] bg-white border-t-2 border-[#E5E5E5] px-4 flex items-center justify-between h-[100px] z-50">
+            <a href="student.html" id="nav-home" class="flex flex-col items-center gap-1 group py-2 flex-1">
+                <div class="w-12 h-8 rounded-xl bg-[#58CC02]/10 flex items-center justify-center">
                     <iconify-icon icon="lucide:home" class="text-2xl text-[#58CC02]"></iconify-icon>
                 </div>
-                <span class="text-[10px] font-black text-[#58CC02] uppercase tracking-widest" data-sd-id="81">Home</span>
+                <span class="text-[10px] font-black text-[#58CC02] uppercase tracking-widest">Home</span>
             </a>
-            <a href="assignments.html" id="nav-assignments" class="flex flex-col items-center gap-1 group py-2 flex-1" data-sd-id="82">
-                <iconify-icon icon="lucide:book-open" class="text-2xl text-gray-300 group-hover:text-[#58CC02] transition-colors"></iconify-icon>
-                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest" data-sd-id="83">Tasks</span>
+            <a href="assignments.html" id="nav-assignments" class="flex flex-col items-center gap-1 group py-2 flex-1">
+                <div class="w-12 h-8 rounded-xl flex items-center justify-center">
+                    <iconify-icon icon="lucide:book-open" class="text-2xl text-gray-300 group-hover:text-[#58CC02] transition-colors"></iconify-icon>
+                </div>
+                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Tasks</span>
             </a>
-            <a href="assistant.html" id="nav-ai" class="flex flex-col items-center gap-1 group py-2 flex-1 relative -top-2" data-sd-id="84">
-                <div class="w-14 h-14 rounded-2xl bg-[#1CB0F6] btn-3d border-b-[#1483B8] flex items-center justify-center text-white shadow-lg" data-sd-id="85">
+            <a href="assistant.html" id="nav-ai" class="flex flex-col items-center gap-1 group py-2 flex-1 relative -top-2">
+                <div class="w-14 h-14 rounded-2xl bg-[#1CB0F6] btn-3d border-b-[#1483B8] flex items-center justify-center text-white shadow-lg">
                     <iconify-icon icon="lucide:sparkles" class="text-3xl"></iconify-icon>
                 </div>
             </a>
-            <a href="announcements.html" id="nav-announcements" class="flex flex-col items-center gap-1 group py-2 flex-1" data-sd-id="86">
-                <iconify-icon icon="lucide:bell" class="text-2xl text-gray-300 group-hover:text-[#58CC02] transition-colors"></iconify-icon>
-                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest" data-sd-id="87">Feed</span>
+            <a href="announcements.html" id="nav-announcements" class="flex flex-col items-center gap-1 group py-2 flex-1">
+                <div class="w-12 h-8 rounded-xl flex items-center justify-center">
+                    <iconify-icon icon="lucide:bell" class="text-2xl text-gray-300 group-hover:text-[#58CC02] transition-colors"></iconify-icon>
+                </div>
+                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Feed</span>
             </a>
-            <a href="login.html" id="nav-profile" class="flex flex-col items-center gap-1 group py-2 flex-1" data-sd-id="88">
-                <iconify-icon icon="lucide:user-circle" class="text-2xl text-gray-300 group-hover:text-[#58CC02] transition-colors"></iconify-icon>
-                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest" data-sd-id="89">Profile</span>
+            <a href="login.html" id="nav-profile" class="flex flex-col items-center gap-1 group py-2 flex-1">
+                <div class="w-12 h-8 rounded-xl flex items-center justify-center">
+                    <iconify-icon icon="lucide:user-circle" class="text-2xl text-gray-300 group-hover:text-[#58CC02] transition-colors"></iconify-icon>
+                </div>
+                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Profile</span>
             </a>
         </footer>
     </div>
 
-    <!-- Achievement Toast (Hidden by default, used for gamification feel) -->
-    <div id="achievement-toast" class="fixed top-20 left-1/2 -translate-x-1/2 w-[85%] bg-[#FFC800] border-b-4 border-[#D9A000] p-4 rounded-2xl flex items-center gap-4 shadow-xl z-50 transform translate-y-[-200%] transition-transform duration-500 pointer-events-none" data-sd-id="90">
-        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center" data-sd-id="91">
-            <iconify-icon icon="lucide:trophy" class="text-[#FFC800] text-2xl"></iconify-icon>
+    <!-- Early Bird Badge Popup (Shown once with close button) -->
+    <div id="earlybird-modal" class="fixed top-20 left-1/2 -translate-x-1/2 w-[88%] max-w-sm bg-[#FFC800] border-b-4 border-[#D9A000] p-4 rounded-2xl flex items-center justify-between shadow-2xl z-50 transform -translate-y-40 transition-transform duration-500 hidden">
+        <div class="flex items-center gap-3">
+            <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center shrink-0 shadow-sm">
+                <iconify-icon icon="lucide:award" class="text-[#FFC800] text-2xl"></iconify-icon>
+            </div>
+            <div>
+                <h5 class="font-black text-white text-sm uppercase leading-none mb-1">Early Bird Badge! 🏆</h5>
+                <p class="font-black text-[#8C6D00] text-xs">Logged in early & kept your 7-day streak alive!</p>
+            </div>
         </div>
-        <div data-sd-id="92">
-            <h5 class="font-black text-white text-sm uppercase leading-none mb-1" data-sd-id="93">New Badge!</h5>
-            <p class="font-black text-[#8C6D00] text-xs" data-sd-id="94">Early Bird: Completed before 9AM</p>
-        </div>
+        <button id="close-earlybird-btn" class="w-8 h-8 rounded-full bg-black/10 hover:bg-black/20 text-white flex items-center justify-center shrink-0 ml-2 cursor-pointer">
+            <iconify-icon icon="lucide:x" class="text-lg"></iconify-icon>
+        </button>
     </div>
 
     <script>
-        function showAchievement(title, msg, icon = 'lucide:trophy') {
-            const toast = document.getElementById('achievement-toast');
-            toast.querySelector('h5').textContent = title;
-            toast.querySelector('p').textContent = msg;
-            toast.querySelector('iconify-icon').setAttribute('icon', icon);
-            toast.style.transform = 'translate(-50%, 0)';
-            setTimeout(() => {
-                toast.style.transform = 'translate(-50%, -200%)';
-            }, 3000);
-        }
-
         document.addEventListener('DOMContentLoaded', () => {
-            // Interactive Mascot
+            renderDashboard();
+
+            // Early Bird Badge popup (show once, with close button)
+            const badgeDismissed = getData('edutrack_earlybird_dismissed', false);
+            const badgeEl = document.getElementById('earlybird-modal');
+            const closeBadgeBtn = document.getElementById('close-earlybird-btn');
+
+            if (!badgeDismissed && badgeEl) {
+                badgeEl.classList.remove('hidden');
+                setTimeout(() => {
+                    badgeEl.style.transform = 'translate(-50%, 0)';
+                }, 400);
+
+                closeBadgeBtn.addEventListener('click', () => {
+                    badgeEl.style.transform = 'translate(-50%, -200%)';
+                    setData('edutrack_earlybird_dismissed', true);
+                    setTimeout(() => badgeEl.classList.add('hidden'), 500);
+                });
+            }
+
+            // Interactive Mascot quotes
             const mascot = document.getElementById('student-mascot');
             if (mascot) {
-                const owlQuotes = [
-                    "Hoot! You're 75% done with your daily goal!",
-                    "Keep up the momentum! Study with AI today! 🦉",
-                    "7 days strong! Don't let your streak break!",
-                    "Data Structures is calling your name! 💻"
+                const quotes = [
+                    "Hoot! You're making awesome progress on your streak!",
+                    "Pro tip: Ask AI to summarize long PDF lectures in seconds! 🦉",
+                    "Keep going! Just one more assignment to complete today's goal!",
+                    "You're a Level 12 scholar — keep that flame burning! 🔥"
                 ];
                 mascot.addEventListener('click', () => {
-                    const quote = owlQuotes[Math.floor(Math.random() * owlQuotes.length)];
-                    showAchievement('Duo the Owl Says:', quote, 'lucide:sparkles');
+                    const q = quotes[Math.floor(Math.random() * quotes.length)];
+                    showToast('Duo the Owl Says 🦉', q, 'lucide:sparkles', '#58CC02');
                 });
             }
 
-            // Streak & XP Click
-            const flame = document.querySelector('header .flex.items-center.gap-1:first-child');
-            if (flame) {
-                flame.style.cursor = 'pointer';
-                flame.addEventListener('click', () => {
-                    showAchievement('7 Day Streak! 🔥', 'You have studied every day this week! +50 XP bonus unlocked.', 'lucide:flame');
-                });
-            }
-
-            const zap = document.querySelector('header .flex.items-center.gap-1:last-child');
-            if (zap) {
-                zap.style.cursor = 'pointer';
-                zap.addEventListener('click', () => {
-                    showAchievement('1,240 Total XP ⚡', 'Level 12 Scholar. Only 160 XP to Level 13!', 'lucide:zap');
-                });
-            }
-
-            // Daily goal section click
-            const dailyGoal = document.querySelector('section[data-sd-id="14"]');
-            if (dailyGoal) {
-                dailyGoal.style.cursor = 'pointer';
-                dailyGoal.addEventListener('click', () => {
-                    showAchievement('Daily Goal: 3/4 Tasks! 🎯', 'Complete 1 more assignment today to hit your 100% streak target.', 'lucide:target');
-                });
-            }
-
-            // Make upcoming deadline cards clickable
-            document.querySelectorAll('section[data-sd-id="41"] .duo-card').forEach(card => {
-                card.style.cursor = 'pointer';
-                card.addEventListener('click', () => {
-                    window.location.href = 'assignments.html';
-                });
+            // Streak & XP Badges in Header
+            document.getElementById('streak-badge').addEventListener('click', () => {
+                const student = getStudentProfile();
+                showToast(`${student.streak} Day Streak! 🔥`, 'Study every day to keep your flame blazing!', 'lucide:flame', '#FF9600');
             });
 
-            // Initial celebration
-            setTimeout(() => {
-                showAchievement('Welcome Back, Priya! 🎉', 'You have 2 assignments due soon. Let\'s make today count!', 'lucide:sparkles');
-            }, 800);
-        });
-    </script>
+            document.getElementById('points-badge').addEventListener('click', () => {
+                const student = getStudentProfile();
+                showToast(`${student.points} Total XP ⚡`, `Level ${student.level} Scholar. Earn +100 XP per assignment!`, 'lucide:zap', '#FFC800');
+            });
 
+            // Daily goal click
+            document.getElementById('daily-goal-card').addEventListener('click', () => {
+                const prog = getDailyGoalProgress();
+                showToast(`Daily Goal: ${prog.completed}/${prog.target} Completed 🎯`, `${prog.percent}% accomplished today!`, 'lucide:target', '#58CC02');
+            });
+        });
+
+        function renderDashboard() {
+            const student = getStudentProfile();
+            const tasks = getTasks();
+            const announcements = getAnnouncements();
+
+            // 1. Stats Bar
+            const firstName = (student.name || 'Priya').split(' ')[0];
+            document.getElementById('header-student-name').textContent = `Hi ${firstName}!`;
+            document.getElementById('header-student-level').textContent = `Level ${student.level || 12}`;
+            document.getElementById('header-streak-count').textContent = student.streak || 7;
+            document.getElementById('header-points-count').textContent = (student.points >= 1000)
+                ? (student.points / 1000).toFixed(1) + 'k'
+                : (student.points || 1200);
+
+            // 2. Daily Goal Progress
+            const progress = getDailyGoalProgress();
+            document.getElementById('goal-ratio-text').textContent = `${progress.completed}/${progress.target}`;
+            document.getElementById('goal-percent-badge').textContent = `${progress.percent}% COMPLETE`;
+            
+            const remaining = progress.target - progress.completed;
+            if (remaining > 0) {
+                document.getElementById('goal-subtitle').textContent = `${remaining} more assignment${remaining > 1 ? 's' : ''} to hit your streak!`;
+            } else {
+                document.getElementById('goal-subtitle').textContent = `Awesome work! 100% of today's goal reached! 🎉`;
+                document.getElementById('goal-percent-badge').classList.replace('bg-[#58CC02]', 'bg-[#FFC800]');
+            }
+
+            // Progress Ring stroke-dasharray
+            const ringCircle = document.getElementById('progress-ring-circle');
+            if (ringCircle) {
+                ringCircle.setAttribute('stroke-dasharray', `${progress.percent} 100`);
+            }
+
+            // 3. Pending Tasks for Upcoming list (Sorted by deadline)
+            const pendingTasks = tasks.filter(t => t.status !== 'Completed').sort((a, b) => {
+                return new Date(a.deadline || '2099-01-01') - new Date(b.deadline || '2099-01-01');
+            });
+
+            const top3Tasks = pendingTasks.slice(0, 3);
+            const urgentTask = top3Tasks[0];
+
+            // 4. Study Tip & "Let's Go"
+            const studyTipText = document.getElementById('study-tip-text');
+            const letsGoBtn = document.getElementById('btn-lets-go');
+
+            if (urgentTask) {
+                studyTipText.innerHTML = `You have assignments due soon. Start with <span class="underline">${escapeHtml(urgentTask.title)}</span> today!`;
+                letsGoBtn.onclick = () => {
+                    window.location.href = `assignments.html?highlight=${urgentTask.id}`;
+                };
+            } else {
+                studyTipText.textContent = `All caught up! Review your lecture notes with the AI Assistant!`;
+                letsGoBtn.onclick = () => {
+                    window.location.href = 'assistant.html';
+                };
+            }
+
+            // 5. Render Upcoming List
+            const upcomingContainer = document.getElementById('upcoming-tasks-list');
+            upcomingContainer.innerHTML = '';
+
+            if (top3Tasks.length === 0) {
+                upcomingContainer.innerHTML = `
+                    <div class="duo-card rounded-[20px] p-6 bg-white text-center">
+                        <iconify-icon icon="lucide:check-circle-2" class="text-4xl text-[#58CC02] mb-2"></iconify-icon>
+                        <p class="font-black text-sm text-[#4B4B4B]">No pending assignments!</p>
+                        <p class="text-xs font-bold text-gray-400 mt-1">Enjoy your free time or add a new task.</p>
+                    </div>
+                `;
+            } else {
+                top3Tasks.forEach(t => {
+                    const statusInfo = getDeadlineStatus(t.deadline);
+                    const deadlineDate = t.deadline ? new Date(t.deadline) : new Date();
+                    const month = deadlineDate.toLocaleString('en-US', { month: 'short' });
+                    const day = deadlineDate.getDate();
+
+                    const card = document.createElement('div');
+                    card.className = `duo-card rounded-[20px] p-4 flex items-center gap-4 bg-white border-l-[8px] ${statusInfo.borderClass} cursor-pointer hover:bg-gray-50 transition-colors`;
+                    card.innerHTML = `
+                        <div class="w-14 h-14 rounded-xl flex flex-col items-center justify-center shrink-0" style="background-color: ${statusInfo.color}18; color: ${statusInfo.color};">
+                            <span class="text-xs font-black leading-none uppercase">${month}</span>
+                            <span class="text-xl font-black leading-none mt-0.5">${day}</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-black text-base leading-tight truncate text-[#4B4B4B]">${escapeHtml(t.title)}</h4>
+                            <p class="text-xs font-bold flex items-center gap-1.5 mt-1" style="color: ${statusInfo.color};">
+                                <iconify-icon icon="lucide:clock" class="text-sm"></iconify-icon>
+                                <span>${statusInfo.label} • ${escapeHtml(t.subject || 'Course')}</span>
+                            </p>
+                        </div>
+                        <iconify-icon icon="lucide:chevron-right" class="text-gray-300 text-xl shrink-0"></iconify-icon>
+                    `;
+                    card.onclick = () => {
+                        window.location.href = `assignments.html?highlight=${t.id}`;
+                    };
+                    upcomingContainer.appendChild(card);
+                });
+            }
+
+            // 6. Announcements Card
+            if (announcements.length > 0) {
+                const latest = announcements[0];
+                document.getElementById('announcement-title').textContent = latest.title || 'Announcement';
+                document.getElementById('announcement-meta').textContent = `${latest.author || 'Admin'} • ${latest.time || 'Recent'}`;
+                document.getElementById('announcement-snippet').textContent = latest.content || '';
+                const badge = document.getElementById('announcement-badge');
+                if (latest.read) {
+                    badge.classList.add('hidden');
+                } else {
+                    badge.classList.remove('hidden');
+                }
+
+                document.getElementById('latest-announcement-card').onclick = () => {
+                    window.location.href = 'announcements.html';
+                };
+            }
+        }
+
+        function escapeHtml(str) {
+            return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+    </script>
 </body></html>
