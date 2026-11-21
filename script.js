@@ -447,6 +447,25 @@ function setupNavigation() {
         }
     });
 
+    // Sync with parent frame if embedded in index.html
+    if (window.parent && window.parent !== window) {
+        const keyMap = {
+            'student.html': 'student',
+            'faculty.html': 'faculty',
+            'admin.html': 'admin',
+            'assignments.html': 'assignments',
+            'assistant.html': 'assistant',
+            'announcements.html': 'announcements',
+            'login.html': 'login'
+        };
+        const activeKey = keyMap[filename];
+        if (activeKey) {
+            try {
+                window.parent.postMessage({ type: 'navigate', url: filename, key: activeKey }, '*');
+            } catch (err) {}
+        }
+    }
+
     // Special handling for Profile tab: Click shows profile popup with Logout option if logged in
     const profileBtn = document.getElementById('nav-profile');
     if (profileBtn && filename !== 'login.html') {
@@ -483,7 +502,7 @@ function showProfileModal(user) {
             <h3 class="text-xl font-black text-[#4B4B4B]">${user.name || 'Priya Sharma'}</h3>
             <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">${user.role ? user.role.toUpperCase() : 'STUDENT'} • Level ${student.level || 12}</p>
 
-            <div class="grid grid-cols-2 gap-3 mb-6">
+            <div class="grid grid-cols-2 gap-3 mb-4">
                 <div class="duo-card rounded-xl p-3 bg-gray-50">
                     <p class="text-[10px] font-black uppercase text-gray-400">Total XP</p>
                     <p class="text-lg font-black text-[#FFC800]">${student.points || 1200} ⚡</p>
@@ -491,6 +510,25 @@ function showProfileModal(user) {
                 <div class="duo-card rounded-xl p-3 bg-gray-50">
                     <p class="text-[10px] font-black uppercase text-gray-400">Streak</p>
                     <p class="text-lg font-black text-[#FF9600]">${student.streak || 7} Days 🔥</p>
+                </div>
+            </div>
+
+            <!-- All Portals Quick Navigation (Connects every link) -->
+            <div class="mb-4 text-left">
+                <p class="text-[10px] font-black uppercase text-gray-400 tracking-wider mb-2">Switch Portal</p>
+                <div class="grid grid-cols-3 gap-1.5">
+                    <a href="student.html" class="flex flex-col items-center p-2 rounded-xl bg-gray-50 hover:bg-[#58CC02]/10 text-[#58CC02] text-center border border-gray-100 transition-colors">
+                        <iconify-icon icon="lucide:graduation-cap" class="text-lg"></iconify-icon>
+                        <span class="text-[9px] font-black uppercase mt-0.5">Student</span>
+                    </a>
+                    <a href="faculty.html" class="flex flex-col items-center p-2 rounded-xl bg-gray-50 hover:bg-[#1CB0F6]/10 text-[#1CB0F6] text-center border border-gray-100 transition-colors">
+                        <iconify-icon icon="lucide:book-user" class="text-lg"></iconify-icon>
+                        <span class="text-[9px] font-black uppercase mt-0.5">Faculty</span>
+                    </a>
+                    <a href="admin.html" class="flex flex-col items-center p-2 rounded-xl bg-gray-50 hover:bg-[#9B59B6]/10 text-[#9B59B6] text-center border border-gray-100 transition-colors">
+                        <iconify-icon icon="lucide:shield-check" class="text-lg"></iconify-icon>
+                        <span class="text-[9px] font-black uppercase mt-0.5">Admin</span>
+                    </a>
                 </div>
             </div>
 

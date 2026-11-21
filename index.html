@@ -145,13 +145,13 @@
 
     <!-- Mobile Sub-Navigation Bar for Small Screens -->
     <div class="lg:hidden bg-white border-b border-[#E5E5E5] px-4 py-2 flex items-center gap-2 overflow-x-auto no-scrollbar">
-        <button onclick="loadScreen('student.html', 'student')" class="px-3 py-1.5 bg-[#58CC02]/15 text-[#58CC02] text-xs font-black rounded-lg shrink-0">Student</button>
-        <button onclick="loadScreen('faculty.html', 'faculty')" class="px-3 py-1.5 bg-gray-100 text-gray-600 text-xs font-black rounded-lg shrink-0">Faculty</button>
-        <button onclick="loadScreen('admin.html', 'admin')" class="px-3 py-1.5 bg-gray-100 text-gray-600 text-xs font-black rounded-lg shrink-0">Admin</button>
-        <button onclick="loadScreen('assignments.html', 'assignments')" class="px-3 py-1.5 bg-gray-100 text-gray-600 text-xs font-black rounded-lg shrink-0">Tasks</button>
-        <button onclick="loadScreen('assistant.html', 'assistant')" class="px-3 py-1.5 bg-gray-100 text-gray-600 text-xs font-black rounded-lg shrink-0">AI Assistant</button>
-        <button onclick="loadScreen('announcements.html', 'announcements')" class="px-3 py-1.5 bg-gray-100 text-gray-600 text-xs font-black rounded-lg shrink-0">Feed</button>
-        <button onclick="loadScreen('login.html', 'login')" class="px-3 py-1.5 bg-gray-100 text-gray-600 text-xs font-black rounded-lg shrink-0">Login</button>
+        <button id="btn-mob-student" onclick="loadScreen('student.html', 'student')" class="mobile-tab-btn px-3 py-1.5 bg-[#58CC02]/15 text-[#58CC02] text-xs font-black rounded-lg shrink-0">Student</button>
+        <button id="btn-mob-faculty" onclick="loadScreen('faculty.html', 'faculty')" class="mobile-tab-btn px-3 py-1.5 bg-gray-100 text-gray-600 text-xs font-black rounded-lg shrink-0">Faculty</button>
+        <button id="btn-mob-admin" onclick="loadScreen('admin.html', 'admin')" class="mobile-tab-btn px-3 py-1.5 bg-gray-100 text-gray-600 text-xs font-black rounded-lg shrink-0">Admin</button>
+        <button id="btn-mob-assignments" onclick="loadScreen('assignments.html', 'assignments')" class="mobile-tab-btn px-3 py-1.5 bg-gray-100 text-gray-600 text-xs font-black rounded-lg shrink-0">Tasks</button>
+        <button id="btn-mob-assistant" onclick="loadScreen('assistant.html', 'assistant')" class="mobile-tab-btn px-3 py-1.5 bg-gray-100 text-gray-600 text-xs font-black rounded-lg shrink-0">AI Assistant</button>
+        <button id="btn-mob-announcements" onclick="loadScreen('announcements.html', 'announcements')" class="mobile-tab-btn px-3 py-1.5 bg-gray-100 text-gray-600 text-xs font-black rounded-lg shrink-0">Feed</button>
+        <button id="btn-mob-login" onclick="loadScreen('login.html', 'login')" class="mobile-tab-btn px-3 py-1.5 bg-gray-100 text-gray-600 text-xs font-black rounded-lg shrink-0">Login</button>
     </div>
 
     <!-- Main Workspace Frame Container -->
@@ -186,20 +186,30 @@
             currentScreen = url;
             currentKey = key;
             const iframe = document.getElementById('app-frame');
-            iframe.src = url;
-            document.getElementById('btn-popout').href = url;
+            if (iframe && iframe.src.indexOf(url) === -1) {
+                iframe.src = url;
+            }
+            const popout = document.getElementById('btn-popout');
+            if (popout) popout.href = url;
 
-            // Update top tabs active state
+            // Update desktop top tabs
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
             const activeBtn = document.getElementById('btn-tab-' + key);
-            if (activeBtn) {
-                activeBtn.classList.add('active');
+            if (activeBtn) activeBtn.classList.add('active');
+
+            // Update mobile sub-navigation tabs
+            document.querySelectorAll('.mobile-tab-btn').forEach(btn => {
+                btn.className = 'mobile-tab-btn px-3 py-1.5 bg-gray-100 text-gray-600 text-xs font-black rounded-lg shrink-0';
+            });
+            const activeMobBtn = document.getElementById('btn-mob-' + key);
+            if (activeMobBtn) {
+                activeMobBtn.className = 'mobile-tab-btn px-3 py-1.5 bg-[#58CC02]/15 text-[#58CC02] text-xs font-black rounded-lg shrink-0';
             }
 
             // Sync URL hash
-            window.location.hash = key;
+            try { history.replaceState(null, '', '#' + key); } catch(e) {}
         }
 
         function setViewport(mode) {
@@ -210,8 +220,10 @@
             const btnFull = document.getElementById('btn-vp-full');
 
             [btnMobile, btnTablet, btnFull].forEach(b => {
-                b.classList.remove('bg-white', 'shadow-sm', 'text-[#4B4B4B]');
-                b.classList.add('text-gray-400');
+                if (b) {
+                    b.classList.remove('bg-white', 'shadow-sm', 'text-[#4B4B4B]');
+                    b.classList.add('text-gray-400');
+                }
             });
 
             wrapper.classList.remove('device-mobile', 'device-tablet', 'device-full');
@@ -219,30 +231,61 @@
             if (mode === 'mobile') {
                 wrapper.classList.add('device-mobile');
                 notch.style.display = 'flex';
-                btnMobile.classList.add('bg-white', 'shadow-sm', 'text-[#4B4B4B]');
-                btnMobile.classList.remove('text-gray-400');
+                if (btnMobile) {
+                    btnMobile.classList.add('bg-white', 'shadow-sm', 'text-[#4B4B4B]');
+                    btnMobile.classList.remove('text-gray-400');
+                }
             } else if (mode === 'tablet') {
                 wrapper.classList.add('device-tablet');
                 notch.style.display = 'none';
-                btnTablet.classList.add('bg-white', 'shadow-sm', 'text-[#4B4B4B]');
-                btnTablet.classList.remove('text-gray-400');
+                if (btnTablet) {
+                    btnTablet.classList.add('bg-white', 'shadow-sm', 'text-[#4B4B4B]');
+                    btnTablet.classList.remove('text-gray-400');
+                }
             } else if (mode === 'full') {
                 wrapper.classList.add('device-full');
                 notch.style.display = 'none';
-                btnFull.classList.add('bg-white', 'shadow-sm', 'text-[#4B4B4B]');
-                btnFull.classList.remove('text-gray-400');
+                if (btnFull) {
+                    btnFull.classList.add('bg-white', 'shadow-sm', 'text-[#4B4B4B]');
+                    btnFull.classList.remove('text-gray-400');
+                }
             }
         }
 
-        // Handle navigation inside iframe if possible
+        // Handle navigation inside iframe (two-way link sync)
         window.addEventListener('message', (e) => {
-            if (e.data && e.data.type === 'navigate') {
-                loadScreen(e.data.url, e.data.key);
+            if (e.data && e.data.type === 'navigate' && e.data.key) {
+                const key = e.data.key;
+                currentKey = key;
+                currentScreen = e.data.url;
+                const popout = document.getElementById('btn-popout');
+                if (popout) popout.href = e.data.url;
+
+                // Sync desktop tab
+                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+                const activeBtn = document.getElementById('btn-tab-' + key);
+                if (activeBtn) activeBtn.classList.add('active');
+
+                // Sync mobile tab
+                document.querySelectorAll('.mobile-tab-btn').forEach(btn => {
+                    btn.className = 'mobile-tab-btn px-3 py-1.5 bg-gray-100 text-gray-600 text-xs font-black rounded-lg shrink-0';
+                });
+                const activeMobBtn = document.getElementById('btn-mob-' + key);
+                if (activeMobBtn) {
+                    activeMobBtn.className = 'mobile-tab-btn px-3 py-1.5 bg-[#58CC02]/15 text-[#58CC02] text-xs font-black rounded-lg shrink-0';
+                }
+
+                try { history.replaceState(null, '', '#' + key); } catch(err) {}
             }
         });
 
         // Initialize from hash or default to student
         document.addEventListener('DOMContentLoaded', () => {
+            // Auto-detect mobile devices for full view
+            if (window.innerWidth < 768) {
+                setViewport('full');
+            }
+
             const hash = window.location.hash.replace('#', '');
             if (hash && screenMap[hash]) {
                 loadScreen(screenMap[hash], hash);
