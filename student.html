@@ -103,16 +103,33 @@
                         Let's Go 🚀
                     </button>
                 </div>
-                <!-- Mascot Owl (Absolute) -->
-                <div id="student-mascot" class="absolute -right-2 -bottom-2 w-32 h-32 float-mascot cursor-pointer opacity-90 hover:scale-105 transition-transform" title="Click me for a tip!">
-                   <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                       <circle cx="50" cy="50" r="45" fill="#FFFFFF" fill-opacity="0.2"></circle>
-                       <path d="M50 20C30 20 20 35 20 55C20 75 35 85 50 85C65 85 80 75 80 55C80 35 70 20 50 20Z" fill="#58CC02" stroke="white" stroke-width="3"></path>
-                       <circle cx="35" cy="45" r="8" fill="white"></circle>
-                       <circle cx="35" cy="45" r="4" fill="black"></circle>
-                       <circle cx="65" cy="45" r="8" fill="white"></circle>
-                       <circle cx="65" cy="45" r="4" fill="black"></circle>
-                       <path d="M45 55L50 60L55 55" stroke="#FFC800" stroke-width="4" stroke-linecap="round"></path>
+                <!-- Educational Logo (Absolute) -->
+                <div id="student-mascot" class="absolute -right-2 -bottom-2 w-32 h-32 float-mascot cursor-pointer opacity-95 hover:scale-105 transition-transform" title="Click me for a study tip!">
+                   <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full drop-shadow-md">
+                       <!-- Badge Background -->
+                       <rect x="6" y="6" width="88" height="88" rx="26" fill="#58CC02"/>
+                       <rect x="9" y="9" width="82" height="82" rx="23" stroke="white" stroke-width="2" stroke-opacity="0.3"/>
+                       
+                       <!-- Knowledge Star of Wisdom -->
+                       <path d="M50 14L52 19.5L57.5 21.5L52 23.5L50 29L48 23.5L42.5 21.5L48 19.5Z" fill="#FFC800"/>
+                       
+                       <!-- Graduation Cap (Mortarboard) -->
+                       <path d="M34 46C34 52 41 56 50 56C59 56 66 52 66 46V41H34V46Z" fill="#1E293B"/>
+                       <polygon points="50,29 78,40 50,51 22,40" fill="#0F172A"/>
+                       <polygon points="50,32 73,40 50,48 27,40" fill="#1E293B"/>
+                       
+                       <!-- Center Button & Golden Tassel -->
+                       <ellipse cx="50" cy="40" rx="3" ry="2" fill="#FFC800"/>
+                       <path d="M50 40C58 41 66 45 70 51C72 54 73 59 73 62" stroke="#FFC800" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                       <circle cx="73" cy="63" r="2.5" fill="#FFC800"/>
+
+                       <!-- Open Book of Knowledge -->
+                       <path d="M50 65C43 61 31 59 19 63V80C31 76 43 78 50 82C57 78 69 76 81 80V63C69 59 57 61 50 65Z" fill="#3D8E00"/>
+                       <path d="M50 64C43 60 31 58 20 62V78C31 74 43 76 50 80V64Z" fill="#FFFFFF"/>
+                       <path d="M50 64C57 60 69 58 80 62V78C69 74 57 76 50 80V64Z" fill="#F1F5F9"/>
+                       <path d="M50 64V80" stroke="#CBD5E1" stroke-width="2" stroke-linecap="round"/>
+                       <path d="M26 68C32 66 39 66 44 67M26 72C32 70 39 70 44 71" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round"/>
+                       <path d="M56 67C61 66 68 66 74 68M56 71C61 70 68 70 74 72" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round"/>
                    </svg>
                 </div>
             </section>
@@ -250,18 +267,18 @@
                 });
             }
 
-            // Interactive Mascot quotes
+            // Interactive Educational Mascot quotes
             const mascot = document.getElementById('student-mascot');
             if (mascot) {
                 const quotes = [
-                    "Hoot! You're making awesome progress on your streak!",
-                    "Pro tip: Ask AI to summarize long PDF lectures in seconds! 🦉",
+                    "You're making awesome progress on your streak today!",
+                    "Pro tip: Ask AI to summarize long PDF lectures in seconds! 🎓",
                     "Keep going! Just one more assignment to complete today's goal!",
                     "You're a Level 12 scholar — keep that flame burning! 🔥"
                 ];
                 mascot.addEventListener('click', () => {
                     const q = quotes[Math.floor(Math.random() * quotes.length)];
-                    showToast('Duo the Owl Says 🦉', q, 'lucide:sparkles', '#58CC02');
+                    showToast('EduTrack Coach Says 🎓', q, 'lucide:sparkles', '#58CC02');
                 });
             }
 
